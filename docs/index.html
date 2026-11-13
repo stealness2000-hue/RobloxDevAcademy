@@ -103,18 +103,21 @@
   </footer>
 
   <script>
-    // Works on any GitHub Pages site: https://<owner>.github.io/<repo>/  →  latest release asset of that repo.
+    // On <owner>.github.io/<repo>/ the repository is derived from the URL (works for forks too);
+    // on any other domain the official repository is used.
     (function () {
-      var a = document.getElementById('download');
-      var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
-      var repo = location.pathname.split('/').filter(Boolean)[0];
-      if (owner && repo) {
-        var base = 'https://github.com/' + owner + '/' + repo + '/releases';
-        a.href = base + '/latest/download/Roblox-Dev-Academy-Setup.exe';
-        document.getElementById('releases').innerHTML = ' · <a href="' + base + '">Alle versies</a>';
-      } else {
-        a.href = 'Roblox-Dev-Academy-Setup.exe';
+      var owner = 'stealness2000-hue';
+      var repo = 'RobloxDevAcademy';
+      if (location.hostname.endsWith('.github.io')) {
+        var p = location.pathname.split('/').filter(Boolean)[0];
+        if (p) {
+          owner = location.hostname.split('.')[0];
+          repo = p;
+        }
       }
+      var base = 'https://github.com/' + owner + '/' + repo + '/releases';
+      document.getElementById('download').href = base + '/latest/download/Roblox-Dev-Academy-Setup.exe';
+      document.getElementById('releases').innerHTML = ' · <a href="' + base + '">Alle versies</a>';
     })();
   </script>
 </body>
