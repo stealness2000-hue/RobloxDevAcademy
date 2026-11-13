@@ -1,0 +1,93 @@
+/* Design tokens. Components only use these variables, never raw colors. */
+:root,
+:root[data-theme='dark'] {
+  --bg: #0c1018;
+  --sidebar: #10151f;
+  --surface: #171e2a;
+  --surface-2: #1c2433;
+  --elevated: #202a39;
+  --hover: rgba(255, 255, 255, 0.045);
+  --active: rgba(255, 255, 255, 0.075);
+  --border: #2b3545;
+  --border-soft: #222b39;
+  --text: #f2f5fc;
+  --text-2: #929caf;
+  --text-3: #687387;
+  --success: #43cb91;
+  --success-soft: rgba(67, 203, 145, 0.12);
+  --warning: #e8b75a;
+  --warning-soft: rgba(232, 183, 90, 0.12);
+  --error: #f16d79;
+  --error-soft: rgba(241, 109, 121, 0.12);
+  --code-bg: #0f141d;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+  --scrollbar: #2b3545;
+  color-scheme: dark;
+
+  --syn-keyword: #c792ea;
+  --syn-string: #a5d6a7;
+  --syn-number: #f7c97e;
+  --syn-comment: #637083;
+  --syn-name: #dfe6f3;
+  --syn-builtin: #82aaff;
+  --syn-symbol: #8fa0b8;
+}
+
+:root[data-theme='light'] {
+  --bg: #f6f7fa;
+  --sidebar: #eef1f6;
+  --surface: #ffffff;
+  --surface-2: #f8f9fc;
+  --elevated: #ffffff;
+  --hover: rgba(16, 24, 40, 0.045);
+  --active: rgba(16, 24, 40, 0.08);
+  --border: #d9dee8;
+  --border-soft: #e6e9f0;
+  --text: #141a26;
+  --text-2: #4f5a6d;
+  --text-3: #7a8497;
+  --success: #188a5b;
+  --success-soft: rgba(24, 138, 91, 0.1);
+  --warning: #a86d00;
+  --warning-soft: rgba(168, 109, 0, 0.1);
+  --error: #c93545;
+  --error-soft: rgba(201, 53, 69, 0.09);
+  --code-bg: #f8f9fc;
+  --shadow: 0 8px 28px rgba(16, 24, 40, 0.1);
+  --scrollbar: #c9d0dc;
+  color-scheme: light;
+
+  --syn-keyword: #8e3fc7;
+  --syn-string: #2f7d32;
+  --syn-number: #b05a00;
+  --syn-comment: #8b95a5;
+  --syn-name: #1d2533;
+  --syn-builtin: #2f5bd3;
+  --syn-symbol: #5a6578;
+}
+
+/* Accent options (restrained: used for focus, selection and primary actions only). */
+:root { --accent: #527cff; --accent-2: #7797ff; --accent-soft: rgba(82, 124, 255, 0.14); --on-accent: #ffffff; }
+:root[data-accent='violet'] { --accent: #8b6cf6; --accent-2: #a58ff8; --accent-soft: rgba(139, 108, 246, 0.14); }
+:root[data-accent='teal'] { --accent: #1fb5a3; --accent-2: #4fcbbc; --accent-soft: rgba(31, 181, 163, 0.14); }
+:root[data-accent='amber'] { --accent: #d99a2b; --accent-2: #e6b35c; --accent-soft: rgba(217, 154, 43, 0.15); --on-accent: #1a1204; }
+:root[data-theme='light'][data-accent='blue'] { --accent: #3b63e8; }
+
+:root {
+  --font-ui: 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --font-code: 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+  --radius-sm: 5px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --titlebar-h: 40px;
+  --sidebar-w: 232px;
+  --dur: 140ms;
+  --dur-slow: 260ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='off']) { --dur: 0ms; --dur-slow: 0ms; }
+}
+:root[data-motion='on'] { --dur: 0ms; --dur-slow: 0ms; }

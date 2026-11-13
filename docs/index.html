@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roblox Dev Academy</title>
+  <meta name="description" content="Leer Roblox programmeren met Luau, vanaf nul. Gratis Windows-app, werkt offline." />
+  <link rel="icon" href="icon.png" />
+  <style>
+    :root {
+      --bg: #0c1018; --surface: #171e2a; --border: #2b3545; --text: #f2f5fc; --text-2: #929caf; --accent: #527cff; --accent-2: #7797ff; --success: #43cb91;
+      color-scheme: dark;
+    }
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme='dark']) { --bg: #f6f7fa; --surface: #ffffff; --border: #d9dee8; --text: #141a26; --text-2: #4f5a6d; --accent: #3b63e8; --accent-2: #2f55d6; --success: #188a5b; color-scheme: light; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent-2); }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+    header { padding: 22px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .brand img { width: 28px; height: 28px; border-radius: 7px; }
+    .hero { padding: 48px 0 28px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+    h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02em; margin: 0 0 14px; }
+    .lead { color: var(--text-2); font-size: 18px; margin: 0 0 24px; max-width: 46ch; }
+    .btn { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; padding: 13px 20px; border-radius: 9px; }
+    .btn:hover { background: var(--accent-2); }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .meta { margin-top: 12px; font-size: 14px; color: var(--text-2); }
+    .shot { width: 100%; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 18px 50px rgba(0,0,0,.35); display: block; }
+    section { padding: 36px 0; border-top: 1px solid var(--border); }
+    h2 { font-size: 24px; margin: 0 0 18px; letter-spacing: -0.01em; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+    .card h3 { margin: 0 0 6px; font-size: 16px; }
+    .card p { margin: 0; color: var(--text-2); font-size: 15px; }
+    .num { font-family: 'Cascadia Code', Consolas, monospace; color: var(--text-2); font-size: 13px; }
+    ol.steps { padding-left: 20px; margin: 0; }
+    ol.steps li { margin: 6px 0; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+    footer { padding: 28px 0 40px; color: var(--text-2); font-size: 14px; border-top: 1px solid var(--border); }
+    code { font-family: 'Cascadia Code', Consolas, monospace; font-size: .92em; }
+    @media (max-width: 800px) { .hero, .two { grid-template-columns: 1fr; } .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="wrap"><div class="brand"><img src="icon.png" alt="" /> Roblox Dev Academy</div></header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <h1>Leer Roblox programmeren. Vanaf nul.</h1>
+        <p class="lead">Je hoeft nog niets van code te weten. De Academy leert je stap voor stap zelf Roblox-scripts schrijven in Luau, in het Nederlands, met oefeningen die echt worden nagekeken.</p>
+        <a class="btn" id="download" href="#">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download voor Windows
+        </a>
+        <div class="meta">Gratis · Windows 10 en 11 · werkt offline · je voortgang blijft op je eigen computer</div>
+      </div>
+      <img class="shot" src="screenshot-dashboard.png" alt="Het dashboard van de Roblox Dev Academy met de volgende les en je voortgang" />
+    </div>
+
+    <section class="wrap">
+      <h2>Wat je leert</h2>
+      <div class="grid">
+        <div class="card"><div class="num">00 – 01</div><h3>Eerste stappen</h3><p>Wat code is, je eerste script, variabelen, getallen en tekst. Ook waar alles staat in Roblox Studio.</p></div>
+        <div class="card"><div class="num">02 – 03</div><h3>Beslissen en herhalen</h3><p>If-statements, and/or/not en lussen. Je bouwt een winkelcontrole en een aftelklok.</p></div>
+        <div class="card"><div class="num">04 – 05</div><h3>Functies en tabellen</h3><p>Herbruikbare code, schadeberekening en een compleet inventarissysteem.</p></div>
+      </div>
+      <p class="meta" style="margin-top:14px">42 lessen, 33 extra oefeningen en uitdagingen. Daarna volgen cursussen over events, client/server, UI en data opslaan.</p>
+    </section>
+
+    <section class="wrap two">
+      <div>
+        <h2>Fouten in gewone taal</h2>
+        <p style="color:var(--text-2)">Elke fout wordt uitgelegd: wat er misging, waarom, op welke regel, en een hint. Het antwoord krijg je pas als je erom vraagt. Je code wordt echt uitgevoerd in Luau en getest met verschillende waarden, dus gokken werkt niet.</p>
+      </div>
+      <img class="shot" src="screenshot-lesson.png" alt="Een les over if-statements met een oefening die is nagekeken" />
+    </section>
+
+    <section class="wrap two">
+      <img class="shot" src="screenshot-studio.png" alt="De Roblox Studio-pagina met een gecontroleerde oefening" />
+      <div>
+        <h2>Werkt samen met Roblox Studio</h2>
+        <p style="color:var(--text-2)">Installeer met één klik de Academy-plugin. Open oefeningen in Studio en laat je werk controleren. Scripts synchroniseer je veilig, zonder dat er iets stilletjes wordt overschreven. De koppeling loopt alleen via je eigen computer.</p>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <h2>Installeren</h2>
+      <ol class="steps">
+        <li>Klik op <strong>Download voor Windows</strong> en open <code>Roblox-Dev-Academy-Setup.exe</code>.</li>
+        <li>Toont Windows "Windows heeft uw pc beschermd"? Klik op <strong>Meer info</strong> en dan <strong>Toch uitvoeren</strong>. De app is (nog) niet digitaal ondertekend.</li>
+        <li>Kies een map en klik op <strong>Installeren</strong>. Je begint met les 1: <em>Wat is code?</em></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Roblox Dev Academy is een onafhankelijk leerproject en is niet verbonden aan Roblox Corporation. Je leergegevens worden alleen lokaal opgeslagen.
+    <span id="releases"></span>
+  </footer>
+
+  <script>
+    // Works on any GitHub Pages site: https://<owner>.github.io/<repo>/  →  latest release asset of that repo.
+    (function () {
+      var a = document.getElementById('download');
+      var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : null;
+      var repo = location.pathname.split('/').filter(Boolean)[0];
+      if (owner && repo) {
+        var base = 'https://github.com/' + owner + '/' + repo + '/releases';
+        a.href = base + '/latest/download/Roblox-Dev-Academy-Setup.exe';
+        document.getElementById('releases').innerHTML = ' · <a href="' + base + '">Alle versies</a>';
+      } else {
+        a.href = 'Roblox-Dev-Academy-Setup.exe';
+      }
+    })();
+  </script>
+</body>
+</html>

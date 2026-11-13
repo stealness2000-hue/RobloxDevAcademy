@@ -1,0 +1,46 @@
+# Builds, tests and publishes the Windows installer for free on GitHub.
+# Trigger: push a version tag, e.g.  git tag v0.3.0 && git push origin v0.3.0
+# The installer becomes downloadable 24/7 at:
+#   https://github.com/<owner>/<repo>/releases/latest/download/Roblox-Dev-Academy-Setup.exe
+name: Build en publiceer installer
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Unit, database, curriculum and Studio tests (real Luau runtime)
+        run: npm test
+
+      - name: Build installer
+        run: npm run dist
+
+      - name: Keep installer as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Roblox-Dev-Academy-Setup
+          path: release/Roblox-Dev-Academy-Setup.exe
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/Roblox-Dev-Academy-Setup.exe
+          generate_release_notes: true
