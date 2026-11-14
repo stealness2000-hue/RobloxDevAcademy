@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, useEffect, type ReactNode } from 'react';
+import { backgroundStyle } from './background';
 import {
   BarChart3, BookOpen, Bot, Code2, Dumbbell, FolderKanban, GraduationCap, LayoutDashboard, Monitor, Settings as SettingsIcon, Swords, Trophy, Flame, Sparkles, Braces,
 } from 'lucide-react';
@@ -154,6 +155,8 @@ export function App() {
               </button>
             </div>
           </nav>
+          <div className="main-wrap">
+          <div className={`app-bg bg-${settings.background}`} style={backgroundStyle(settings)} aria-hidden />
           <main className="main" id="main">
             <ErrorBoundary resetKey={`${route.page}:${route.params?.id ?? ''}`}>
               <Suspense fallback={<div className="page"><div className="skeleton" style={{ height: 220 }} /></div>}>
@@ -161,6 +164,7 @@ export function App() {
               </Suspense>
             </ErrorBoundary>
           </main>
+          </div>
         </div>
       )}
       <Toasts />

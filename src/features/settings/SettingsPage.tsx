@@ -4,8 +4,14 @@ import { useApp } from '@/store';
 import { call } from '@/api';
 import { Modal, Segmented, Switch } from '@/components/ui';
 import type { BackupInfo, Settings } from '@shared/types';
+import { playKey, playSuccess, type TypingProfile } from '@/sound/sounds';
+import { backgroundStyle } from '@/app/background';
 
-const SECTIONS = ['Weergave', 'Leren', 'Editor', 'Roblox Studio', 'AI Tutor', 'Gegevens'] as const;
+const SECTIONS = ['Weergave', 'Geluid', 'Leren', 'Editor', 'Roblox Studio', 'AI Tutor', 'Gegevens'] as const;
+const BACKGROUNDS: { value: Settings['background']; label: string }[] = [
+  { value: 'none', label: 'Geen' }, { value: 'aurora', label: 'Aurora' }, { value: 'grid', label: 'Raster' }, { value: 'dots', label: 'Stippen' },
+  { value: 'sunset', label: 'Avond' }, { value: 'ocean', label: 'Oceaan' },
+];
 type Section = (typeof SECTIONS)[number];
 
 function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
@@ -40,6 +46,33 @@ export function SettingsPage() {
                   ))}
                 </div>
               </Row>
+              <div className="setting-row" style={{ display: 'block' }}>
+                <div style={{ marginBottom: 8 }}>Achtergrond</div>
+                <div className="bg-tiles" role="radiogroup" aria-label="Achtergrond">
+                  {BACKGROUNDS.map((b) => (
+                    <button key={b.value} type="button" role="radio" aria-checked={settings.background === b.value} className="bg-tile" onClick={() => set('background', b.value)}>
+                      <div className={`app-bg bg-${b.value === 'none' ? 'solid' : b.value}`} />
+                      <span>{b.label}</span>
+                    </button>
+                  ))}
+                  <button type="button" role="radio" aria-checked={settings.background === 'custom'} className="bg-tile" onClick={async () => {
+                    try {
+                      const next = await call('settings:pickBackground');
+                      if (next) useApp.setState({ settings: next });
+                    } catch (e) {
+                      useApp.getState().toast({ kind: 'error', title: 'Afbeelding niet gebruikt', body: (e as Error).message });
+                    }
+                  }}>
+                    {settings.customBackground && <div className="app-bg" style={backgroundStyle({ ...settings, background: 'custom' })} />}
+                    <span>{settings.customBackground ? 'Eigen ✓' : 'Eigen…'}</span>
+                  </button>
+                </div>
+                <div className="row" style={{ marginTop: 12 }}>
+                  <span className="small muted" style={{ width: 160 }}>Dimmen (leesbaarheid)</span>
+                  <input type="range" min={0} max={0.9} step={0.05} value={settings.backgroundDim} onChange={(e) => set('backgroundDim', Number(e.target.value))} aria-label="Achtergrond dimmen" />
+                  <span className="mono small">{Math.round(settings.backgroundDim * 100)}%</span>
+                </div>
+              </div>
               <Row label="Interface-schaal" hint="Maakt alles groter of kleiner.">
                 <Segmented label="Schaal" value={settings.uiScale} onChange={(v) => set('uiScale', v)} options={[{ value: 0.9, label: '90%' }, { value: 1, label: '100%' }, { value: 1.1, label: '110%' }, { value: 1.25, label: '125%' }]} />
               </Row>
@@ -47,6 +80,31 @@ export function SettingsPage() {
                 <Segmented label="Minder beweging" value={settings.reducedMotion} onChange={(v) => set('reducedMotion', v)} options={[{ value: 'system', label: 'Systeem' }, { value: 'on', label: 'Aan' }, { value: 'off', label: 'Uit' }]} />
               </Row>
               <Row label="XP en levels tonen" hint="XP is een extraatje; je beheersing wordt altijd bijgehouden."><Switch label="XP tonen" checked={settings.showXp} onChange={(v) => set('showXp', v)} /></Row>
+            </>
+          )}
+          {section === 'Geluid' && (
+            <>
+              <Row label="Typgeluid" hint="Een geluidje bij elke toets in de code-editor. Elke toets klinkt net iets anders.">
+                <div className="row">
+                  <Segmented label="Typgeluid" value={settings.typingSound} onChange={(v) => { set('typingSound', v); playKey(v as TypingProfile, 'key', settings.soundVolume); }} options={[{ value: 'off', label: 'Uit' }, { value: 'soft', label: 'Zacht' }, { value: 'mechanical', label: 'Mechanisch' }, { value: 'typewriter', label: 'Typemachine' }, { value: 'bubble', label: 'Bubbel' }]} />
+                </div>
+              </Row>
+              <Row label="Probeer het" hint="Klik om het gekozen geluid te horen, ook voor spatie en Enter.">
+                <div className="row">
+                  {(['key', 'space', 'enter', 'backspace'] as const).map((k) => (
+                    <button key={k} className="btn sm" onClick={() => playKey(settings.typingSound, k, settings.soundVolume)}>{({ key: 'Letter', space: 'Spatie', enter: 'Enter', backspace: 'Backspace' } as const)[k]}</button>
+                  ))}
+                </div>
+              </Row>
+              <Row label="Volume">
+                <div className="row">
+                  <input type="range" min={0} max={1} step={0.05} value={settings.soundVolume} onChange={(e) => set('soundVolume', Number(e.target.value))} aria-label="Volume" />
+                  <span className="mono small" style={{ width: 36 }}>{Math.round(settings.soundVolume * 100)}%</span>
+                </div>
+              </Row>
+              <Row label="Geluid bij oefeningen" hint="Een kort belletje als je oefening klopt, en een zacht toontje als het nog niet klopt.">
+                <div className="row"><Switch label="Geluid bij oefeningen" checked={settings.feedbackSounds} onChange={(v) => { set('feedbackSounds', v); if (v) playSuccess(settings.soundVolume); }} /></div>
+              </Row>
             </>
           )}
           {section === 'Leren' && (

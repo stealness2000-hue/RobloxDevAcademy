@@ -4,7 +4,9 @@ import { course2 } from './course-2';
 import { course3 } from './course-3';
 import { course4 } from './course-4';
 import { course5 } from './course-5';
-import type { Course, Lesson, Step } from './types';
+import { courseCpp } from './course-cpp';
+import { courseJava } from './course-java';
+import type { Course, Lesson, Step, Track } from './types';
 
 const planned = (id: string, number: number, title: string, description: string, level: string, topics: string[]): Course => ({
   id, number, title, description, level, lessons: [], planned: topics,
@@ -32,25 +34,39 @@ export const COURSES: Course[] = [
     ['Module-architectuur', 'Strikte Luau-types', 'Metatables en OOP', 'State machines', 'Opruimen van verbindingen']),
   planned('course-12', 12, 'Complete games bouwen', 'Obby, simulator, tycoon en ronde-gebaseerde games.', 'Gevorderd',
     ['Obby', 'Simulator', 'Tycoon', 'Ronde-gebaseerde multiplayer', 'Eigen game als eindproject']),
+  courseCpp,
+  courseJava,
 ];
 
 export const ALL_LESSONS: Lesson[] = COURSES.flatMap((c) => c.lessons);
 export const LESSON_BY_ID = new Map(ALL_LESSONS.map((l) => [l.id, l]));
 export const COURSE_BY_ID = new Map(COURSES.map((c) => [c.id, c]));
 
-/** Global lesson number (1-based) across all written courses, for "les 14" style labels. */
-export const lessonNumber = (id: string) => ALL_LESSONS.findIndex((l) => l.id === id) + 1;
+export const TRACK_LABEL: Record<Track, string> = { luau: 'Roblox Luau', cpp: 'C++', java: 'Java' };
+export const trackOfCourse = (c: Course): Track => c.track ?? 'luau';
+export const trackOfLesson = (id: string): Track => {
+  const l = LESSON_BY_ID.get(id);
+  const c = l ? COURSE_BY_ID.get(l.courseId) : undefined;
+  return c ? trackOfCourse(c) : 'luau';
+};
+export const lessonsOfTrack = (t: Track) => COURSES.filter((c) => trackOfCourse(c) === t).flatMap((c) => c.lessons);
+/** Programming language of a lesson's code (each track has one language). */
+export const languageOfLesson = (id: string): 'luau' | 'cpp' | 'java' => trackOfLesson(id);
+
+/** Lesson number (1-based) within its track, for "les 14" style labels. */
+export const lessonNumber = (id: string) => lessonsOfTrack(trackOfLesson(id)).findIndex((l) => l.id === id) + 1;
 
 /** Steps the student must complete before a lesson counts as done. */
 export const isGradedStep = (s: Step) => s.type === 'exercise' || s.type === 'quiz' || s.type === 'predict' || s.type === 'studio';
 
-/** Sequential unlocking: the first lesson is open; each next lesson opens once the previous one is completed. */
+/** Sequential unlocking per track: the first lesson of each track is open; the next opens once the previous is completed. */
 export function isUnlocked(lessonId: string, completed: Set<string>): boolean {
-  const idx = ALL_LESSONS.findIndex((l) => l.id === lessonId);
+  const list = lessonsOfTrack(trackOfLesson(lessonId));
+  const idx = list.findIndex((l) => l.id === lessonId);
   if (idx <= 0) return idx === 0;
-  return completed.has(ALL_LESSONS[idx - 1].id) || completed.has(lessonId);
+  return completed.has(list[idx - 1].id) || completed.has(lessonId);
 }
 
-export function nextLesson(completed: Set<string>): Lesson | null {
-  return ALL_LESSONS.find((l) => !completed.has(l.id)) ?? null;
+export function nextLesson(completed: Set<string>, track: Track = 'luau'): Lesson | null {
+  return lessonsOfTrack(track).find((l) => !completed.has(l.id)) ?? ALL_LESSONS.find((l) => !completed.has(l.id)) ?? null;
 }

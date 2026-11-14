@@ -76,8 +76,12 @@ export interface Lesson {
   summary: string[];
 }
 
+export type Track = 'luau' | 'cpp' | 'java';
+
 export interface Course {
   id: string;
+  /** Learning track; lessons unlock in order within a track. Default 'luau'. */
+  track?: Track;
   number: number;
   title: string;
   description: string;

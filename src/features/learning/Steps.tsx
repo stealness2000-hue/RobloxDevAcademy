@@ -6,6 +6,7 @@ import { OutputConsole, ErrorExplanation } from './Output';
 import { call } from '@/api';
 import { useApp } from '@/store';
 import { explainRunError } from '@shared/explain-error';
+import { explainNative } from '@shared/explain-native';
 import type { RunResult } from '@shared/types';
 import type { Step } from '@/curriculum/types';
 
@@ -20,13 +21,19 @@ export function ExplainStep({ step }: { step: StepOf<'explain'> }) {
   );
 }
 
-export function useRunner() {
+export type Lang = 'luau' | 'cpp' | 'java';
+
+export function runCode(language: Lang, code: string) {
+  return language === 'luau' ? call('luau:run', code) : call('code:run', { language, code, record: true });
+}
+
+export function useRunner(language: Lang = 'luau') {
   const [result, setResult] = useState<RunResult | null>(null);
   const [busy, setBusy] = useState(false);
   const run = async (code: string) => {
     setBusy(true);
     try {
-      setResult(await call('luau:run', code));
+      setResult(await runCode(language, code));
     } finally {
       setBusy(false);
     }
@@ -34,16 +41,16 @@ export function useRunner() {
   return { result, busy, run, setResult };
 }
 
-export function CodeStep({ step }: { step: StepOf<'code'> }) {
+export function CodeStep({ step, language = 'luau' }: { step: StepOf<'code'>; language?: Lang }) {
   const [focus, setFocus] = useState<number | null>(step.annotations?.length ? 0 : null);
-  const { result, busy, run } = useRunner();
+  const { result, busy, run } = useRunner(language);
   const ann = focus !== null ? step.annotations?.[focus] : undefined;
   return (
     <div className="step">
       {step.title && <h2 className="step-title">{step.title}</h2>}
       {step.body && <Prose text={step.body} />}
       <div className="code-example">
-        <CodeView code={step.code} focusToken={ann?.token} errorLine={result?.error?.line} />
+        <CodeView code={step.code} focusToken={ann?.token} errorLine={result?.error?.line} language={language} />
         {step.annotations && (
           <div className="annotations">
             <div className="ann-tabs" role="tablist" aria-label="Onderdelen van de code">
@@ -68,7 +75,7 @@ export function CodeStep({ step }: { step: StepOf<'code'> }) {
       {result && (
         <>
           <OutputConsole result={result} />
-          {result.error && <ErrorExplanation explanation={explainRunError(result.error, step.code)} />}
+          {result.error && <ErrorExplanation explanation={language === 'luau' ? explainRunError(result.error, step.code) : explainNative(result.error.message, language)} />}
         </>
       )}
       {step.after && (result || !step.runnable) && <Prose text={step.after} className="after" />}
@@ -77,7 +84,7 @@ export function CodeStep({ step }: { step: StepOf<'code'> }) {
 }
 
 /** Multiple choice. Counts as done once the correct answer is chosen; the FIRST answer is recorded. */
-export function QuizStep({ step, lessonId, done, onDone }: { step: StepOf<'quiz'> | StepOf<'predict'>; lessonId: string; done: boolean; onDone: () => void }) {
+export function QuizStep({ step, lessonId, done, onDone, language = 'luau' }: { step: StepOf<'quiz'> | StepOf<'predict'>; lessonId: string; done: boolean; onDone: () => void; language?: Lang }) {
   const [chosen, setChosen] = useState<number | null>(null);
   const [answeredOnce, setAnsweredOnce] = useState(done);
   const [verify, setVerify] = useState<RunResult | null>(null);
@@ -104,7 +111,7 @@ export function QuizStep({ step, lessonId, done, onDone }: { step: StepOf<'quiz'
         <span className="badge">{isPredict ? 'Voorspel de output' : 'Kennisvraag'}</span>
       </div>
       <h2 className="step-title">{step.question}</h2>
-      {'code' in step && step.code && <CodeView code={step.code} />}
+      {'code' in step && step.code && <CodeView code={step.code} language={language} />}
       <div className="col" role="radiogroup" aria-label={step.question} style={{ marginTop: 12 }}>
         {step.options.map((o, i) => {
           const state = chosen === i ? (i === correctIdx ? 'correct' : 'wrong') : done && i === correctIdx ? 'correct' : '';
@@ -125,7 +132,7 @@ export function QuizStep({ step, lessonId, done, onDone }: { step: StepOf<'quiz'
       {isPredict && solved && 'code' in step && (
         <div style={{ marginTop: 12 }}>
           {!verify ? (
-            <button className="btn" disabled={verifying} onClick={async () => { setVerifying(true); setVerify(await call('luau:run', step.code!)); setVerifying(false); }}>
+            <button className="btn" disabled={verifying} onClick={async () => { setVerifying(true); setVerify(await runCode(language, step.code!)); setVerifying(false); }}>
               <Play size={14} /> Controleer het zelf: run de code
             </button>
           ) : (

@@ -71,6 +71,12 @@ export interface Settings {
   idleTimeoutMinutes: number;
   breakReminderMinutes: number; // 0 = off
   showXp: boolean;
+  typingSound: 'off' | 'soft' | 'mechanical' | 'typewriter' | 'bubble';
+  soundVolume: number; // 0 – 1
+  feedbackSounds: boolean;
+  background: 'none' | 'aurora' | 'grid' | 'dots' | 'sunset' | 'ocean' | 'custom';
+  backgroundDim: number; // 0 – 0.9, darkens the background behind the content
+  customBackground: string | null; // file name inside the app's backgrounds folder
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -92,6 +98,12 @@ export const DEFAULT_SETTINGS: Settings = {
   idleTimeoutMinutes: 3,
   breakReminderMinutes: 0,
   showXp: true,
+  typingSound: 'mechanical',
+  soundVolume: 0.35,
+  feedbackSounds: true,
+  background: 'aurora',
+  backgroundDim: 0.55,
+  customBackground: null,
 };
 
 export interface LessonProgressRow {

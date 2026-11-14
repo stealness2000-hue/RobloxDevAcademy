@@ -624,11 +624,13 @@ function toFile(r: Record<string, string | number | null>): CodeFile {
 
 function uniqueName(existing: CodeFile[], wanted: string): string {
   const clean = wanted.trim().replace(/[\\/:*?"<>|]/g, '') || 'script.luau';
-  const name = /\.luau?$/.test(clean) ? clean : `${clean}.luau`;
+  // .luau / .lua run in the Luau sandbox; .cpp and .java use the local C++/Java toolchains.
+  const name = /\.(luau?|cpp|java)$/i.test(clean) ? clean : `${clean}.luau`;
   const names = new Set(existing.map((f) => f.name));
   if (!names.has(name)) return name;
-  const stem = name.replace(/\.luau?$/, '');
-  for (let i = 2; ; i++) if (!names.has(`${stem}-${i}.luau`)) return `${stem}-${i}.luau`;
+  const ext = /\.(luau?|cpp|java)$/i.exec(name)![0];
+  const stem = name.slice(0, -ext.length);
+  for (let i = 2; ; i++) if (!names.has(`${stem}-${i}${ext}`)) return `${stem}-${i}${ext}`;
 }
 
 function safeJson(s: string): Record<string, unknown> {

@@ -58,12 +58,30 @@ export function Prose({ text, className = '' }: { text: string; className?: stri
 // ---------------------------------------------------------------- static code view with Luau highlighting
 const BUILTINS = new Set(['print', 'warn', 'typeof', 'type', 'tostring', 'tonumber', 'math', 'string', 'table', 'task', 'pairs', 'ipairs', 'game', 'workspace', 'script', 'Instance', 'Vector3', 'Color3', 'CFrame', 'UDim2', 'Enum', 'pcall', 'error', 'require']);
 
-export function CodeView({ code, highlightLines = [], errorLine, focusToken, className = '' }: { code: string; highlightLines?: number[]; errorLine?: number; focusToken?: string; className?: string }) {
-  const tokens = tokenize(code, { keepWhitespace: true });
+const CLIKE_KEYWORDS = new Set(['int', 'double', 'float', 'bool', 'boolean', 'char', 'void', 'long', 'auto', 'const', 'return', 'if', 'else', 'for', 'while', 'do', 'break', 'continue', 'true', 'false', 'class', 'public', 'private', 'static', 'new', 'null', 'nullptr', 'struct', 'using', 'namespace', 'include', 'switch', 'case', 'import', 'String']);
+
+/** Small tokenizer for C++/Java highlighting in static code blocks (display only). */
+function tokenizeClike(src: string): { type: string; value: string }[] {
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?)|(\d+(?:\.\d+)?)|(#\w+|[A-Za-z_]\w*)|(\s+)|([\s\S])/g;
+  const out: { type: string; value: string }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(src))) {
+    if (m[1]) out.push({ type: 'comment', value: m[1] });
+    else if (m[2]) out.push({ type: 'string', value: m[2] });
+    else if (m[3]) out.push({ type: 'number', value: m[3] });
+    else if (m[4]) out.push({ type: m[4].startsWith('#') || CLIKE_KEYWORDS.has(m[4]) ? 'keyword' : 'name', value: m[4] });
+    else if (m[5]) out.push({ type: 'whitespace', value: m[5] });
+    else out.push({ type: 'symbol', value: m[6] });
+  }
+  return out;
+}
+
+export function CodeView({ code, highlightLines = [], errorLine, focusToken, className = '', language = 'luau' }: { code: string; highlightLines?: number[]; errorLine?: number; focusToken?: string; className?: string; language?: 'luau' | 'cpp' | 'java' }) {
+  const tokens = language === 'luau' ? tokenize(code, { keepWhitespace: true }) : tokenizeClike(code);
   const lines: ReactNode[][] = [[]];
   let key = 0;
   for (const t of tokens) {
-    const cls = t.type === 'name' && BUILTINS.has(t.value) ? 'tok-builtin' : `tok-${t.type}`;
+    const cls = t.type === 'name' && (BUILTINS.has(t.value) || (language !== 'luau' && /^(std|System|cout|endl|println|out|Math)$/.test(t.value))) ? 'tok-builtin' : `tok-${t.type}`;
     const pieces = t.value.split('\n');
     pieces.forEach((p, i) => {
       if (i > 0) lines.push([]);

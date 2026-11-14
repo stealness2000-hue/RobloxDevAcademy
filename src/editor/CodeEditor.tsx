@@ -3,6 +3,7 @@ import { setupMonaco, setAutocompleteEnabled, monaco } from './monaco';
 import { call, ping } from '@/api';
 import { useApp } from '@/store';
 import { reindent } from '@shared/format';
+import { keyKind, playKey } from '@/sound/sounds';
 import type { Diagnostic } from '@shared/types';
 import { ROBLOX_GLOBALS } from '@shared/explain-error';
 
@@ -29,22 +30,26 @@ interface Props {
   ariaLabel?: string;
   /** For Roblox-engine code (projects, code review): don't flag game/workspace/Instance as unknown. */
   robloxCode?: boolean;
+  /** Code language; analyzer diagnostics and autocomplete are Luau-only. */
+  language?: 'luau' | 'cpp' | 'java';
 }
 
 export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEditor(
-  { value, onChange, onRun, onSave, onDiagnostics, errorLine, readOnly, minLines = 4, maxLines = 18, fill, ariaLabel = 'Code-editor', robloxCode },
+  { value, onChange, onRun, onSave, onDiagnostics, errorLine, readOnly, minLines = 4, maxLines = 18, fill, ariaLabel = 'Code-editor', robloxCode, language = 'luau' },
   ref,
 ) {
   const host = useRef<HTMLDivElement>(null);
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const settings = useApp((s) => s.settings);
   const cbs = useRef({ onChange, onRun, onSave, onDiagnostics });
+  const soundRef = useRef(settings);
+  soundRef.current = settings;
   cbs.current = { onChange, onRun, onSave, onDiagnostics };
   const decorations = useRef<monaco.editor.IEditorDecorationsCollection | null>(null);
 
   useEffect(() => {
     setupMonaco();
-    const model = monaco.editor.createModel(value, 'luau');
+    const model = monaco.editor.createModel(value, language);
     const ed = monaco.editor.create(host.current!, {
       model,
       theme: settings.theme === 'light' ? 'academy-light' : 'academy-dark',
@@ -80,12 +85,20 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
     editor.current = ed;
     decorations.current = ed.createDecorationsCollection();
 
+    // Satisfying typing sounds (only for keys that type, delete or break lines; never for shortcuts).
+    ed.onKeyDown((e) => {
+      const be = e.browserEvent;
+      if (be.ctrlKey || be.metaKey || be.altKey || readOnly) return;
+      const kind = keyKind(be);
+      if (kind) playKey(soundRef.current.typingSound, kind, soundRef.current.soundVolume);
+    });
     ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => cbs.current.onRun?.());
     ed.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => cbs.current.onSave?.());
     ed.addCommand(monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF, () => formatNow());
 
     let checkTimer: ReturnType<typeof setTimeout> | undefined;
     const runCheck = () => {
+      if (language !== 'luau') return; // g++/javac report errors when the code runs
       clearTimeout(checkTimer);
       checkTimer = setTimeout(async () => {
         const code = model.getValue();

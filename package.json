@@ -1,7 +1,7 @@
 {
   "name": "roblox-dev-academy",
   "productName": "Roblox Dev Academy",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Leer Roblox-programmeren met Luau, vanaf nul.",
   "author": "Roblox Dev Academy",
   "license": "UNLICENSED",
@@ -92,5 +92,9 @@
       "onlyLoadAppFromAsar": true,
       "grantFileProtocolExtraPrivileges": false
     }
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "electron-winstaller@5.4.0": true
   }
 }

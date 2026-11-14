@@ -26,8 +26,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Unit, database, curriculum and Studio tests (real Luau runtime)
+      - name: Show C++ and Java toolchains
+        shell: bash
+        run: |
+          java -version
+          g++ --version || where g++ || true
+
+      - name: Unit, database, curriculum and Studio tests (real Luau, Java and C++)
         run: npm test
+        env:
+          REQUIRE_TOOLCHAINS: '1'
 
       - name: Build installer
         run: npm run dist

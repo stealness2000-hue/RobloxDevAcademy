@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Target, Trophy, BookOpen, RotateCcw } from 'lucide-react';
 import { useApp } from '@/store';
 import { call } from '@/api';
-import { COURSE_BY_ID, LESSON_BY_ID, isGradedStep, lessonNumber, ALL_LESSONS } from '@/curriculum';
+import { COURSE_BY_ID, LESSON_BY_ID, isGradedStep, lessonNumber, languageOfLesson, lessonsOfTrack, trackOfLesson, TRACK_LABEL } from '@/curriculum';
+import { ToolchainBanner } from './ToolchainBanner';
 import { conceptName } from '@/curriculum/concepts';
 import { ProgressBar, Prose, inline } from '@/components/ui';
 import { CodeStep, ExplainStep, QuizStep, StudioStep } from './Steps';
@@ -60,6 +61,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   };
 
   const course = lesson ? COURSE_BY_ID.get(lesson.courseId) : undefined;
+  const language = languageOfLesson(lessonId);
   const gradedKeys = useMemo(() => lesson?.steps.map((s, i) => (isGradedStep(s) ? `s${i}` : null)).filter(Boolean) as string[], [lesson]);
 
   if (!lesson || !course) {
@@ -76,9 +78,10 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const allDone = gradedKeys.every((k) => state.done.includes(k)) || alreadyCompleted;
   const atEnd = state.reached >= lesson.steps.length - 1;
   const progress = alreadyCompleted ? 1 : (state.reached + (canAdvance(state.reached) ? 1 : 0)) / lesson.steps.length;
-  const idx = ALL_LESSONS.findIndex((l) => l.id === lesson.id);
-  const next = ALL_LESSONS[idx + 1];
-  const prev = ALL_LESSONS[idx - 1];
+  const trackLessons = lessonsOfTrack(trackOfLesson(lesson.id));
+  const idx = trackLessons.findIndex((l) => l.id === lesson.id);
+  const next = trackLessons[idx + 1];
+  const prev = trackLessons[idx - 1];
 
   async function complete() {
     const awards = await call('progress:completeLesson', { lessonId, courseId: lesson!.courseId, courseLessonIds: course!.lessons.map((l) => l.id) });
@@ -93,7 +96,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       <div className="lesson-top">
         <button className="btn ghost sm" onClick={() => navigate('learn')}><ArrowLeft size={14} /> {course.title}</button>
         <span className="grow" />
-        <span className="small faint">Les {lessonNumber(lesson.id)}</span>
+        <span className="small faint">{TRACK_LABEL[trackOfLesson(lesson.id)]} · les {lessonNumber(lesson.id)}</span>
       </div>
       <header className="lesson-header">
         <h1>{lesson.title}</h1>
@@ -108,12 +111,13 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         <div style={{ marginTop: 14 }}><ProgressBar value={progress} tone={alreadyCompleted ? 'success' : undefined} /></div>
       </header>
 
+      {language !== 'luau' && <ToolchainBanner language={language} />}
       <div className="steps">
         {lesson.steps.slice(0, state.reached + 1).map((step, i) => (
           <section key={i} ref={(el) => { stepRefs.current[i] = el; }} className={`step-wrap ${i === state.reached ? 'current' : ''}`} aria-label={`Stap ${i + 1}`}>
             {step.type === 'explain' && <ExplainStep step={step} />}
-            {step.type === 'code' && <CodeStep step={step} />}
-            {(step.type === 'quiz' || step.type === 'predict') && <QuizStep step={step} lessonId={lessonId} done={isDone(i)} onDone={() => markDone(i)} />}
+            {step.type === 'code' && <CodeStep step={step} language={language} />}
+            {(step.type === 'quiz' || step.type === 'predict') && <QuizStep step={step} lessonId={lessonId} done={isDone(i)} onDone={() => markDone(i)} language={language} />}
             {step.type === 'visual' && step.kind === 'variable' && <VariableVisualizer initial={step.code} title={step.title} body={step.body} />}
             {step.type === 'visual' && step.kind !== 'variable' && (
               <div className="step">
@@ -129,7 +133,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             {step.type === 'exercise' && (
               <div className="step">
                 <ExercisePanel
-                  spec={step}
+                  spec={{ ...step, language }}
                   lessonId={lessonId}
                   initialCode={state.codes[step.id]}
                   initiallySolved={isDone(i)}

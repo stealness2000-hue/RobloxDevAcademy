@@ -7,16 +7,22 @@ import { call } from '@/api';
 import { useApp } from '@/store';
 import { explainDiagnostic, explainRunError, ROBLOX_GLOBALS } from '@shared/explain-error';
 import { codeTokens } from '@shared/luau-lexer';
+import { explainNative } from '@shared/explain-native';
+import { runCode } from '@/features/learning/Steps';
+import { ToolchainBanner } from '@/features/learning/ToolchainBanner';
 import type { CodeFile, CodeRevision, Diagnostic, RunResult } from '@shared/types';
 
 const EXAMPLES: { name: string; code: string }[] = [
   { name: 'hallo.luau', code: '-- Je eerste script\nlocal username = "Developer"\n\nprint("Hallo " .. username)\n' },
   { name: 'coins.luau', code: 'local coins = 100\nlocal prijs = 30\n\ncoins -= prijs\nprint(`Over: {coins} coins`)\n' },
   { name: 'aftellen.luau', code: '-- Een for-lus (dat leer je in cursus 3)\nfor i = 3, 1, -1 do\n    print(i)\n    task.wait(1) -- wacht hier niet echt; in Roblox Studio wel\nend\nprint("Start!")\n' },
+  { name: 'hallo.cpp', code: '#include <iostream>\n\nint main() {\n    std::cout << "Hallo vanuit C++!" << std::endl;\n    return 0;\n}\n' },
+  { name: 'Main.java', code: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hallo vanuit Java!");\n    }\n}\n' },
   { name: 'winkel.luau', code: 'local coins = 120\nlocal prijs = 100\n\nif coins >= prijs then\n    print("Je kunt het kopen!")\nelse\n    print("Nog niet genoeg coins")\nend\n' },
 ];
 
 const TABS_KEY = 'playground.tabs';
+const langOf = (name: string): 'luau' | 'cpp' | 'java' => (/.cpp$/i.test(name) ? 'cpp' : /.java$/i.test(name) ? 'java' : 'luau');
 function loadTabs(): { open: number[]; active: number | null } {
   try {
     return JSON.parse(localStorage.getItem(TABS_KEY) ?? '') ?? { open: [], active: null };
@@ -112,7 +118,7 @@ export function Playground() {
     setBusy(true);
     setPanel('output');
     try {
-      setResult(await call('luau:run', value));
+      setResult(await runCode(langOf(active.name), value));
     } finally {
       setBusy(false);
     }
@@ -137,8 +143,9 @@ export function Playground() {
     openFile(f.id);
   }
 
-  const usesRoblox = codeTokens(value).some((t) => t.type === 'name' && ROBLOX_GLOBALS.has(t.value));
-  const runExplanation = result?.error ? explainRunError(result.error, value) : null;
+  const lang = active ? langOf(active.name) : 'luau';
+  const usesRoblox = lang === 'luau' && codeTokens(value).some((t) => t.type === 'name' && ROBLOX_GLOBALS.has(t.value));
+  const runExplanation = result?.error ? (lang === 'luau' ? explainRunError(result.error, value) : explainNative(result.error.message, lang)) : null;
   const errors = diags.filter((d) => d.severity === 'error');
 
   return (
@@ -165,7 +172,7 @@ export function Playground() {
             <button key={e.name} className="pg-file-main example" onClick={() => createFile(e.name, e.code)}><BookOpen size={13} /> <span className="grow">{e.name}</span></button>
           ))}
         </div>
-        <div className="small faint" style={{ padding: '12px 12px 0' }}>Hier draai je gewone Luau. Code met <code>game</code>, <code>workspace</code> of <code>Instance</code> test je in Roblox Studio.</div>
+        <div className="small faint" style={{ padding: '12px 12px 0' }}>Bestanden op <code>.luau</code> draaien in Luau, <code>.cpp</code> in C++ en <code>.java</code> in Java. Code met <code>game</code>, <code>workspace</code> of <code>Instance</code> test je in Roblox Studio.</div>
       </aside>
 
       <section className="pg-main">
@@ -192,13 +199,14 @@ export function Playground() {
         {active && recovered[active.id] && (
           <div className="pg-banner"><AlertTriangle size={14} /> Niet-opgeslagen wijzigingen van je vorige sessie zijn hersteld. Sla op om ze te bewaren, of zet het bestand terug.</div>
         )}
+        {active && lang !== 'luau' && <div style={{ padding: '0 14px 8px' }}><ToolchainBanner language={lang} /></div>}
         {active && usesRoblox && (
           <div className="pg-banner warn"><Monitor size={14} /> Deze code gebruikt onderdelen van de Roblox-engine. Die bestaan alleen in Roblox Studio; de speeltuin kan ze niet uitvoeren.</div>
         )}
         </div>
         <div className="pg-editor">
           {active ? (
-            <CodeEditor key={active.id} ref={editor} value={value} onChange={onChange} onRun={run} onSave={save} onDiagnostics={setDiags} errorLine={result?.error?.line ?? null} fill ariaLabel={`Editor: ${active.name}`} />
+            <CodeEditor key={active.id} ref={editor} value={value} onChange={onChange} onRun={run} onSave={save} onDiagnostics={setDiags} errorLine={result?.error?.line ?? null} fill ariaLabel={`Editor: ${active.name}`} language={lang} />
           ) : (
             <div className="empty"><FileCode2 size={28} /> Open of maak een bestand om te beginnen.</div>
           )}

@@ -1,5 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme, net, protocol, session, shell } from 'electron';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import initSqlJs from 'sql.js';
@@ -8,6 +9,9 @@ import { Repository } from './db/repository';
 import { LuauService } from './services/luau';
 import { loadWindowState, trackWindowState } from './services/window-state';
 import { StudioBridge } from './services/studio-bridge';
+import { NativeRunner } from './services/native-runner';
+
+const native = new NativeRunner();
 import { execFile } from 'node:child_process';
 import os from 'node:os';
 import { verifyStudioFacts, type StudioExercise, type StudioFacts, type StudioVerification } from '../shared/studio';
@@ -256,6 +260,13 @@ function registerAppProtocol() {
   protocol.handle('app', async (req) => {
     const { pathname, host } = new URL(req.url);
     if (host !== 'academy') return new Response('Not found', { status: 404 });
+    if (pathname.startsWith('/user-content/')) {
+      // Custom background images chosen by the student (copied into the app's own folder).
+      const name = decodeURIComponent(pathname.slice('/user-content/'.length));
+      if (!/^bg-[a-f0-9]{16}.(png|jpe?g|webp|gif)$/.test(name)) return new Response('Forbidden', { status: 403 });
+      const res = await net.fetch(pathToFileURL(path.join(backgroundsDir(), name)).toString());
+      return new Response(res.body, { status: res.status, headers: { 'Content-Type': res.headers.get('content-type') ?? 'image/png', 'X-Content-Type-Options': 'nosniff' } });
+    }
     const rel = decodeURIComponent(pathname).replace(/^\/+/, '') || 'index.html';
     const full = path.normalize(path.join(root, rel));
     if (!full.startsWith(root + path.sep)) return new Response('Forbidden', { status: 403 }); // path traversal guard
@@ -266,6 +277,8 @@ function registerAppProtocol() {
     return new Response(res.body, { status: res.status, headers });
   });
 }
+
+const backgroundsDir = () => path.join(app.getPath('userData'), 'backgrounds');
 
 // ---------------------------------------------------------------- IPC
 type Handler = (arg: never) => unknown | Promise<unknown>;
@@ -342,6 +355,26 @@ const handlers: Record<Channel, Handler> = {
     db.backup('predelete');
     repo.deleteProfile();
     bridge.unpair();
+  },
+  'code:run': async (a: { language: 'cpp' | 'java'; code: string; record: boolean }) => {
+    const r = await native.run(a.language, a.code);
+    if (a.record) repo.recordRun(r.ok, r.error?.kind ?? null);
+    return r;
+  },
+  'code:toolchain': (a: { language: 'cpp' | 'java'; refresh: boolean }) => native.detect(a.language, a.refresh),
+  'settings:pickBackground': async () => {
+    const res = await dialog.showOpenDialog(win!, { title: 'Kies een achtergrond', properties: ['openFile'], filters: [{ name: 'Afbeeldingen', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'] }] });
+    if (res.canceled || !res.filePaths[0]) return null;
+    const src = res.filePaths[0];
+    const ext = path.extname(src).slice(1).toLowerCase();
+    if (!['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext)) throw new Error('Kies een PNG-, JPG-, WEBP- of GIF-afbeelding.');
+    if (fs.statSync(src).size > 15 * 1024 * 1024) throw new Error('Deze afbeelding is groter dan 15 MB.');
+    const dir = backgroundsDir();
+    fs.mkdirSync(dir, { recursive: true });
+    for (const old of fs.readdirSync(dir)) if (/^bg-/.test(old)) fs.rmSync(path.join(dir, old), { force: true });
+    const name = `bg-${crypto.randomBytes(8).toString('hex')}.${ext}`;
+    fs.copyFileSync(src, path.join(dir, name));
+    return repo.setSettings({ background: 'custom', customBackground: name });
   },
   'studio:status': () => studioState(),
   'studio:startPairing': () => bridge.startPairing(),

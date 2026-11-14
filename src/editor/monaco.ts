@@ -3,6 +3,8 @@
  * and real Luau autocomplete (from the Luau analysis engine in the main process).
  */
 import './monaco-features';
+import 'monaco-editor/languages/definitions/cpp/register';
+import 'monaco-editor/languages/definitions/java/register';
 import * as monaco from 'monaco-editor/editor/editor.api';
 import EditorWorker from 'monaco-editor/editor/editor.worker?worker';
 import { call } from '@/api';

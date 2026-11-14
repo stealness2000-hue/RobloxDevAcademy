@@ -30,6 +30,12 @@ export const SettingsPatch = z
     idleTimeoutMinutes: z.number().int().min(1).max(30),
     breakReminderMinutes: z.number().int().min(0).max(180),
     showXp: z.boolean(),
+    typingSound: z.enum(['off', 'soft', 'mechanical', 'typewriter', 'bubble']),
+    soundVolume: z.number().min(0).max(1),
+    feedbackSounds: z.boolean(),
+    background: z.enum(['none', 'aurora', 'grid', 'dots', 'sunset', 'ocean', 'custom']),
+    backgroundDim: z.number().min(0).max(0.9),
+    customBackground: z.string().regex(/^bg-[a-f0-9]{16}.(png|jpe?g|webp|gif)$/).nullable(),
   })
   .partial()
   .strict();
@@ -88,6 +94,9 @@ export const schemas = {
   'data:restoreBackup': z.string().regex(/^backup-[0-9T-]+(?:-[a-z]+)?\.sqlite$/),
   'data:reset': z.enum(['lessons', 'practice', 'statistics', 'all']),
   'data:deleteProfile': z.literal('VERWIJDER'),
+  'settings:pickBackground': z.undefined(),
+  'code:run': z.object({ language: z.enum(['cpp', 'java']), code, record: z.boolean() }).strict(),
+  'code:toolchain': z.object({ language: z.enum(['cpp', 'java']), refresh: z.boolean() }).strict(),
   'studio:status': z.undefined(),
   'studio:startPairing': z.undefined(),
   'studio:unpair': z.undefined(),
@@ -143,6 +152,9 @@ export interface ChannelResults {
   'data:restoreBackup': { restored: boolean };
   'data:reset': void;
   'data:deleteProfile': void;
+  'settings:pickBackground': Settings | null;
+  'code:run': RunResult;
+  'code:toolchain': { language: 'cpp' | 'java'; available: boolean; command: string | null; version: string | null };
   'studio:status': StudioState;
   'studio:startPairing': string;
   'studio:unpair': void;
@@ -164,4 +176,4 @@ export interface AcademyApi {
 }
 
 /** Hosts the app may open in the external browser. Everything else is refused. */
-export const EXTERNAL_HOST_ALLOWLIST = ['create.roblox.com', 'luau.org', 'www.roblox.com', 'github.com'];
+export const EXTERNAL_HOST_ALLOWLIST = ['create.roblox.com', 'luau.org', 'www.roblox.com', 'github.com', 'adoptium.net', 'www.msys2.org', 'winlibs.com', 'en.cppreference.com', 'docs.oracle.com'];

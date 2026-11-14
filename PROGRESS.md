@@ -1,6 +1,6 @@
 # PROGRESS — Roblox Dev Academy
 
-Last updated: 2026-11-14 · Version 0.3.0
+Last updated: 2026-11-14 · Version 0.4.0
 
 This file is the honest status of the project. "Done" means built **and** tested; everything else is labelled.
 
@@ -32,6 +32,16 @@ that does not need Roblox Studio. All exercises are checked automatically in the
 | 6–12 (engine, events, client/server, UI, data, advanced, games) | — | — | — | Planned topics shown as "in ontwikkeling" |
 
 Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of 10 projects.
+
+## What changed in 0.4.0
+
+- **C++ and Java tracks** (5 lessons each: output, variables and types, if/else, loops, functions/methods), next to Roblox Luau. Each track unlocks on its own, so students can start C++ or Java right away.
+- Code runs with the official free toolchains: the JDK's source launcher for Java, g++ (MinGW-w64/MSYS2) for C++. The app detects them (PATH, JAVA_HOME and common install folders) and shows free install steps in Dutch if missing. Runs use a temporary folder, timeouts, an output limit and a minimal environment. Unlike Luau this is native code (not a WASM sandbox); see limitations.
+- Exercises are checked like Luau: real output plus re-runs with other input values. Dutch explanations for common g++/javac/JVM errors (missing semicolon or brace, unknown name, std::cout without include, type mismatch, division by zero, out-of-bounds, null).
+- Code Playground: `.cpp` and `.java` files run with their toolchain; C++ and Java examples added. Monaco syntax highlighting for both.
+- **Typing sounds**, synthesized live (no audio files): Zacht, Mechanisch, Typemachine (with bell on Enter) and Bubbel, slightly randomized per key, with volume control. Short success/"not yet" sounds on exercises. All configurable (Instellingen → Geluid).
+- **Backgrounds**: Aurora, Raster, Stippen, Avond, Oceaan, or your own image (PNG/JPG/WEBP/GIF up to 15 MB, copied into the app folder and served via `app://`, so the CSP stays strict), with a dim slider for readability.
+- CI now fails if Java or g++ is missing on the build server, so all C++/Java content is compiled and checked on every release.
 
 ## What changed in 0.3.0 — Roblox Studio integration
 
@@ -102,6 +112,8 @@ Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of
 Not executed: the plugin inside a real Roblox Studio (Studio is not installed/running on the build machine), the NSIS installer itself, and the GitHub workflows (they run once the project is pushed to GitHub).
 
 ## Known limitations
+
+- **C++/Java need a local toolchain** (free: Temurin JDK, MSYS2 g++), installed by the student. This code runs natively as the student's user, with timeouts and a temp folder but without a sandbox. C++ content is verified on the GitHub build server (no g++ on the development machine).
 
 - **Curriculum**: Courses 6–12 (Roblox engine, events, client/server, UI, DataStores, advanced, full games) and projects 2–10 are not written yet. They need Roblox Studio, and therefore the Studio integration below, to be checked properly.
 - **Roblox Studio plugin not yet tried in real Studio.** The protocol, security and verification are tested end to end against the real app with a simulated plugin, and the plugin compiles as Luau; its Studio-side behaviour (UI, HttpService localhost permission prompt, ScriptEditorService calls) still needs a manual check in Studio. Behaviour during Play (for example "the part turns blue") cannot be observed and stays self-confirmed.

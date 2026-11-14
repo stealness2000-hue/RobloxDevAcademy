@@ -6,6 +6,7 @@ import { OutputConsole, ErrorExplanation } from './Output';
 import { call } from '@/api';
 import { useApp } from '@/store';
 import { evaluate, type Check, type EvaluationResult } from '@shared/evaluator';
+import { playNotYet, playSuccess } from '@/sound/sounds';
 
 export interface ExerciseSpec {
   id: string;
@@ -19,6 +20,7 @@ export interface ExerciseSpec {
   success: string;
   mode: 'guided' | 'independent';
   kind?: 'exercise' | 'fix-bug' | 'challenge' | 'review';
+  language?: 'luau' | 'cpp' | 'java';
 }
 
 interface Props {
@@ -49,13 +51,15 @@ export function ExercisePanel({ spec, lessonId, initialCode, initiallySolved, hi
     setBusy(true);
     let first = true;
     // First run is the student's real run (recorded); evaluator follow-up runs are not counted.
+    const lang = spec.language ?? 'luau';
     const runner = (c: string) => {
-      const ch = first ? 'luau:run' : 'luau:evalRun';
+      const record = first;
       first = false;
-      return call(ch, c);
+      if (lang !== 'luau') return call('code:run', { language: lang, code: c, record });
+      return call(record ? 'luau:run' : 'luau:evalRun', c);
     };
     try {
-      const r = await evaluate(code, spec.checks, runner);
+      const r = await evaluate(code, spec.checks, runner, lang);
       setResult(r);
       const independent = spec.mode === 'independent' && hintsShown === 0 && !solutionSeen;
       const awards = await call('progress:recordAttempt', {
@@ -70,6 +74,7 @@ export function ExercisePanel({ spec, lessonId, initialCode, initiallySolved, hi
         code,
       });
       showAwards(awards);
+      if (settings.feedbackSounds) (r.passed ? playSuccess : playNotYet)(settings.soundVolume);
       if (r.passed) {
         setSolved(true);
         onSolved?.();
@@ -115,6 +120,7 @@ export function ExercisePanel({ spec, lessonId, initialCode, initiallySolved, hi
           errorLine={errorLine}
           minLines={Math.max(3, spec.starter.split('\n').length + 1)}
           ariaLabel={`Code voor oefening: ${spec.title}`}
+          language={spec.language ?? 'luau'}
         />
         <div className="exercise-bar">
           <button className="btn primary" onClick={runCode} disabled={busy} title="Ctrl + Enter">

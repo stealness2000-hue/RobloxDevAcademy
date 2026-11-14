@@ -10,6 +10,7 @@
  */
 import { codeTokens, hasSequence, stringValue, tokenize } from './luau-lexer';
 import { explainRunError, type Explanation, type ErrorCategory } from './explain-error';
+import { explainNative } from './explain-native';
 import type { RunResult } from './types';
 
 export type Check =
@@ -82,7 +83,9 @@ function endsWithReturn(code: string): boolean {
   return false;
 }
 
-export async function evaluate(code: string, checks: Check[], run: Runner): Promise<EvaluationResult> {
+export type CodeLanguage = 'luau' | 'cpp' | 'java';
+
+export async function evaluate(code: string, checks: Check[], run: Runner, language: CodeLanguage = 'luau'): Promise<EvaluationResult> {
   const base = await run(code);
   const results: CheckResult[] = [];
   const tokens = codeTokens(code);
@@ -91,7 +94,7 @@ export async function evaluate(code: string, checks: Check[], run: Runner): Prom
 
   // Any runtime/syntax error fails the exercise; the error assistant explains it.
   if (!base.ok && base.error) {
-    const explanation = explainRunError(base.error, code);
+    const explanation = language === 'luau' ? explainRunError(base.error, code) : explainNative(base.error.message, language);
     return {
       passed: false,
       results: [],

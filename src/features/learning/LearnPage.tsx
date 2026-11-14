@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { CheckCircle2, ChevronDown, ChevronRight, Circle, Clock, Lock, PlayCircle, Hammer } from 'lucide-react';
 import { useApp } from '@/store';
-import { COURSES, isUnlocked, lessonNumber } from '@/curriculum';
+import { COURSES, isUnlocked, lessonNumber, TRACK_LABEL, trackOfCourse } from '@/curriculum';
 import { ProgressBar } from '@/components/ui';
 
 export function LearnPage() {
@@ -29,12 +29,21 @@ export function LearnPage() {
       </div>
 
       <div className="col" style={{ gap: 10 }}>
-        {COURSES.map((course) => {
+        {COURSES.map((course, ci) => {
+          const track = trackOfCourse(course);
+          const newTrack = ci === 0 || trackOfCourse(COURSES[ci - 1]) !== track;
           const done = course.lessons.filter((l) => completed.has(l.id)).length;
           const isOpen = open.has(course.id);
           const available = course.lessons.length > 0;
           return (
-            <div key={course.id} className={`card flush course ${available ? '' : 'planned'}`}>
+            <div key={course.id} style={{ display: 'contents' }}>
+            {newTrack && (
+              <div className="track-head">
+                <h2>{TRACK_LABEL[track]}</h2>
+                <span className="small muted">{track === 'luau' ? 'Leer Roblox-games programmeren, vanaf nul.' : track === 'cpp' ? 'De taal van game-engines. Werkt met een gratis compiler (g++).' : 'Bekend van Minecraft en Android. Werkt met de gratis JDK.'}</span>
+              </div>
+            )}
+            <div className={`card flush course ${available ? '' : 'planned'}`}>
               <button className="course-head" onClick={() => toggle(course.id)} aria-expanded={isOpen}>
                 <span className="course-num mono">{String(course.number).padStart(2, '0')}</span>
                 <span className="grow">
@@ -81,6 +90,7 @@ export function LearnPage() {
                   <ul>{course.planned.map((p) => <li key={p}>{p}</li>)}</ul>
                 </div>
               )}
+            </div>
             </div>
           );
         })}

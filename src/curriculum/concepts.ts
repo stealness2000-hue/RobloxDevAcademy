@@ -6,10 +6,10 @@ export interface Concept {
 }
 
 export type SkillGroup =
-  | 'Basis' | 'Variabelen' | 'Voorwaarden' | 'Lussen' | 'Functies' | 'Tabellen' | 'Events' | 'Roblox-services' | 'UI-scripting' | 'Client/server' | 'DataStores';
+  | 'Basis' | 'Variabelen' | 'Voorwaarden' | 'Lussen' | 'Functies' | 'Tabellen' | 'Events' | 'Roblox-services' | 'UI-scripting' | 'Client/server' | 'DataStores' | 'C++' | 'Java';
 
 /** The skill groups shown in the mastery chart, in teaching order. */
-export const SKILL_GROUPS: SkillGroup[] = ['Basis', 'Variabelen', 'Voorwaarden', 'Lussen', 'Functies', 'Tabellen', 'Events', 'Roblox-services', 'UI-scripting', 'Client/server', 'DataStores'];
+export const SKILL_GROUPS: SkillGroup[] = ['Basis', 'Variabelen', 'Voorwaarden', 'Lussen', 'Functies', 'Tabellen', 'Events', 'Roblox-services', 'UI-scripting', 'Client/server', 'DataStores', 'C++', 'Java'];
 
 export const CONCEPTS: Concept[] = [
   { id: 'code-basics', name: 'Wat code is', group: 'Basis' },
@@ -45,6 +45,16 @@ export const CONCEPTS: Concept[] = [
   { id: 'ui', name: 'UI-scripting', group: 'UI-scripting' },
   { id: 'client-server', name: 'Client en server', group: 'Client/server' },
   { id: 'datastores', name: 'DataStores', group: 'DataStores' },
+  { id: 'cpp-basics', name: 'C++: output en syntax', group: 'C++' },
+  { id: 'cpp-variables', name: 'C++: variabelen en types', group: 'C++' },
+  { id: 'cpp-conditions', name: 'C++: if en else', group: 'C++' },
+  { id: 'cpp-loops', name: 'C++: lussen', group: 'C++' },
+  { id: 'cpp-functions', name: 'C++: functies', group: 'C++' },
+  { id: 'java-basics', name: 'Java: output en syntax', group: 'Java' },
+  { id: 'java-variables', name: 'Java: variabelen en types', group: 'Java' },
+  { id: 'java-conditions', name: 'Java: if en else', group: 'Java' },
+  { id: 'java-loops', name: 'Java: lussen', group: 'Java' },
+  { id: 'java-methods', name: 'Java: methodes', group: 'Java' },
 ];
 
 export const CONCEPT_BY_ID = new Map(CONCEPTS.map((c) => [c.id, c]));
