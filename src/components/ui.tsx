@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { tokenize } from '@shared/luau-lexer';
 import { useApp } from '@/store';
+import { t as tr } from '@shared/i18n';
 
 // ---------------------------------------------------------------- icons for achievements
 const ACH_ICONS: Record<string, typeof Play> = {
@@ -180,7 +181,7 @@ export function Toasts() {
             <div className="t-title">{t.title}</div>
             {t.body && <div className="t-body">{t.body}</div>}
           </div>
-          <button className="btn ghost sm icon" aria-label="Sluiten" onClick={() => dismiss(t.id)}><X size={14} /></button>
+          <button className="btn ghost sm icon" aria-label={tr('Close')} onClick={() => dismiss(t.id)}><X size={14} /></button>
         </div>
       ))}
     </div>
@@ -192,5 +193,5 @@ export function formatDuration(seconds: number): string {
   const m = Math.round(seconds / 60);
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60);
-  return `${h} u ${m % 60} min`;
+  return tr('{h} h {m} min', { h, m: m % 60 });
 }

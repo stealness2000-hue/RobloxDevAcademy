@@ -13,6 +13,7 @@ import {
   type Award, type CodeFile, type CodeRevision, type ConceptMastery, type DailyActivity, type LessonProgressRow,
   type Profile, type ProgressSnapshot, type Settings, type Statistics,
 } from '../../shared/types';
+import { APP_NAME } from '../../shared/brand';
 
 export interface AttemptInput {
   exerciseId: string;
@@ -134,10 +135,10 @@ export class Repository {
         [lessonId, courseId, t, t, t],
       );
       if (courseId === 'projects') {
-        this.awardXp(`project:${lessonId}`, XP_RULES.guidedProject, 'Begeleid project afgerond', awards);
+        this.awardXp(`project:${lessonId}`, XP_RULES.guidedProject, 'Guided project finished', awards);
         return;
       }
-      this.awardXp(`lesson:${lessonId}`, XP_RULES.lessonComplete, 'Les afgerond', awards);
+      this.awardXp(`lesson:${lessonId}`, XP_RULES.lessonComplete, 'Lesson finished', awards);
       this.awardAchievement('first-lesson', awards);
       if (courseLessonIds.length > 0) {
         const placeholders = courseLessonIds.map(() => '?').join(',');
@@ -145,7 +146,7 @@ export class Repository {
           this.db.get<{ n: number }>(`SELECT COUNT(*) AS n FROM lesson_progress WHERE status = 'completed' AND lesson_id IN (${placeholders})`, courseLessonIds)!.n,
         );
         if (done === courseLessonIds.length) {
-          this.awardXp(`course:${courseId}`, XP_RULES.chapterComplete, 'Cursus afgerond', awards);
+          this.awardXp(`course:${courseId}`, XP_RULES.chapterComplete, 'Course finished', awards);
           const ach = COURSE_ACHIEVEMENTS[courseId];
           if (ach) this.awardAchievement(ach, awards);
         }
@@ -179,9 +180,9 @@ export class Repository {
       for (const c of a.concepts) this.db.run('INSERT OR IGNORE INTO attempt_concepts (attempt_id, concept_id) VALUES (?, ?)', [id, c]);
 
       if (a.correct) {
-        if (a.kind === 'review') this.awardXp(`review:${a.exerciseId}:${localDay(this.clock())}`, XP_RULES.review, 'Herhaling afgerond', awards);
-        else if (a.independent) this.awardXp(`exercise:${a.exerciseId}`, XP_RULES.firstIndependentSolution, 'Eerste zelfstandige oplossing', awards);
-        else this.awardXp(`exercise:${a.exerciseId}`, 10, 'Begeleide oefening opgelost', awards);
+        if (a.kind === 'review') this.awardXp(`review:${a.exerciseId}:${localDay(this.clock())}`, XP_RULES.review, 'Review finished', awards);
+        else if (a.independent) this.awardXp(`exercise:${a.exerciseId}`, XP_RULES.firstIndependentSolution, 'First independent solution', awards);
+        else this.awardXp(`exercise:${a.exerciseId}`, 10, 'Guided exercise solved', awards);
 
         if (a.independent && a.concepts.includes('variables')) this.awardAchievement('first-variable', awards);
         if (a.kind === 'fix-bug') this.awardAchievement('bug-hunter', awards);
@@ -199,7 +200,7 @@ export class Repository {
     this.db.run('INSERT INTO quiz_results (quiz_id, lesson_id, concepts, correct, created_at) VALUES (?, ?, ?, ?, ?)', [
       quizId, lessonId, JSON.stringify(concepts), correct ? 1 : 0, this.now(),
     ]);
-    if (correct) this.awardXp(`quiz:${quizId}`, XP_RULES.quizCorrect, 'Kennisvraag goed beantwoord', awards);
+    if (correct) this.awardXp(`quiz:${quizId}`, XP_RULES.quizCorrect, 'Quiz question answered correctly', awards);
     return awards;
   }
 
@@ -355,7 +356,7 @@ export class Repository {
     const t = this.now();
     const id = this.db.transaction(() => {
       const fid = this.db.insert('INSERT INTO code_files (name, content, draft, created_at, updated_at) VALUES (?, ?, NULL, ?, ?)', [uniqueName(this.listFiles(), name), content, t, t]);
-      this.db.run('INSERT INTO code_revisions (file_id, content, reason, created_at) VALUES (?, ?, ?, ?)', [fid, content, 'Aangemaakt', t]);
+      this.db.run('INSERT INTO code_revisions (file_id, content, reason, created_at) VALUES (?, ?, ?, ?)', [fid, content, 'Created', t]);
       return fid;
     });
     return this.getFile(id)!;
@@ -375,7 +376,7 @@ export class Repository {
     const awards: Award[] = [];
     this.db.transaction(() => {
       const prev = this.getFile(id);
-      if (!prev) throw new Error('Bestand niet gevonden');
+      if (!prev) throw new Error('File not found');
       const t = this.now();
       this.db.run('UPDATE code_files SET content = ?, draft = NULL, updated_at = ? WHERE id = ?', [content, t, id]);
       if (prev.content !== content) this.db.run('INSERT INTO code_revisions (file_id, content, reason, created_at) VALUES (?, ?, ?, ?)', [id, content, reason, t]);
@@ -396,7 +397,7 @@ export class Repository {
 
   restoreRevision(revisionId: number): CodeFile {
     const rev = this.db.get<{ file_id: number; content: string; created_at: string }>('SELECT file_id, content, created_at FROM code_revisions WHERE id = ?', [revisionId]);
-    if (!rev) throw new Error('Versie niet gevonden');
+    if (!rev) throw new Error('Version not found');
     return this.saveFile(rev.file_id, rev.content, `Hersteld naar versie van ${rev.created_at.slice(0, 16).replace('T', ' ')}`).file;
   }
 
@@ -482,114 +483,53 @@ export class Repository {
     };
   }
 
-  // ---------------------------------------------------------------- Roblox Studio pairing + sync
-  getStudioTokenHash(): string | null {
-    return this.db.get<{ detail: string }>("SELECT detail FROM studio_connections WHERE state = 'paired' ORDER BY id DESC LIMIT 1")?.detail ?? null;
+  // ---------------------------------------------------------------- machine translation cache
+  getTranslations(lang: string, hashes: string[]): Map<string, string> {
+    const out = new Map<string, string>();
+    for (let k = 0; k < hashes.length; k += 400) {
+      const part = hashes.slice(k, k + 400);
+      const rows = this.db.all<{ source_hash: string; text: string }>(
+        `SELECT source_hash, text FROM translations WHERE lang = ? AND source_hash IN (${part.map(() => '?').join(',')})`, [lang, ...part]);
+      for (const r of rows) out.set(r.source_hash, r.text);
+    }
+    return out;
   }
 
-  setStudioTokenHash(hash: string | null) {
+  saveTranslations(lang: string, items: { hash: string; text: string }[]) {
+    if (!items.length) return;
     this.db.transaction(() => {
-      this.db.run("DELETE FROM studio_connections WHERE state = 'paired'");
-      if (hash) this.db.run("INSERT INTO studio_connections (state, detail, created_at) VALUES ('paired', ?, ?)", [hash, this.now()]);
+      for (const it of items)
+        this.db.run('INSERT INTO translations (lang, source_hash, text, created_at) VALUES (?, ?, ?, ?) ON CONFLICT(lang, source_hash) DO UPDATE SET text = excluded.text', [lang, it.hash, it.text, this.now()]);
     });
   }
 
-  /**
-   * A script arrives from Studio. Never overwrites Academy changes silently:
-   *  - new path → new Playground file
-   *  - only Studio changed → Academy file updated (old version kept as revision)
-   *  - both changed → a conflict is recorded for the student to resolve
-   */
-  studioPull(studioPath: string, source: string): { kind: 'created' | 'updated' | 'unchanged' | 'conflict'; fileId: number; conflictId?: number } {
-    return this.db.transaction(() => {
-      const sync = this.db.get<{ file_id: number; base_source: string }>('SELECT file_id, base_source FROM studio_sync WHERE studio_path = ?', [studioPath]);
-      const file = sync ? this.getFile(sync.file_id) : null;
-      if (!sync || !file) {
-        const short = studioPath.split('.').slice(-2).join('.');
-        const created = this.createFile(`Studio - ${short}`, source);
-        this.db.run('INSERT OR REPLACE INTO studio_sync (studio_path, file_id, base_source, updated_at) VALUES (?, ?, ?, ?)', [studioPath, created.id, source, this.now()]);
-        return { kind: 'created' as const, fileId: created.id };
-      }
-      const academy = file.draft ?? file.content;
-      const setBase = (s: string) => this.db.run('UPDATE studio_sync SET base_source = ?, updated_at = ? WHERE studio_path = ?', [s, this.now(), studioPath]);
-      if (source === academy) {
-        setBase(source);
-        return { kind: 'unchanged' as const, fileId: file.id };
-      }
-      if (source === sync.base_source) return { kind: 'unchanged' as const, fileId: file.id };
-      if (academy === sync.base_source) {
-        this.saveFile(file.id, source, 'Bijgewerkt vanuit Studio');
-        setBase(source);
-        return { kind: 'updated' as const, fileId: file.id };
-      }
-      const conflictId = this.db.insert('INSERT INTO studio_conflicts (studio_path, studio_source, academy_source, created_at) VALUES (?, ?, ?, ?)', [studioPath, source, academy, this.now()]);
-      return { kind: 'conflict' as const, fileId: file.id, conflictId };
-    });
+  clearTranslations() {
+    this.db.run('DELETE FROM translations');
   }
 
-  /** What to send to Studio for a linked Playground file. */
-  studioPushData(fileId: number): { path: string; source: string; baseSource: string } | null {
-    const sync = this.db.get<{ studio_path: string; base_source: string }>('SELECT studio_path, base_source FROM studio_sync WHERE file_id = ?', [fileId]);
-    const file = this.getFile(fileId);
-    if (!sync || !file) return null;
-    return { path: sync.studio_path, source: file.draft ?? file.content, baseSource: sync.base_source };
+  // ---------------------------------------------------------------- license
+  getLicense(): { key: string; verifiedAt: string; lastCheckAt: string } | null {
+    const r = this.db.get<{ license_key: string; verified_at: string; last_check_at: string }>('SELECT license_key, verified_at, last_check_at FROM license WHERE id = 1');
+    return r ? { key: r.license_key, verifiedAt: r.verified_at, lastCheckAt: r.last_check_at } : null;
   }
 
-  studioPushResult(path: string, pushed: string, reason: 'applied' | 'declined' | 'conflict' | 'missing', currentSource?: string) {
-    if (reason === 'applied') this.db.run('UPDATE studio_sync SET base_source = ?, updated_at = ? WHERE studio_path = ?', [pushed, this.now(), path]);
-    if (reason === 'conflict' && currentSource !== undefined)
-      this.db.insert('INSERT INTO studio_conflicts (studio_path, studio_source, academy_source, created_at) VALUES (?, ?, ?, ?)', [path, currentSource, pushed, this.now()]);
+  saveLicense(key: string) {
+    const now = this.now();
+    this.db.run('INSERT INTO license (id, license_key, verified_at, last_check_at) VALUES (1, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET license_key = excluded.license_key, last_check_at = excluded.last_check_at', [key, now, now]);
   }
 
-  studioConflicts() {
-    return this.db
-      .all<{ id: number; studio_path: string; studio_source: string; academy_source: string; created_at: string }>('SELECT * FROM studio_conflicts WHERE resolved_at IS NULL ORDER BY id DESC')
-      .map((c) => ({ id: Number(c.id), path: c.studio_path, studioSource: c.studio_source, academySource: c.academy_source, createdAt: c.created_at }));
+  removeLicense() {
+    this.db.run('DELETE FROM license');
   }
 
-  /**
-   * Resolve a conflict. Both versions always stay available in the file's revision history.
-   * 'studio': the Academy file takes the Studio version. 'academy': the Academy version is kept and becomes the
-   * version to push (the base is set to what Studio has now, so the next push is not a conflict).
-   */
-  resolveStudioConflict(id: number, choice: 'studio' | 'academy'): { path: string; fileId: number } | null {
-    return this.db.transaction(() => {
-      const c = this.db.get<{ studio_path: string; studio_source: string; academy_source: string }>('SELECT * FROM studio_conflicts WHERE id = ? AND resolved_at IS NULL', [id]);
-      const sync = c && this.db.get<{ file_id: number }>('SELECT file_id FROM studio_sync WHERE studio_path = ?', [c.studio_path]);
-      if (!c || !sync) return null;
-      const keepBoth = (reason: string, content: string) => this.saveFile(sync.file_id, content, reason);
-      if (choice === 'studio') {
-        keepBoth('Academy-versie bewaard (conflict)', c.academy_source);
-        keepBoth('Conflict opgelost: Studio-versie gekozen', c.studio_source);
-      } else {
-        keepBoth('Studio-versie bewaard (conflict)', c.studio_source);
-        keepBoth('Conflict opgelost: Academy-versie gekozen', c.academy_source);
-      }
-      this.db.run('UPDATE studio_sync SET base_source = ?, updated_at = ? WHERE studio_path = ?', [c.studio_source, this.now(), c.studio_path]);
-      this.db.run('UPDATE studio_conflicts SET resolved_at = ?, resolution = ? WHERE id = ?', [this.now(), choice, id]);
-      return { path: c.studio_path, fileId: sync.file_id };
-    });
-  }
-
-  studioSyncedFiles() {
-    return this.db
-      .all<{ studio_path: string; file_id: number; updated_at: string }>('SELECT s.studio_path, s.file_id, s.updated_at FROM studio_sync s JOIN code_files f ON f.id = s.file_id WHERE f.deleted_at IS NULL ORDER BY s.updated_at DESC')
-      .map((r) => ({ path: r.studio_path, fileId: Number(r.file_id), updatedAt: r.updated_at }));
-  }
-
-  // ---------------------------------------------------------------- AI mentor script cache
-  getMentorScript(lessonId: string): string | null {
-    return this.db.get<{ script_json: string }>('SELECT script_json FROM mentor_scripts WHERE lesson_id = ?', [lessonId])?.script_json ?? null;
-  }
-
-  saveMentorScript(lessonId: string, json: string) {
-    this.db.run('INSERT INTO mentor_scripts (lesson_id, script_json, created_at) VALUES (?, ?, ?) ON CONFLICT(lesson_id) DO UPDATE SET script_json = excluded.script_json, created_at = excluded.created_at', [lessonId, json, this.now()]);
+  hasSetting(key: string): boolean {
+    return !!this.db.get('SELECT 1 AS x FROM settings WHERE key = ?', [key]);
   }
 
   // ---------------------------------------------------------------- data management
   exportAll(): Record<string, unknown> {
     const tables = ['users', 'settings', 'lesson_progress', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_files', 'code_revisions', 'xp_events', 'earned_achievements'];
-    const data: Record<string, unknown> = { exportedAt: nowIso(), schemaVersion: this.db.schemaVersion, app: 'Roblox Dev Academy' };
+    const data: Record<string, unknown> = { exportedAt: nowIso(), schemaVersion: this.db.schemaVersion, app: APP_NAME };
     for (const t of tables) data[t] = this.db.all(`SELECT * FROM ${t}`);
     return data;
   }
@@ -621,7 +561,7 @@ export class Repository {
 
   deleteProfile() {
     this.db.transaction(() => {
-      for (const t of ['mentor_scripts', 'studio_sync', 'studio_conflicts', 'attempt_concepts', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_revisions', 'code_files', 'xp_events', 'earned_achievements', 'lesson_progress', 'app_events', 'settings', 'users', 'tutor_conversations', 'studio_connections'])
+      for (const t of ['attempt_concepts', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_revisions', 'code_files', 'xp_events', 'earned_achievements', 'lesson_progress', 'app_events', 'settings', 'users', 'tutor_conversations', 'studio_connections', 'translations'])
         this.db.run(`DELETE FROM ${t}`);
     });
   }

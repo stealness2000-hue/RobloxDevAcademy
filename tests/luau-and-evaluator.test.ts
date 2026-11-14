@@ -120,7 +120,7 @@ describe('Evaluator', () => {
     expect(fake.passed).toBe(false);
     expect(fake.feedback).toContain('local coins = 50');
     const changedLine = await evaluate('local coins = 121\nif coins >= 100 then print("Kopen!") end', checks, run);
-    expect(changedLine.feedback).toContain('precies zo staan');
+    expect(changedLine.feedback).toContain('exactly as it is');
   });
 
   it('runs test harnesses for functions', async () => {

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { VerificationView } from '@/features/studio/StudioPage';
+import { useState } from 'react';
+import { t } from '@/i18n';
 import { CheckCircle2, Circle, Play, Loader2, XCircle, Monitor, Info } from 'lucide-react';
 import { CodeView, Prose, inline } from '@/components/ui';
 import { OutputConsole, ErrorExplanation } from './Output';
@@ -53,7 +53,7 @@ export function CodeStep({ step, language = 'luau' }: { step: StepOf<'code'>; la
         <CodeView code={step.code} focusToken={ann?.token} errorLine={result?.error?.line} language={language} />
         {step.annotations && (
           <div className="annotations">
-            <div className="ann-tabs" role="tablist" aria-label="Onderdelen van de code">
+            <div className="ann-tabs" role="tablist" aria-label={t('Parts of the code')}>
               {step.annotations.map((a, i) => (
                 <button key={i} role="tab" aria-selected={focus === i} className="ann-tab mono" onClick={() => setFocus(i)}>{a.token}</button>
               ))}
@@ -65,10 +65,10 @@ export function CodeStep({ step, language = 'luau' }: { step: StepOf<'code'>; la
           <div className="exercise-bar">
             {step.runnable && (
               <button className="btn primary" onClick={() => run(step.code)} disabled={busy}>
-                {busy ? <Loader2 size={15} className="spin" /> : <Play size={15} />} Run Code
+                {busy ? <Loader2 size={15} className="spin" /> : <Play size={15} />} {t('Run Code')}
               </button>
             )}
-            {step.studioOnly && <span className="badge warning"><Monitor size={12} /> Alleen in Roblox Studio</span>}
+            {step.studioOnly && <span className="badge warning"><Monitor size={12} /> {t('Only in Roblox Studio')}</span>}
           </div>
         )}
       </div>
@@ -108,7 +108,7 @@ export function QuizStep({ step, lessonId, done, onDone, language = 'luau' }: { 
   return (
     <div className="step">
       <div className="row" style={{ marginBottom: 8 }}>
-        <span className="badge">{isPredict ? 'Voorspel de output' : 'Kennisvraag'}</span>
+        <span className="badge">{isPredict ? t('Predict the output') : t('Quiz question')}</span>
       </div>
       <h2 className="step-title">{step.question}</h2>
       {'code' in step && step.code && <CodeView code={step.code} language={language} />}
@@ -126,17 +126,17 @@ export function QuizStep({ step, lessonId, done, onDone, language = 'luau' }: { 
       {chosen !== null && (
         <div className={`feedback ${chosen === correctIdx ? 'ok' : 'bad'}`} style={{ marginTop: 12 }}>
           {chosen === correctIdx ? <CheckCircle2 size={18} /> : <Info size={18} />}
-          <div>{inline(step.options[chosen].feedback)}{chosen !== correctIdx && <div className="small muted" style={{ marginTop: 4 }}>Probeer een ander antwoord.</div>}</div>
+          <div>{inline(step.options[chosen].feedback)}{chosen !== correctIdx && <div className="small muted" style={{ marginTop: 4 }}>{t('Try another answer.')}</div>}</div>
         </div>
       )}
       {isPredict && solved && 'code' in step && (
         <div style={{ marginTop: 12 }}>
           {!verify ? (
             <button className="btn" disabled={verifying} onClick={async () => { setVerifying(true); setVerify(await runCode(language, step.code!)); setVerifying(false); }}>
-              <Play size={14} /> Controleer het zelf: run de code
+              <Play size={14} /> {t('Check it yourself: run the code')}
             </button>
           ) : (
-            <OutputConsole result={verify} title="Echte Output" />
+            <OutputConsole result={verify} title={t('Real Output')} />
           )}
         </div>
       )}
@@ -147,20 +147,10 @@ export function QuizStep({ step, lessonId, done, onDone, language = 'luau' }: { 
 /** Studio steps cannot be verified automatically; the student confirms them. This is recorded honestly as self-reported. */
 export function StudioStep({ step, done, onDone, checked, onCheck }: { step: StepOf<'studio'>; done: boolean; onDone: () => void; checked: number[]; onCheck: (c: number[]) => void }) {
   const all = step.steps.every((_, i) => checked.includes(i));
-  const { studio, refreshStudio, navigate } = useApp();
-  const connected = studio?.status === 'connected';
-  const verification = step.exercise ? studio?.verifications.find((v) => v.exerciseId === step.exercise) : undefined;
-  useEffect(() => {
-    if (step.exercise) void refreshStudio();
-  }, [step.exercise, refreshStudio]);
-  useEffect(() => {
-    // Verified in Studio: the step completes itself (no self-report needed).
-    if (verification?.passed && !done) onDone();
-  }, [verification?.passed, done, onDone]);
   return (
     <div className="step">
       <div className="row" style={{ marginBottom: 8 }}>
-        <span className="badge warning"><Monitor size={12} /> In Roblox Studio</span>
+        <span className="badge warning"><Monitor size={12} /> {t('In Roblox Studio')}</span>
       </div>
       <h2 className="step-title">{step.title}</h2>
       {step.body && <Prose text={step.body} />}
@@ -180,46 +170,18 @@ export function StudioStep({ step, done, onDone, checked, onCheck }: { step: Ste
           );
         })}
       </ol>
-      {step.exercise && (
-        <div className="studio-ex" style={{ marginTop: 12 }}>
-          <div className="row">
-            <Monitor size={15} />
-            <strong className="grow">Automatisch controleren in Studio</strong>
-            {connected ? <span className="badge success">Verbonden</span> : <span className="badge">Niet gekoppeld</span>}
-          </div>
-          {connected ? (
-            <>
-              <div className="small muted" style={{ marginTop: 4 }}>Open de oefening in Studio. In het Academy-paneel kun je een leeg oefenscript maken en je werk laten controleren.</div>
-              <div className="row" style={{ marginTop: 8 }}>
-                <button className="btn sm" onClick={async () => { await call('studio:openExercise', step.exercise!); void refreshStudio(); }}>Open in Studio</button>
-                <button className="btn sm primary" disabled={studio?.currentExerciseId !== step.exercise} onClick={() => void call('studio:requestCheck')}>Controleer nu</button>
-              </div>
-            </>
-          ) : (
-            <div className="small muted" style={{ marginTop: 4 }}>
-              Koppel Roblox Studio om je werk automatisch te laten controleren.{' '}
-              <button className="btn sm ghost" onClick={() => navigate('studio')}>Naar koppelen</button>
-            </div>
-          )}
-          {verification && <div style={{ marginTop: 10 }}><VerificationView v={verification} /></div>}
-        </div>
-      )}
       <div className="feedback info" style={{ marginTop: 12 }}>
         <Info size={16} />
         <div>
-          <div><strong>Verwacht resultaat:</strong> {inline(step.expected)}</div>
-          {!verification?.passed && (
-            <div className="small muted" style={{ marginTop: 4 }}>
-              {step.exercise ? 'Zonder koppeling bevestig je zelf dat het gelukt is.' : 'Deze stap kan de Academy niet automatisch controleren. Jij bevestigt zelf dat het gelukt is.'}
-            </div>
-          )}
+          <div><strong>{t('Expected result:')}</strong> {inline(step.expected)}</div>
+          <div className="small muted" style={{ marginTop: 4 }}>{t('The Academy cannot check this step automatically. You confirm yourself that it worked.')}</div>
         </div>
       </div>
       <div className="row" style={{ marginTop: 12 }}>
         <button className={`btn ${done ? 'success' : 'primary'}`} disabled={!all || done} onClick={onDone}>
-          <CheckCircle2 size={15} /> {done ? (verification?.passed ? 'Geverifieerd in Studio' : 'Bevestigd') : 'Het is gelukt in Studio'}
+          <CheckCircle2 size={15} /> {done ? t('Confirmed') : t('It worked in Studio')}
         </button>
-        {!all && !done && <span className="small faint">Vink eerst alle stappen af, of laat Studio je werk controleren.</span>}
+        {!all && !done && <span className="small faint">{t('First tick off all the steps.')}</span>}
       </div>
     </div>
   );

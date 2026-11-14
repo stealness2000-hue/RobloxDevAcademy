@@ -5,9 +5,10 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { LuauService } from '../electron/services/luau';
 import { evaluate } from '../shared/evaluator';
-import { ALL_LESSONS, COURSES, languageOfLesson } from '../src/curriculum';
+import { CONTENT_SETS, languageOfLesson } from '../src/curriculum';
 import { NativeRunner } from '../electron/services/native-runner';
-import { PRACTICE } from '../src/curriculum/practice';
+import { PRACTICE as EN_PRACTICE } from '../src/curriculum/practice';
+import { PRACTICE as NL_PRACTICE } from '../src/curriculum/nl/practice';
 import { CONCEPT_BY_ID } from '../src/curriculum/concepts';
 
 const luau = new LuauService();
@@ -22,14 +23,21 @@ const runFor = (lessonId: string) => {
   return { lang, run: lang === 'luau' ? run : (c: string) => native.run(lang, c), available: available[lang] };
 };
 
-const exercises = ALL_LESSONS.flatMap((l) => l.steps.filter((s) => s.type === 'exercise').map((s) => ({ lesson: l.id, ex: s as Extract<typeof s, { type: 'exercise' }> })));
-
 describe.runIf(process.env.REQUIRE_TOOLCHAINS === '1')('build server has the C++ and Java toolchains', () => {
   it('java and g++ are available, so no C++/Java content is skipped', () => {
     expect(available.java, 'Java (JDK) missing on the build server').toBe(true);
     expect(available.cpp, 'g++ missing on the build server').toBe(true);
   });
 });
+
+// Both content sets (English base + human Dutch) are checked the same way.
+for (const contentLang of ['en', 'nl'] as const) {
+const COURSES = CONTENT_SETS[contentLang]();
+const ALL_LESSONS = COURSES.flatMap((c) => c.lessons);
+const PRACTICE = contentLang === 'en' ? EN_PRACTICE : NL_PRACTICE;
+describe(`content: ${contentLang}`, () => {
+const exercises = ALL_LESSONS.flatMap((l) => l.steps.filter((s) => s.type === 'exercise').map((s) => ({ lesson: l.id, ex: s as Extract<typeof s, { type: 'exercise' }> })));
+
 
 describe('curriculum structure', () => {
   it('has unique ids and known concepts', () => {
@@ -52,7 +60,7 @@ describe('curriculum structure', () => {
       expect(l.summary.length).toBeGreaterThan(0);
       expect(l.steps.some((s) => s.type === 'exercise' || s.type === 'quiz' || s.type === 'predict')).toBe(true);
     }
-    expect(COURSES[0].lessons[1].title).toBe('Je eerste Luau-script');
+    expect(COURSES[0].lessons[1].title).toBe(contentLang === 'en' ? 'Your first Luau script' : 'Je eerste Luau-script');
   });
 
   it('every quiz/predict has exactly one correct answer', () => {
@@ -88,7 +96,7 @@ describe('practice bank', () => {
 });
 
 describe('predict steps in lessons match the real output', () => {
-  for (const l of ALL_LESSONS) for (const s of l.steps) if (s.type === 'predict' && !/fout|Hoeveel|Hoe vaak|eerste regel/i.test(s.question + s.options.find((o) => o.correct)!.text)) {
+  for (const l of ALL_LESSONS) for (const s of l.steps) if (s.type === 'predict' && !/fout|error|Hoeveel|How many|Hoe vaak|eerste regel|first line/i.test(s.question + s.options.find((o) => o.correct)!.text)) {
     const rf = runFor(l.id);
     it.skipIf(!rf.available)(s.id, async () => {
       const r = await rf.run(s.code);
@@ -99,7 +107,7 @@ describe('predict steps in lessons match the real output', () => {
 
 describe('runnable code examples run without errors (except deliberate error demos)', () => {
   for (const l of ALL_LESSONS) l.steps.forEach((s, i) => {
-    if (s.type === 'code' && s.runnable && !/fout/i.test((s.title ?? '') + (s.after ?? ''))) {
+    if (s.type === 'code' && s.runnable && !/fout|error/i.test((s.title ?? '') + (s.after ?? ''))) {
       const rf = runFor(l.id);
       it.skipIf(!rf.available)(`${l.id} step ${i + 1}`, async () => {
         const r = await rf.run(s.code);
@@ -108,3 +116,5 @@ describe('runnable code examples run without errors (except deliberate error dem
     }
   });
 });
+});
+}

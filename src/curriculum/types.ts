@@ -58,8 +58,6 @@ export type Step =
       body?: string;
       steps: { text: string; detail?: string }[];
       expected: string;
-      /** Optional Studio exercise that the companion plugin can verify automatically. */
-      exercise?: string;
     };
 
 export interface Lesson {

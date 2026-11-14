@@ -140,7 +140,7 @@ export class NativeRunner {
     const tc = await this.detect(language);
     const done = (r: Omit<RunResult, 'durationMs' | 'values'>): RunResult => ({ ...r, values: [], durationMs: performance.now() - started });
     if (!tc.available || !tc.command) {
-      return done({ ok: false, output: [], outputTruncated: false, error: { kind: 'host', message: language === 'java' ? 'Java (JDK) is niet gevonden op deze computer.' : 'Er is geen C++-compiler (g++) gevonden op deze computer.' } });
+      return done({ ok: false, output: [], outputTruncated: false, error: { kind: 'host', message: language === 'java' ? 'Java (JDK) was not found on this computer.' : 'No C++ compiler (g++) was found on this computer.' } });
     }
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), `rda-${language}-${crypto.randomBytes(4).toString('hex')}-`));
     try {
@@ -155,7 +155,7 @@ export class NativeRunner {
       fs.writeFileSync(src, code, 'utf8');
       const c = await run(tc.command, ['-std=c++17', '-O0', '-fdiagnostics-color=never', '-o', exe, 'main.cpp'], { cwd: dir, timeoutMs: 30000 });
       if (c.code !== 0) {
-        return done({ ok: false, output: [], outputTruncated: false, error: { kind: c.timedOut ? 'timeout' : 'syntax', message: (c.stderr || c.stdout).trim() || 'Compileren mislukt.', line: firstLine(c.stderr, 'cpp') } });
+        return done({ ok: false, output: [], outputTruncated: false, error: { kind: c.timedOut ? 'timeout' : 'syntax', message: (c.stderr || c.stdout).trim() || 'Compiling failed.', line: firstLine(c.stderr, 'cpp') } });
       }
       const r = await run(exe, [], { cwd: dir, timeoutMs: 5000 });
       return done(toResult('cpp', r));
@@ -177,13 +177,13 @@ function lines(text: string, kind: OutputLine['kind']): OutputLine[] {
 
 function toResult(language: NativeLanguage, r: { code: number | null; stdout: string; stderr: string; timedOut: boolean; truncated: boolean }): Omit<RunResult, 'durationMs' | 'values'> {
   const output = lines(r.stdout, 'print');
-  if (r.timedOut) return { ok: false, output, outputTruncated: r.truncated, error: { kind: 'timeout', message: 'Je programma bleef te lang doorlopen en is gestopt.' } };
-  if (r.truncated) return { ok: false, output, outputTruncated: true, error: { kind: 'interrupted', message: 'Je programma liet te veel tekst zien en is gestopt (waarschijnlijk een oneindige lus).' } };
+  if (r.timedOut) return { ok: false, output, outputTruncated: r.truncated, error: { kind: 'timeout', message: 'Your program kept running too long and was stopped.' } };
+  if (r.truncated) return { ok: false, output, outputTruncated: true, error: { kind: 'interrupted', message: 'Your program showed too much text and was stopped (probably an infinite loop).' } };
   if (r.code === 0) return { ok: true, output, outputTruncated: false, error: null };
   const err = r.stderr.trim();
   // Java source launcher: compile errors look like "Main.java:3: error: ..."; runtime errors start with "Exception in thread".
   const compile = language === 'java' && /Main\.java:\d+: error:/.test(err);
-  return { ok: false, output, outputTruncated: false, error: { kind: compile ? 'syntax' : 'runtime', message: err || `Programma stopte met foutcode ${r.code}.`, line: compile ? firstLine(err, 'java') : runtimeLine(err) } };
+  return { ok: false, output, outputTruncated: false, error: { kind: compile ? 'syntax' : 'runtime', message: err || `Program stopped with exit code ${r.code}.`, line: compile ? firstLine(err, 'java') : runtimeLine(err) } };
 }
 
 function runtimeLine(err: string): number | undefined {

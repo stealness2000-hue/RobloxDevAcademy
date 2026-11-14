@@ -2,10 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, Target, Trophy, BookOpen, RotateCcw } from 'lucide-react';
 import { useApp } from '@/store';
 import { call } from '@/api';
-import { COURSE_BY_ID, LESSON_BY_ID, isGradedStep, lessonNumber, languageOfLesson, lessonsOfTrack, trackOfLesson, TRACK_LABEL } from '@/curriculum';
+import { COURSE_BY_ID, LESSON_BY_ID, isFreeLesson, isGradedStep, lessonNumber, languageOfLesson, lessonsOfTrack, trackOfLesson, TRACK_LABEL } from '@/curriculum';
+import { t } from '@/i18n';
+import { useTranslatedContent } from '@/i18n/content';
+import { MachineBadge } from '@/components/MachineBadge';
+import { LockScreen } from '@/features/license/LockScreen';
 import { ToolchainBanner } from './ToolchainBanner';
 import { MentorPlayer } from '@/features/mentor/MentorPlayer';
-import { Sparkles } from 'lucide-react';
+import { Clapperboard } from 'lucide-react';
 import { conceptName } from '@/curriculum/concepts';
 import { ProgressBar, Prose, inline } from '@/components/ui';
 import { CodeStep, ExplainStep, QuizStep, StudioStep } from './Steps';
@@ -21,8 +25,12 @@ interface LessonState {
 }
 
 export function LessonPlayer({ lessonId }: { lessonId: string }) {
-  const lesson = LESSON_BY_ID.get(lessonId);
-  const { snapshot, navigate, showAwards, refresh } = useApp();
+  const source = LESSON_BY_ID.get(lessonId);
+  const { snapshot, navigate, showAwards, refresh, license } = useApp();
+  // Machine languages: prose is translated, code and checks stay as they are.
+  const tr = useTranslatedContent(source, lessonId);
+  const lesson = tr.value;
+  const locked = !!source && !license?.unlocked && !isFreeLesson(lessonId);
   const row = snapshot?.lessons.find((l) => l.lessonId === lessonId);
   const [repeating, setRepeating] = useState(false);
   const alreadyCompleted = row?.status === 'completed' && !repeating;
@@ -41,7 +49,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   latest.current = state;
 
   useEffect(() => {
-    if (!lesson) return;
+    if (!lesson || locked) return;
     void call('progress:openLesson', { lessonId, courseId: lesson.courseId }).then(refresh);
     return () => {
       // Flush pending state when leaving the lesson.
@@ -68,8 +76,9 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
   const gradedKeys = useMemo(() => lesson?.steps.map((s, i) => (isGradedStep(s) ? `s${i}` : null)).filter(Boolean) as string[], [lesson]);
 
   if (!lesson || !course) {
-    return <div className="page"><div className="empty">Deze les bestaat niet (meer).<button className="btn" onClick={() => navigate('learn')}>Naar Leren</button></div></div>;
+    return <div className="page"><div className="empty">{t('This lesson does not exist (anymore).')}<button className="btn" onClick={() => navigate('learn')}>{t('Go to Courses')}</button></div></div>;
   }
+  if (locked) return <LockScreen title={lesson.title} />;
 
   const isDone = (i: number) => state.done.includes(`s${i}`) || alreadyCompleted;
   const canAdvance = (i: number) => !isGradedStep(lesson.steps[i]) || isDone(i);
@@ -100,26 +109,27 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       <div className="lesson-top">
         <button className="btn ghost sm" onClick={() => navigate('learn')}><ArrowLeft size={14} /> {course.title}</button>
         <span className="grow" />
-        <span className="small faint">{TRACK_LABEL[trackOfLesson(lesson.id)]} · les {lessonNumber(lesson.id)}</span>
+        <span className="small faint">{TRACK_LABEL[trackOfLesson(lesson.id)]} · {t('lesson {n}', { n: lessonNumber(lesson.id) })}</span>
       </div>
       <header className="lesson-header">
         <h1>{lesson.title}</h1>
-        <button className="btn mentor-btn" onClick={() => setMentorOpen(true)}><Sparkles size={15} /> Uitleg door AI Mentor</button>
+        <button className="btn mentor-btn" onClick={() => setMentorOpen(true)}><Clapperboard size={15} /> {t('Video explanation')}</button>
         <div className="lesson-meta">
           <span className="row small muted"><Target size={14} /> {lesson.objective}</span>
         </div>
         <div className="row small muted" style={{ gap: 16, marginTop: 6, flexWrap: 'wrap' }}>
           <span className="row" style={{ gap: 5 }}><Clock size={13} /> ± {lesson.minutes} min</span>
-          {lesson.prerequisites.length > 0 && <span>Voorkennis: {lesson.prerequisites.map(conceptName).join(', ')}</span>}
-          {alreadyCompleted && <span className="badge success"><CheckCircle2 size={12} /> Afgerond</span>}
+          {lesson.prerequisites.length > 0 && <span>{t('Prior knowledge')}: {lesson.prerequisites.map(conceptName).join(', ')}</span>}
+          {alreadyCompleted && <span className="badge success"><CheckCircle2 size={12} /> {t('Finished')}</span>}
         </div>
         <div style={{ marginTop: 14 }}><ProgressBar value={progress} tone={alreadyCompleted ? 'success' : undefined} /></div>
       </header>
 
+      {tr.machine && <MachineBadge loading={tr.loading} missing={tr.missing} />}
       {language !== 'luau' && <ToolchainBanner language={language} />}
       <div className="steps">
         {lesson.steps.slice(0, state.reached + 1).map((step, i) => (
-          <section key={i} ref={(el) => { stepRefs.current[i] = el; }} className={`step-wrap ${i === state.reached ? 'current' : ''}`} aria-label={`Stap ${i + 1}`}>
+          <section key={i} ref={(el) => { stepRefs.current[i] = el; }} className={`step-wrap ${i === state.reached ? 'current' : ''}`} aria-label={t('Step {n}', { n: i + 1 })}>
             {step.type === 'explain' && <ExplainStep step={step} />}
             {step.type === 'code' && <CodeStep step={step} language={language} />}
             {(step.type === 'quiz' || step.type === 'predict') && <QuizStep step={step} lessonId={lessonId} done={isDone(i)} onDone={() => markDone(i)} language={language} />}
@@ -149,8 +159,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
             )}
             {i === state.reached && !atEnd && (
               <div className="step-next">
-                <button className="btn primary" onClick={advance} disabled={!canAdvance(i)}>Verder <ArrowRight size={15} /></button>
-                {!canAdvance(i) && <span className="small faint">{step.type === 'exercise' ? 'Los de oefening op om verder te gaan.' : step.type === 'studio' ? 'Bevestig de Studio-stappen om verder te gaan.' : 'Kies het juiste antwoord om verder te gaan.'}</span>}
+                <button className="btn primary" onClick={advance} disabled={!canAdvance(i)}>{t('Next')} <ArrowRight size={15} /></button>
+                {!canAdvance(i) && <span className="small faint">{step.type === 'exercise' ? t('Solve the exercise to continue.') : step.type === 'studio' ? t('Confirm the Studio steps to continue.') : t('Pick the right answer to continue.')}</span>}
               </div>
             )}
           </section>
@@ -159,28 +169,28 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
         {atEnd && canAdvance(state.reached) && (
           <section className="step-wrap lesson-end">
             <div className="step">
-              <div className="row" style={{ gap: 10 }}><BookOpen size={18} /><h2>Samenvatting</h2></div>
+              <div className="row" style={{ gap: 10 }}><BookOpen size={18} /><h2>{t('Summary')}</h2></div>
               <ul className="summary">{lesson.summary.map((s, i) => <li key={i}>{inline(s)}</li>)}</ul>
-              {!allDone && <div className="feedback bad"><div>Niet alle oefeningen en vragen zijn afgerond. Scroll omhoog om ze af te maken.</div></div>}
+              {!allDone && <div className="feedback bad"><div>{t('Not all exercises and questions are finished. Scroll up to finish them.')}</div></div>}
               {(completion || alreadyCompleted) ? (
                 <div className="complete-card">
                   <Trophy size={22} />
                   <div className="grow">
-                    <strong>{completion ? 'Les afgerond!' : 'Je hebt deze les al afgerond.'}</strong>
+                    <strong>{completion ? t('Lesson finished!') : t('You already finished this lesson.')}</strong>
                     {completion && completion.length > 0 && (
-                      <div className="small muted">{completion.map((a) => (a.kind === 'xp' ? `+${a.amount} XP · ${a.reason}` : `Prestatie: ${a.reason}`)).join('   ·   ')}</div>
+                      <div className="small muted">{completion.map((a) => (a.kind === 'xp' ? `+${a.amount} XP · ${t(a.reason)}` : t('Achievement: {name}', { name: t(a.reason) }))).join('   ·   ')}</div>
                     )}
-                    {completion && completion.length === 0 && <div className="small muted">Je voortgang is opgeslagen.</div>}
+                    {completion && completion.length === 0 && <div className="small muted">{t('Your progress is saved.')}</div>}
                   </div>
                   {next ? (
-                    <button className="btn primary" onClick={() => navigate('lesson', { id: next.id })}>Volgende les: {next.title} <ArrowRight size={15} /></button>
+                    <button className="btn primary" onClick={() => navigate('lesson', { id: next.id })}>{t('Next lesson: {title}', { title: LESSON_BY_ID.get(next.id)?.title ?? next.title })} <ArrowRight size={15} /></button>
                   ) : (
-                    <button className="btn primary" onClick={() => navigate('learn')}>Naar het overzicht</button>
+                    <button className="btn primary" onClick={() => navigate('learn')}>{t('Back to the overview')}</button>
                   )}
                 </div>
               ) : (
                 <div className="row" style={{ marginTop: 14 }}>
-                  <button className="btn primary lg" disabled={!allDone} onClick={complete}><CheckCircle2 size={16} /> Les afronden</button>
+                  <button className="btn primary lg" disabled={!allDone} onClick={complete}><CheckCircle2 size={16} /> {t('Finish lesson')}</button>
                 </div>
               )}
             </div>
@@ -191,8 +201,8 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       <div className="lesson-nav">
         {prev ? <button className="btn ghost" onClick={() => navigate('lesson', { id: prev.id })}><ArrowLeft size={14} /> {prev.title}</button> : <span />}
         {row?.status === 'completed' && !repeating && (
-          <button className="btn ghost" onClick={() => { setRepeating(true); setCompletion(null); update(() => ({ done: [], codes: {}, studio: {}, reached: 0 })); }} title="Oefeningen opnieuw maken (je voortgang blijft bewaard)">
-            <RotateCcw size={14} /> Les herhalen
+          <button className="btn ghost" onClick={() => { setRepeating(true); setCompletion(null); update(() => ({ done: [], codes: {}, studio: {}, reached: 0 })); }} title={t('Do the exercises again (your progress is kept)')}>
+            <RotateCcw size={14} /> {t('Repeat lesson')}
           </button>
         )}
       </div>

@@ -3,8 +3,8 @@ import type { Course } from './types';
 export const course0: Course = {
   id: 'course-0',
   number: 0,
-  title: 'Voordat je codeert',
-  description: 'Wat code is, hoe Luau eruitziet en waar je scripts in Roblox Studio zet. Geen voorkennis nodig.',
+  title: 'Before you code',
+  description: 'What code is, what Luau looks like and where your scripts go in Roblox Studio. No experience needed.',
   level: 'Absolute beginner',
   planned: [],
   lessons: [
@@ -12,73 +12,73 @@ export const course0: Course = {
     {
       id: 'c0-what-is-code',
       courseId: 'course-0',
-      title: 'Wat is code?',
-      objective: 'Je weet wat programmeren en code zijn, en waarom een computer precies doet wat er staat.',
+      title: 'What is code?',
+      objective: 'You know what programming and code are, and why a computer does exactly what it says.',
       minutes: 5,
       prerequisites: [],
       concepts: ['code-basics'],
       steps: [
         {
           type: 'explain',
-          title: 'Programmeren = instructies geven',
-          body: `Een computer is heel snel, maar kan zelf niet bedenken wat hij moet doen. Iemand moet hem stap voor stap vertellen wat er moet gebeuren. Dat noemen we **programmeren**.
+          title: 'Programming = giving instructions',
+          body: `A computer is very fast, but it can't decide by itself what to do. Someone has to tell it, step by step, what should happen. That is called **programming**.
 
-Vergelijk het met een recept: "Breek twee eieren. Klop ze los. Bak ze drie minuten." Een recept is een lijst instructies die je van boven naar beneden uitvoert.
+Think of a recipe: "Crack two eggs. Whisk them. Fry them for three minutes." A recipe is a list of instructions that you follow from top to bottom.
 
-**Code** is zo'n lijst instructies, maar dan geschreven in een taal die de computer begrijpt. Zo'n taal heet een **programmeertaal**.`,
+**Code** is such a list of instructions, written in a language the computer understands. That language is called a **programming language**.`,
         },
         {
           type: 'explain',
-          title: 'Een computer doet precies wat er staat',
-          body: `Een mens begrijpt wat je bedoelt, ook als je een tikfout maakt. Een computer niet. Hij leest je code letterlijk.
+          title: 'A computer does exactly what it says',
+          body: `A person understands what you mean, even if you make a typo. A computer doesn't. It reads your code literally.
 
-Daarom is programmeren in het begin vooral: **precies** leren schrijven. Een vergeten haakje of een verkeerde hoofdletter is genoeg om iets te laten mislukken.
+That's why programming at the start is mostly about writing **precisely**. A forgotten bracket or a wrong capital letter is enough to make something fail.
 
-> Dat is normaal. Iedere programmeur maakt dagelijks zulke fouten. De Academy legt elke fout in gewone taal uit.`,
+> That's completely normal. Every programmer makes mistakes like that every day. The Academy explains every mistake in plain language.`,
         },
         {
           type: 'quiz',
           id: 'c0-what-is-code-q1',
-          question: 'Wat is code?',
+          question: 'What is code?',
           concepts: ['code-basics'],
           options: [
-            { text: 'Een lijst instructies die een computer uitvoert', correct: true, feedback: 'Precies. Code vertelt de computer stap voor stap wat hij moet doen.' },
-            { text: 'Een geheime taal om berichten te versleutelen', feedback: 'Dat heet ook wel "een code", maar bij programmeren bedoelen we instructies voor de computer.' },
-            { text: 'Een plaatje van een spel', feedback: 'Plaatjes en modellen zijn onderdelen van een spel, maar code is wat ze laat bewegen en reageren.' },
+            { text: 'A list of instructions that a computer carries out', correct: true, feedback: 'Exactly. Code tells the computer step by step what to do.' },
+            { text: 'A secret language for encrypting messages', feedback: 'That is also called "a code", but in programming we mean instructions for the computer.' },
+            { text: 'A picture from a game', feedback: 'Pictures and models are parts of a game, but code is what makes them move and react.' },
           ],
         },
         {
           type: 'explain',
           title: 'Code in Roblox',
-          body: `Alles wat in een Roblox-game **gebeurt**, komt door code: een deur die opengaat, coins die je verzamelt, een timer die aftelt, een winkel waar je iets koopt.
+          body: `Everything that **happens** in a Roblox game is caused by code: a door that opens, coins you collect, a timer that counts down, a shop where you buy something.
 
-De bouwstenen (onderdelen, kleuren, modellen) maak je in Roblox Studio. Met code geef je ze gedrag. In Roblox schrijf je die code in de taal **Luau**.`,
+You create the building blocks (parts, colors, models) in Roblox Studio. Code gives them behavior. In Roblox you write that code in the language **Luau**.`,
         },
         {
           type: 'quiz',
           id: 'c0-what-is-code-q2',
-          question: 'Je typt per ongeluk een kleine fout in je code. Wat doet de computer?',
+          question: 'You accidentally type a small mistake in your code. What does the computer do?',
           concepts: ['code-basics'],
           options: [
-            { text: 'Hij snapt wat je bedoelt en verbetert het zelf', feedback: 'Was het maar zo. Een computer raadt niet wat je bedoelt; hij volgt letterlijk wat er staat.' },
-            { text: 'Hij volgt letterlijk wat er staat, en meldt vaak een fout', correct: true, feedback: 'Klopt. Daarom leer je in deze Academy fouten lezen en oplossen.' },
-            { text: 'Hij gaat kapot', feedback: 'Geen zorgen: van een tikfout in je code gaat niets kapot. Je krijgt hooguit een foutmelding.' },
+            { text: 'It understands what you mean and fixes it', feedback: "If only. A computer doesn't guess what you mean; it follows exactly what is written." },
+            { text: 'It follows exactly what is written, and often reports an error', correct: true, feedback: 'Right. That is why this Academy teaches you to read and fix errors.' },
+            { text: 'It breaks', feedback: "Don't worry: a typo in your code doesn't break anything. At worst you get an error message." },
           ],
         },
         {
           type: 'code',
-          title: 'Zo ziet code eruit',
-          body: 'Hieronder staat een regel echte Luau-code. Je hoeft hem nog niet te begrijpen: dat leer je in de volgende les. Klik op **Run Code** en kijk wat er gebeurt.',
-          code: 'print("Welkom bij de Roblox Dev Academy!")',
+          title: 'This is what code looks like',
+          body: "Below is a line of real Luau code. You don't need to understand it yet: that's the next lesson. Click **Run Code** and see what happens.",
+          code: 'print("Welcome to Lumora Academy!")',
           runnable: true,
-          after: 'De tekst verscheen in het venster **Output**. Je hebt zojuist code laten uitvoeren.',
+          after: 'The text appeared in the **Output** window. You just ran code.',
         },
       ],
       summary: [
-        'Programmeren is een computer stap voor stap instructies geven.',
-        'Code is die lijst instructies, in een programmeertaal.',
-        'Een computer doet letterlijk wat er staat; fouten zijn normaal en kun je leren oplossen.',
-        'In Roblox schrijf je code in de taal Luau.',
+        'Programming means giving a computer instructions, step by step.',
+        'Code is that list of instructions, written in a programming language.',
+        'A computer does exactly what is written; mistakes are normal and you can learn to fix them.',
+        'In Roblox you write code in the language Luau.',
       ],
     },
 
@@ -86,96 +86,96 @@ De bouwstenen (onderdelen, kleuren, modellen) maak je in Roblox Studio. Met code
     {
       id: 'c0-first-script',
       courseId: 'course-0',
-      title: 'Je eerste Luau-script',
-      objective: 'Je kunt met print() tekst laten zien, en je begrijpt wat de haakjes en aanhalingstekens doen.',
+      title: 'Your first Luau script',
+      objective: 'You can show text with print(), and you understand what the brackets and quotation marks do.',
       minutes: 8,
       prerequisites: ['code-basics'],
       concepts: ['print', 'strings'],
       steps: [
         {
           type: 'explain',
-          body: `Met code geef je instructies aan je programma.
+          body: `With code you give instructions to your program.
 
-De eerste instructie die bijna iedere programmeur leert, is: **laat iets zien op het scherm**. In Luau doe je dat met \`print\`.`,
+The first instruction almost every programmer learns is: **show something on the screen**. In Luau you do that with \`print\`.`,
         },
         {
           type: 'code',
-          title: 'Bekijk deze regel code',
-          body: 'Klik op de onderdelen hieronder om te zien wat elk stukje doet.',
-          code: 'print("Hallo Roblox!")',
+          title: 'Look at this line of code',
+          body: 'Click the parts below to see what each piece does.',
+          code: 'print("Hello Roblox!")',
           runnable: true,
           annotations: [
-            { token: 'print', text: '`print` is een **functie**: een kant-en-klare opdracht die iets voor je doet. `print` laat informatie zien in de **Output**: het venster waarin je programma berichten toont.' },
-            { token: '(', text: 'Het **openende haakje** begint de informatie die je aan `print` geeft. Alles tussen `(` en `)` is wat `print` moet laten zien.' },
-            { token: '"Hallo Roblox!"', text: 'De **aanhalingstekens** `" "` vertellen Luau: dit is gewone **tekst**, geen code. Programmeurs noemen tekst een **string**.' },
-            { token: ')', text: 'Het **sluitende haakje** zegt: hier stopt de informatie voor `print`. Elk `(` heeft een `)` nodig.' },
+            { token: 'print', text: '`print` is a **function**: a ready-made instruction that does something for you. `print` shows information in the **Output**: the window where your program shows messages.' },
+            { token: '(', text: 'The **opening bracket** starts the information you give to `print`. Everything between `(` and `)` is what `print` should show.' },
+            { token: '"Hello Roblox!"', text: 'The **quotation marks** `" "` tell Luau: this is plain **text**, not code. Programmers call text a **string**.' },
+            { token: ')', text: 'The **closing bracket** says: the information for `print` ends here. Every `(` needs a `)`.' },
           ],
-          after: 'Na **Run Code** verschijnt `Hallo Roblox!` in de Output. Merk op: de aanhalingstekens zelf zie je niet. Die vertellen Luau alleen waar de tekst begint en eindigt.',
+          after: 'After **Run Code**, `Hello Roblox!` appears in the Output. Notice that you don\'t see the quotation marks themselves. They only tell Luau where the text starts and ends.',
         },
         {
           type: 'quiz',
           id: 'c0-first-script-q1',
-          question: 'Waarom staat "Hallo Roblox!" tussen aanhalingstekens?',
+          question: 'Why is "Hello Roblox!" between quotation marks?',
           concepts: ['strings'],
           options: [
-            { text: 'Zodat Luau weet dat het gewone tekst is', correct: true, feedback: 'Juist. Zonder aanhalingstekens zou Luau denken dat Hallo een stukje code is.' },
-            { text: 'Omdat het dan groter op het scherm komt', feedback: 'Aanhalingstekens veranderen niets aan hoe groot tekst eruitziet. Ze markeren alleen begin en einde van tekst.' },
-            { text: 'Dat is alleen versiering', feedback: 'Nee, ze zijn nodig. Probeer het later maar eens zonder: dan krijg je een fout.' },
+            { text: 'So Luau knows it is plain text', correct: true, feedback: 'Right. Without quotation marks Luau would think Hello is a piece of code.' },
+            { text: 'Because then it appears bigger on the screen', feedback: "Quotation marks don't change how big text looks. They only mark the start and end of text." },
+            { text: "It's just decoration", feedback: "No, they're needed. Try it later without them: you'll get an error." },
           ],
         },
         {
           type: 'exercise',
           id: 'c0-first-script-ex1',
           mode: 'guided',
-          title: 'Pas de tekst aan',
-          prompt: "Verander de tekst zodat het programma **Ik leer Luau!** laat zien. Klik daarna op **Run Code**.",
-          starter: 'print("Hallo Roblox!")',
+          title: 'Change the text',
+          prompt: "Change the text so the program shows **I'm learning Luau!** Then click **Run Code**.",
+          starter: 'print("Hello Roblox!")',
           checks: [
-            { kind: 'uses', sequence: ['print', '('], message: 'Gebruik nog steeds `print( ... )` om de tekst te laten zien.' },
-            { kind: 'output', lines: ['Ik leer Luau!'], message: 'Je programma laat nog niet precies **Ik leer Luau!** zien. Let op hoofdletters, spaties en het uitroepteken.' },
+            { kind: 'uses', sequence: ['print', '('], message: 'Keep using `print( ... )` to show the text.' },
+            { kind: 'output', lines: ["I'm learning Luau!"], message: "Your program doesn't show exactly **I'm learning Luau!** yet. Check the capital letters, the apostrophe, the spaces and the exclamation mark." },
           ],
           hints: [
-            'Je hoeft alleen de tekst tussen de aanhalingstekens te veranderen. De rest blijft hetzelfde.',
-            'Haal `Hallo Roblox!` weg en typ op die plek `Ik leer Luau!`. Laat de aanhalingstekens staan.',
+            'You only need to change the text between the quotation marks. Everything else stays the same.',
+            "Remove `Hello Roblox!` and type `I'm learning Luau!` in its place. Keep the quotation marks.",
           ],
-          solution: 'print("Ik leer Luau!")',
+          solution: 'print("I\'m learning Luau!")',
           concepts: ['print', 'strings'],
-          success: 'Goed gedaan! Je hebt je eerste Luau-code aangepast en uitgevoerd.',
+          success: 'Well done! You changed and ran your first Luau code.',
         },
         {
           type: 'predict',
           id: 'c0-first-script-p1',
-          question: 'Wat laat deze code zien in de Output?',
+          question: 'What does this code show in the Output?',
           code: 'print("1 + 1")',
           concepts: ['strings'],
           options: [
-            { text: '2', feedback: 'Bijna logisch, maar kijk naar de aanhalingstekens: alles daartussen is tekst, dus Luau rekent niet.' },
-            { text: '1 + 1', correct: true, feedback: 'Precies. Tussen aanhalingstekens is het gewoon tekst. Luau laat het letterlijk zien.' },
-            { text: 'Een foutmelding', feedback: 'Deze code is geldig. Tekst mag alle tekens bevatten, ook + en cijfers.' },
+            { text: '2', feedback: "Almost logical, but look at the quotation marks: everything between them is text, so Luau doesn't calculate." },
+            { text: '1 + 1', correct: true, feedback: 'Exactly. Between quotation marks it is just text. Luau shows it literally.' },
+            { text: 'An error', feedback: 'This code is valid. Text may contain any character, including + and digits.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c0-first-script-ex2',
           mode: 'independent',
-          title: 'Nu helemaal zelf',
-          prompt: 'De editor is leeg. Schrijf zelf een regel code die **Ik word Roblox-developer** laat zien.',
+          title: 'Now on your own',
+          prompt: 'The editor is empty. Write a line of code yourself that shows **I will be a Roblox developer**',
           starter: '',
           checks: [
-            { kind: 'uses', sequence: ['print', '('], message: 'Gebruik `print` met haakjes om iets te laten zien.' },
-            { kind: 'output', lines: ['Ik word Roblox-developer'], message: 'De Output moet precies **Ik word Roblox-developer** zijn (zonder punt of uitroepteken).' },
+            { kind: 'uses', sequence: ['print', '('], message: 'Use `print` with brackets to show something.' },
+            { kind: 'output', lines: ['I will be a Roblox developer'], message: 'The Output must be exactly **I will be a Roblox developer** (no full stop or exclamation mark).' },
           ],
-          hints: ['Kijk terug naar de vorige oefening: dezelfde vorm, andere tekst.', 'De vorm is: `print("jouw tekst")`'],
-          solution: 'print("Ik word Roblox-developer")',
+          hints: ['Look back at the previous exercise: the same shape, different text.', 'The shape is: `print("your text")`'],
+          solution: 'print("I will be a Roblox developer")',
           concepts: ['print', 'strings'],
-          success: 'Helemaal zelf geschreven. Zo begint iedere Roblox-developer.',
+          success: 'Written completely by yourself. This is how every Roblox developer starts.',
         },
       ],
       summary: [
-        '`print( )` laat informatie zien in de Output.',
-        'Tussen de haakjes zet je wat `print` moet laten zien.',
-        'Tekst (een string) zet je tussen aanhalingstekens: `"zo"`.',
-        'Tussen aanhalingstekens rekent Luau niet: `"1 + 1"` blijft tekst.',
+        '`print( )` shows information in the Output.',
+        'Between the brackets you put what `print` should show.',
+        'Text (a string) goes between quotation marks: `"like this"`.',
+        'Between quotation marks Luau doesn\'t calculate: `"1 + 1"` stays text.',
       ],
     },
 
@@ -183,72 +183,72 @@ De eerste instructie die bijna iedere programmeur leert, is: **laat iets zien op
     {
       id: 'c0-what-is-luau',
       courseId: 'course-0',
-      title: 'Wat is Luau? (en Lua)',
-      objective: 'Je weet wat Luau is, hoe het verschilt van Lua, en wat deze app wel en niet kan uitvoeren.',
+      title: 'What is Luau? (and Lua)',
+      objective: 'You know what Luau is, how it differs from Lua, and what this app can and cannot run.',
       minutes: 6,
       prerequisites: ['print'],
       concepts: ['code-basics'],
       steps: [
         {
           type: 'explain',
-          title: 'Lua en Luau',
-          body: `**Lua** is een bestaande programmeertaal, bekend omdat hij klein en snel is. Roblox gebruikte vroeger Lua.
+          title: 'Lua and Luau',
+          body: `**Lua** is an existing programming language, known for being small and fast. Roblox used to use Lua.
 
-Roblox heeft daarna een eigen versie gemaakt: **Luau** (spreek uit: "loe-au"). Luau lijkt heel erg op Lua, maar heeft extra's:
-- het is sneller
-- je kunt kortere schrijfwijzen gebruiken, zoals \`coins += 10\`
-- je kunt tekst met waarden combineren met backticks: \`\`Coins: {coins}\`\`
-- je kunt **types** aangeven, zodat fouten eerder opvallen (dat leer je veel later)
+Roblox then made its own version: **Luau** (pronounced "loo-ow"). Luau is very similar to Lua, but has extras:
+- it is faster
+- you can use shorter forms, such as \`coins += 10\`
+- you can combine text with values using backticks: \`\`Coins: {coins}\`\`
+- you can add **types**, so mistakes are found earlier (you'll learn that much later)
 
-Luau is open source: iedereen mag het gebruiken, ook buiten Roblox.`,
+Luau is open source: anyone may use it, also outside Roblox.`,
         },
         {
           type: 'code',
-          title: 'Een paar Luau-extra\'s',
-          body: 'Je hoeft deze code nog niet te kunnen schrijven. Bekijk het en klik op **Run Code**.',
-          code: 'local coins = 10\ncoins += 5\nprint(`Je hebt {coins} coins`)',
+          title: 'A few Luau extras',
+          body: "You don't need to be able to write this code yet. Look at it and click **Run Code**.",
+          code: 'local coins = 10\ncoins += 5\nprint(`You have {coins} coins`)',
           runnable: true,
-          after: 'In gewoon Lua werkt `+=` en de tekst met `{coins}` niet. In Luau wel. Je ziet `Je hebt 15 coins`.',
+          after: 'In plain Lua, `+=` and the text with `{coins}` don\'t work. In Luau they do. You see `You have 15 coins`.',
         },
         {
           type: 'explain',
-          title: 'Luau is niet hetzelfde als "Roblox"',
-          body: `Dit onderscheid is belangrijk:
+          title: 'Luau is not the same as "Roblox"',
+          body: `This difference is important:
 
-- **Luau** is de taal: woorden zoals \`print\`, \`local\`, \`if\` en rekenen met getallen.
-- **De Roblox-engine** voegt daar onderdelen aan toe, zoals \`workspace\`, \`game\`, \`Instance\` en spelers. Die bestaan alleen binnen Roblox.
+- **Luau** is the language: words like \`print\`, \`local\`, \`if\` and calculating with numbers.
+- **The Roblox engine** adds parts to it, such as \`workspace\`, \`game\`, \`Instance\` and players. Those only exist inside Roblox.
 
-De speeltuin in deze app voert **echte Luau** uit. Roblox-onderdelen werken hier niet; die test je in Roblox Studio. De Academy vertelt je altijd duidelijk wanneer iets Studio nodig heeft.`,
+The playground in this app runs **real Luau**. Roblox parts don't work here; you test those in Roblox Studio. The Academy always tells you clearly when something needs Studio.`,
         },
         {
           type: 'quiz',
           id: 'c0-what-is-luau-q1',
-          question: 'Welke van deze regels kan de Luau-speeltuin in deze app uitvoeren?',
+          question: 'Which of these lines can the Luau playground in this app run?',
           concepts: ['code-basics'],
           options: [
-            { text: 'print("Hallo")', correct: true, feedback: 'Ja: `print` hoort bij Luau zelf.' },
-            { text: 'workspace.Baseplate.Color = Color3.new(1, 0, 0)', feedback: '`workspace` en `Color3` horen bij de Roblox-engine. Dit test je in Roblox Studio.' },
-            { text: 'Instance.new("Part")', feedback: '`Instance` bestaat alleen in Roblox. Hiervoor heb je Roblox Studio nodig.' },
+            { text: 'print("Hello")', correct: true, feedback: 'Yes: `print` belongs to Luau itself.' },
+            { text: 'workspace.Baseplate.Color = Color3.new(1, 0, 0)', feedback: '`workspace` and `Color3` belong to the Roblox engine. You test this in Roblox Studio.' },
+            { text: 'Instance.new("Part")', feedback: '`Instance` only exists in Roblox. You need Roblox Studio for this.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c0-what-is-luau-ex1',
           mode: 'guided',
-          title: 'Draai de Luau-code zelf',
-          prompt: 'Verander het getal `5` in `20`, zodat de Output **Je hebt 30 coins** laat zien.',
-          starter: 'local coins = 10\ncoins += 5\nprint(`Je hebt {coins} coins`)',
-          checks: [{ kind: 'output', lines: ['Je hebt 30 coins'], message: 'De Output moet **Je hebt 30 coins** zijn. Welk getal tel je nu bij de 10 op?' }],
-          hints: ['Kijk naar regel 2: daar wordt iets bij `coins` opgeteld.', 'Maak van `coins += 5` de regel `coins += 20`.'],
-          solution: 'local coins = 10\ncoins += 20\nprint(`Je hebt {coins} coins`)',
+          title: 'Run the Luau code yourself',
+          prompt: 'Change the number `5` into `20`, so the Output shows **You have 30 coins**.',
+          starter: 'local coins = 10\ncoins += 5\nprint(`You have {coins} coins`)',
+          checks: [{ kind: 'output', lines: ['You have 30 coins'], message: 'The Output must be **You have 30 coins**. Which number do you add to the 10 now?' }],
+          hints: ['Look at line 2: something is added to `coins` there.', 'Change `coins += 5` into `coins += 20`.'],
+          solution: 'local coins = 10\ncoins += 20\nprint(`You have {coins} coins`)',
           concepts: ['code-basics'],
-          success: 'Goed. Je paste code aan die je nog niet helemaal kent, en voorspelde het resultaat.',
+          success: "Good. You changed code you don't fully know yet, and predicted the result.",
         },
       ],
       summary: [
-        'Luau is de programmeertaal van Roblox, gebaseerd op Lua, met extra mogelijkheden.',
-        'Luau (de taal) is iets anders dan de Roblox-engine (workspace, game, Instance).',
-        'Deze app voert echte Luau uit; Roblox-onderdelen test je in Roblox Studio.',
+        'Luau is the programming language of Roblox, based on Lua, with extra features.',
+        'Luau (the language) is different from the Roblox engine (workspace, game, Instance).',
+        'This app runs real Luau; you test Roblox parts in Roblox Studio.',
       ],
     },
 
@@ -256,37 +256,37 @@ De speeltuin in deze app voert **echte Luau** uit. Roblox-onderdelen werken hier
     {
       id: 'c0-strings',
       courseId: 'course-0',
-      title: 'Tekst en aanhalingstekens',
-      objective: 'Je kunt tekst correct schrijven, kent " en \', en herkent een niet-afgesloten string.',
+      title: 'Text and quotation marks',
+      objective: 'You can write text correctly, know " and \', and recognise an unfinished string.',
       minutes: 7,
       prerequisites: ['print'],
       concepts: ['strings'],
       steps: [
         {
           type: 'explain',
-          body: `Tekst in code heet een **string**. Je herkent een string aan de aanhalingstekens eromheen.
+          body: `Text in code is called a **string**. You recognise a string by the quotation marks around it.
 
-Je mag **dubbele** \`"tekst"\` of **enkele** \`'tekst'\` aanhalingstekens gebruiken. Ze doen hetzelfde. Begin en einde moeten wel hetzelfde soort zijn.
+You may use **double** \`"text"\` or **single** \`'text'\` quotation marks. They do the same thing. The start and end must be the same kind.
 
-In Roblox-code zie je meestal dubbele aanhalingstekens. Die gebruiken wij ook.`,
+In Roblox code you mostly see double quotation marks. We use those too.`,
         },
         {
           type: 'code',
-          title: 'Twee soorten, hetzelfde resultaat',
-          code: 'print("Dubbele aanhalingstekens")\nprint(\'Enkele aanhalingstekens\')\nprint("Ik zei: \'hoi\'")',
+          title: 'Two kinds, same result',
+          code: 'print("Double quotation marks")\nprint(\'Single quotation marks\')\nprint("I said: \'hi\'")',
           runnable: true,
-          after: 'Regel 3 laat zien waarom er twee soorten zijn: zo kun je het ene soort ín je tekst gebruiken.',
+          after: 'Line 3 shows why there are two kinds: you can use one kind inside your text.',
         },
         {
           type: 'predict',
           id: 'c0-strings-p1',
-          question: 'Wat gebeurt er met deze code?',
-          code: 'print("Hallo)',
+          question: 'What happens with this code?',
+          code: 'print("Hello)',
           concepts: ['strings'],
           options: [
-            { text: 'Hij laat Hallo zien', feedback: 'Kijk goed: de tekst begint met `"` maar eindigt niet met `"`. Luau weet niet waar de tekst stopt.' },
-            { text: 'Luau geeft een fout: de tekst is niet afgesloten', correct: true, feedback: 'Klopt. Het sluitende aanhalingsteken ontbreekt, dus denkt Luau dat `)` ook nog bij de tekst hoort.' },
-            { text: 'Hij laat Hallo) zien', feedback: 'Logisch gedacht, maar omdat de tekst nooit wordt afgesloten, mist Luau daarna ook het sluitende haakje. Het resultaat is een fout.' },
+            { text: 'It shows Hello', feedback: "Look closely: the text starts with `\"` but doesn't end with `\"`. Luau doesn't know where the text stops." },
+            { text: 'Luau gives an error: the text is not closed', correct: true, feedback: 'Right. The closing quotation mark is missing, so Luau thinks `)` also belongs to the text.' },
+            { text: 'It shows Hello)', feedback: 'Good thinking, but because the text is never closed, Luau also misses the closing bracket. The result is an error.' },
           ],
         },
         {
@@ -294,33 +294,33 @@ In Roblox-code zie je meestal dubbele aanhalingstekens. Die gebruiken wij ook.`,
           id: 'c0-strings-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Repareer de code',
-          prompt: 'Deze code werkt niet. Klik eerst op **Run Code** om de foutmelding te zien. Repareer hem daarna zodat hij **Welkom in mijn obby** laat zien.',
-          starter: 'print("Welkom in mijn obby)',
-          checks: [{ kind: 'output', lines: ['Welkom in mijn obby'], message: 'De Output moet precies **Welkom in mijn obby** zijn.' }],
-          hints: ['Waar eindigt de tekst? Staat daar een aanhalingsteken?', 'Zet een `"` direct na het woord obby, vóór het haakje.'],
-          solution: 'print("Welkom in mijn obby")',
+          title: 'Fix the code',
+          prompt: "This code doesn't work. First click **Run Code** to see the error. Then fix it so it shows **Welcome to my obby**.",
+          starter: 'print("Welcome to my obby)',
+          checks: [{ kind: 'output', lines: ['Welcome to my obby'], message: 'The Output must be exactly **Welcome to my obby**.' }],
+          hints: ['Where does the text end? Is there a quotation mark there?', 'Put a `"` right after the word obby, before the bracket.'],
+          solution: 'print("Welcome to my obby")',
           concepts: ['strings'],
-          success: 'Opgelost. Een niet-afgesloten string is een van de meest voorkomende fouten; nu herken je hem.',
+          success: 'Fixed. An unfinished string is one of the most common mistakes; now you recognise it.',
         },
         {
           type: 'exercise',
           id: 'c0-strings-ex2',
           mode: 'independent',
-          title: 'Twee regels tekst',
-          prompt: 'Schrijf code die twee regels laat zien:\n1. **Level 1**\n2. **Start!**',
+          title: 'Two lines of text',
+          prompt: 'Write code that shows two lines:\n1. **Level 1**\n2. **Start!**',
           starter: '',
-          checks: [{ kind: 'output', lines: ['Level 1', 'Start!'], message: 'De Output moet twee regels hebben: eerst **Level 1**, dan **Start!**' }],
-          hints: ['Elke `print` laat één regel zien. Hoeveel `print`-regels heb je nodig?', 'Schrijf twee regels onder elkaar, elk met een eigen `print("...")`.'],
+          checks: [{ kind: 'output', lines: ['Level 1', 'Start!'], message: 'The Output must have two lines: first **Level 1**, then **Start!**' }],
+          hints: ['Each `print` shows one line. How many `print` lines do you need?', 'Write two lines below each other, each with its own `print("...")`.'],
           solution: 'print("Level 1")\nprint("Start!")',
           concepts: ['strings', 'print'],
-          success: 'Mooi. Elke print is een eigen regel in de Output.',
+          success: 'Nice. Each print is its own line in the Output.',
         },
       ],
       summary: [
-        'Een string is tekst tussen aanhalingstekens.',
-        '"dubbele" en \'enkele\' aanhalingstekens werken hetzelfde; begin en einde moeten gelijk zijn.',
-        'Vergeet je het sluitende aanhalingsteken, dan geeft Luau een fout.',
+        'A string is text between quotation marks.',
+        '"double" and \'single\' quotation marks work the same; start and end must match.',
+        'If you forget the closing quotation mark, Luau gives an error.',
       ],
     },
 
@@ -328,40 +328,40 @@ In Roblox-code zie je meestal dubbele aanhalingstekens. Die gebruiken wij ook.`,
     {
       id: 'c0-brackets-commas',
       courseId: 'course-0',
-      title: "Haakjes en komma's",
-      objective: 'Je begrijpt waarom functies haakjes hebben en hoe je met komma\'s meerdere dingen meegeeft.',
+      title: 'Brackets and commas',
+      objective: "You understand why functions have brackets and how to pass several things with commas.",
       minutes: 7,
       prerequisites: ['print', 'strings'],
       concepts: ['arguments'],
       steps: [
         {
           type: 'explain',
-          body: `Achter \`print\` staan altijd haakjes. Die haakjes betekenen: **voer deze functie nu uit, met deze informatie**.
+          body: `After \`print\` there are always brackets. Those brackets mean: **run this function now, with this information**.
 
-De informatie tussen de haakjes noemen programmeurs een **argument**. Bij \`print("Hoi")\` is \`"Hoi"\` het argument.
+Programmers call the information between the brackets an **argument**. In \`print("Hi")\`, \`"Hi"\` is the argument.
 
-Wil je meerdere dingen meegeven? Zet er een **komma** tussen. \`print\` laat ze dan naast elkaar zien, met een spatie ertussen.`,
+Want to pass several things? Put a **comma** between them. \`print\` then shows them next to each other, with a space in between.`,
         },
         {
           type: 'code',
-          title: 'Meerdere argumenten',
-          code: 'print("Coins:", 100)\nprint("Speler", "Level", 7)',
+          title: 'Several arguments',
+          code: 'print("Coins:", 100)\nprint("Player", "Level", 7)',
           runnable: true,
           annotations: [
-            { token: ',', text: 'De **komma** scheidt twee argumenten. Elk argument is een los stukje informatie.' },
-            { token: '100', text: 'Een **getal** heeft geen aanhalingstekens nodig. Luau weet zelf dat `100` een getal is.' },
+            { token: ',', text: 'The **comma** separates two arguments. Each argument is a separate piece of information.' },
+            { token: '100', text: "A **number** doesn't need quotation marks. Luau knows by itself that `100` is a number." },
           ],
-          after: 'Output: `Coins: 100` en `Speler Level 7`. De komma zelf zie je niet; `print` zet er een spatie voor in de plaats.',
+          after: "Output: `Coins: 100` and `Player Level 7`. You don't see the comma itself; `print` puts a space in its place.",
         },
         {
           type: 'quiz',
           id: 'c0-brackets-q1',
-          question: 'Wat betekenen de haakjes in `print("Hoi")`?',
+          question: 'What do the brackets in `print("Hi")` mean?',
           concepts: ['arguments'],
           options: [
-            { text: 'Voer print uit, met de informatie tussen de haakjes', correct: true, feedback: 'Precies. De haakjes "starten" de functie en bevatten de argumenten.' },
-            { text: 'Het is een opmerking voor jezelf', feedback: 'Opmerkingen (comments) schrijf je met `--`. Haakjes horen bij het uitvoeren van een functie.' },
-            { text: 'Ze maken de tekst vetgedrukt', feedback: 'Haakjes hebben niets met opmaak te maken.' },
+            { text: 'Run print, with the information between the brackets', correct: true, feedback: 'Exactly. The brackets "start" the function and contain the arguments.' },
+            { text: "It's a note for yourself", feedback: 'You write notes (comments) with `--`. Brackets belong to running a function.' },
+            { text: 'They make the text bold', feedback: 'Brackets have nothing to do with formatting.' },
           ],
         },
         {
@@ -369,38 +369,38 @@ Wil je meerdere dingen meegeven? Zet er een **komma** tussen. \`print\` laat ze 
           id: 'c0-brackets-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Vergeten haakje',
-          prompt: 'Klik op **Run Code** en lees de uitleg van de fout. Repareer de code daarna.',
+          title: 'Forgotten bracket',
+          prompt: 'Click **Run Code** and read the explanation of the error. Then fix the code.',
           starter: 'print("Score:", 250',
-          checks: [{ kind: 'output', lines: ['Score: 250'], message: 'Na het repareren hoort de Output **Score: 250** te zijn.' }],
-          hints: ['Elk `(` heeft een `)` nodig. Tel ze in deze regel.', 'Zet een `)` helemaal aan het einde van de regel.'],
+          checks: [{ kind: 'output', lines: ['Score: 250'], message: 'After the fix, the Output should be **Score: 250**.' }],
+          hints: ['Every `(` needs a `)`. Count them in this line.', 'Put a `)` at the very end of the line.'],
           solution: 'print("Score:", 250)',
           concepts: ['arguments'],
-          success: 'Goed gerepareerd. Een vergeten haakje is de bekendste beginnersfout.',
+          success: 'Well fixed. A forgotten bracket is the best-known beginner mistake.',
         },
         {
           type: 'exercise',
           id: 'c0-brackets-ex2',
           mode: 'independent',
-          title: 'Drie argumenten',
-          prompt: 'Schrijf één `print` met **drie** argumenten, gescheiden door komma\'s, zodat de Output **Gems: 12 totaal** is. Gebruik voor 12 een getal (zonder aanhalingstekens).',
+          title: 'Three arguments',
+          prompt: "Write one `print` with **three** arguments, separated by commas, so the Output is **Gems: 12 total**. Use a number for 12 (without quotation marks).",
           starter: '',
           checks: [
-            { kind: 'outputCount', min: 1, max: 1, message: 'Gebruik precies één `print`.' },
-            { kind: 'output', lines: ['Gems: 12 totaal'], message: 'De Output moet precies **Gems: 12 totaal** zijn.' },
-            { kind: 'uses', sequence: [',', '12', ','], message: 'Zet het getal `12` als een los argument tussen twee komma\'s, zonder aanhalingstekens.' },
+            { kind: 'outputCount', min: 1, max: 1, message: 'Use exactly one `print`.' },
+            { kind: 'output', lines: ['Gems: 12 total'], message: 'The Output must be exactly **Gems: 12 total**.' },
+            { kind: 'uses', sequence: [',', '12', ','], message: 'Put the number `12` as a separate argument between two commas, without quotation marks.' },
           ],
-          hints: ['Het eerste argument is de tekst `"Gems:"`, het tweede het getal, het derde de tekst `"totaal"`.', 'De vorm is: `print(tekst, getal, tekst)`'],
-          solution: 'print("Gems:", 12, "totaal")',
+          hints: ['The first argument is the text `"Gems:"`, the second the number, the third the text `"total"`.', 'The shape is: `print(text, number, text)`'],
+          solution: 'print("Gems:", 12, "total")',
           concepts: ['arguments'],
-          success: 'Precies. Drie argumenten, één regel Output.',
+          success: 'Exactly. Three arguments, one line of Output.',
         },
       ],
       summary: [
-        'Haakjes achter een functienaam betekenen: voer de functie nu uit.',
-        'De informatie tussen de haakjes heet een argument.',
-        "Komma's scheiden meerdere argumenten. print zet er een spatie tussen.",
-        'Getallen hebben geen aanhalingstekens nodig.',
+        'Brackets after a function name mean: run the function now.',
+        'The information between the brackets is called an argument.',
+        'Commas separate several arguments. print puts a space between them.',
+        "Numbers don't need quotation marks.",
       ],
     },
 
@@ -408,281 +408,280 @@ Wil je meerdere dingen meegeven? Zet er een **komma** tussen. \`print\` laat ze 
     {
       id: 'c0-comments',
       courseId: 'course-0',
-      title: 'Comments: notities in je code',
-      objective: 'Je kunt comments schrijven en weet dat Luau ze overslaat.',
+      title: 'Comments: notes in your code',
+      objective: 'You can write comments and know that Luau skips them.',
       minutes: 5,
       prerequisites: ['print'],
       concepts: ['comments'],
       steps: [
         {
           type: 'explain',
-          body: `Een **comment** is een notitie voor mensen. Luau slaat comments volledig over.
+          body: `A **comment** is a note for people. Luau skips comments completely.
 
-Een comment begint met twee streepjes: \`--\`. Alles daarna op dezelfde regel wordt genegeerd.
+A comment starts with two dashes: \`--\`. Everything after that on the same line is ignored.
 
-Voor een comment over meerdere regels gebruik je \`--[[\` en \`]]\`.
+For a comment over several lines you use \`--[[\` and \`]]\`.
 
-Goede comments leggen uit **waarom** code er staat. In grotere Roblox-projecten helpen ze jou (en anderen) om later te begrijpen wat je bedoelde.`,
+Good comments explain **why** code is there. In bigger Roblox projects they help you (and others) understand later what you meant.`,
         },
         {
           type: 'code',
-          code: '-- Dit is een comment: Luau slaat deze regel over\nprint("Deze regel wordt wel uitgevoerd")\n\n--[[\n  Een comment over\n  meerdere regels\n]]\nprint("Klaar") -- ook achter code mag een comment',
+          code: '-- This is a comment: Luau skips this line\nprint("This line is run")\n\n--[[\n  A comment over\n  several lines\n]]\nprint("Done") -- a comment after code is fine too',
           runnable: true,
-          after: 'Alleen de twee `print`-regels laten iets zien. De comments doen niets.',
+          after: 'Only the two `print` lines show something. The comments do nothing.',
         },
         {
           type: 'predict',
           id: 'c0-comments-p1',
-          question: 'Hoeveel regels verschijnen er in de Output?',
-          code: 'print("Een")\n-- print("Twee")\nprint("Drie")',
+          question: 'How many lines appear in the Output?',
+          code: 'print("One")\n-- print("Two")\nprint("Three")',
           concepts: ['comments'],
           options: [
-            { text: '3', feedback: 'Kijk naar regel 2: die begint met `--`. Wat doet Luau met zo\'n regel?' },
-            { text: '2', correct: true, feedback: 'Juist. Regel 2 is een comment en wordt overgeslagen: je ziet Een en Drie.' },
-            { text: '1', feedback: 'Alleen regel 2 is een comment. Regels 1 en 3 worden gewoon uitgevoerd.' },
+            { text: '3', feedback: "Look at line 2: it starts with `--`. What does Luau do with a line like that?" },
+            { text: '2', correct: true, feedback: 'Right. Line 2 is a comment and is skipped: you see One and Three.' },
+            { text: '1', feedback: 'Only line 2 is a comment. Lines 1 and 3 run normally.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c0-comments-ex1',
           mode: 'guided',
-          title: 'Zet een regel "uit"',
-          prompt: 'Programmeurs zetten code soms tijdelijk uit door er een comment van te maken. Zorg dat de Output alleen **Speler gespawnd** laat zien, door van de andere regel een comment te maken. Verwijder niets.',
-          starter: 'print("Speler gespawnd")\nprint("DEBUG: positie 0, 5, 0")',
+          title: 'Turn a line "off"',
+          prompt: 'Programmers sometimes temporarily turn code off by making it a comment. Make sure the Output only shows **Player spawned**, by turning the other line into a comment. Don\'t delete anything.',
+          starter: 'print("Player spawned")\nprint("DEBUG: position 0, 5, 0")',
           checks: [
-            { kind: 'output', lines: ['Speler gespawnd'], message: 'De Output moet alleen **Speler gespawnd** zijn.' },
-            { kind: 'hasComment', message: 'Maak van de debug-regel een comment met `--` in plaats van hem te verwijderen.' },
+            { kind: 'output', lines: ['Player spawned'], message: 'The Output must only be **Player spawned**.' },
+            { kind: 'hasComment', message: 'Turn the debug line into a comment with `--` instead of deleting it.' },
           ],
-          hints: ['Welk teken zet je vóór een regel om hem een comment te maken?', 'Zet `--` aan het begin van regel 2.'],
-          solution: 'print("Speler gespawnd")\n-- print("DEBUG: positie 0, 5, 0")',
+          hints: ['Which characters do you put in front of a line to make it a comment?', 'Put `--` at the start of line 2.'],
+          solution: 'print("Player spawned")\n-- print("DEBUG: position 0, 5, 0")',
           concepts: ['comments'],
-          success: 'Handig trucje: zo kun je code testen zonder iets weg te gooien.',
+          success: 'Handy trick: this way you can test code without throwing anything away.',
         },
       ],
-      summary: ['Een comment begint met `--` en wordt door Luau overgeslagen.', '`--[[ ... ]]` maakt een comment over meerdere regels.', 'Comments zijn notities voor mensen: leg vooral uit waarom.'],
+      summary: ['A comment starts with `--` and is skipped by Luau.', '`--[[ ... ]]` makes a comment over several lines.', 'Comments are notes for people: mostly explain why.'],
     },
 
     // ------------------------------------------------------------------ 7
     {
       id: 'c0-lines-order',
       courseId: 'course-0',
-      title: 'Waarom staat code op regels?',
-      objective: 'Je weet dat Luau regels van boven naar beneden uitvoert en dat de volgorde ertoe doet.',
+      title: 'Why is code on separate lines?',
+      objective: 'You know that Luau runs lines from top to bottom and that the order matters.',
       minutes: 5,
       prerequisites: ['print'],
       concepts: ['order'],
       steps: [
         {
           type: 'explain',
-          body: `Luau voert je code **van boven naar beneden** uit, regel voor regel. Net als een recept.
+          body: `Luau runs your code **from top to bottom**, line by line. Just like a recipe.
 
-Elke regel is meestal één instructie. Je zou instructies ook op één regel kunnen zetten, maar aparte regels maken code veel beter leesbaar.
+Each line is usually one instruction. You could put instructions on one line, but separate lines make code much easier to read.
 
-Omdat de volgorde vastligt, maakt het uit wáár je een regel zet. Dat wordt straks belangrijk: je moet bijvoorbeeld iets eerst maken voordat je het kunt gebruiken.`,
+Because the order is fixed, it matters **where** you put a line. That becomes important soon: for example, you have to create something before you can use it.`,
         },
         {
           type: 'predict',
           id: 'c0-order-p1',
-          question: 'Wat is de eerste regel in de Output?',
-          code: 'print("Ronde start")\nprint("3")\nprint("2")\nprint("1")',
+          question: 'What is the first line in the Output?',
+          code: 'print("Round start")\nprint("3")\nprint("2")\nprint("1")',
           concepts: ['order'],
           options: [
-            { text: 'Ronde start', correct: true, feedback: 'Ja: de bovenste regel wordt als eerste uitgevoerd.' },
-            { text: '1', feedback: 'Luau begint bovenaan, niet onderaan.' },
-            { text: 'Alle regels tegelijk', feedback: 'Het gaat razendsnel, maar wel netjes één voor één, van boven naar beneden.' },
+            { text: 'Round start', correct: true, feedback: 'Yes: the top line runs first.' },
+            { text: '1', feedback: 'Luau starts at the top, not at the bottom.' },
+            { text: 'All lines at the same time', feedback: "It's lightning fast, but neatly one by one, from top to bottom." },
           ],
         },
         {
           type: 'exercise',
           id: 'c0-order-ex1',
           mode: 'independent',
-          title: 'Zet de aftelling op volgorde',
-          prompt: 'De regels staan door elkaar. Zet ze in de goede volgorde, zodat de Output dit is:\n**3**, **2**, **1**, **Start!**',
+          title: 'Put the countdown in order',
+          prompt: 'The lines are mixed up. Put them in the right order so the Output is:\n**3**, **2**, **1**, **Start!**',
           starter: 'print("1")\nprint("Start!")\nprint("3")\nprint("2")',
-          checks: [{ kind: 'output', lines: ['3', '2', '1', 'Start!'], message: 'De volgorde in de Output moet 3, 2, 1, Start! zijn.' }],
-          hints: ['Welke regel moet bovenaan staan?', 'Tip: met Alt + pijltje omhoog/omlaag verplaats je een regel in de editor.'],
+          checks: [{ kind: 'output', lines: ['3', '2', '1', 'Start!'], message: 'The order in the Output must be 3, 2, 1, Start!' }],
+          hints: ['Which line should be at the top?', 'Tip: with Alt + arrow up/down you move a line in the editor.'],
           solution: 'print("3")\nprint("2")\nprint("1")\nprint("Start!")',
           concepts: ['order'],
-          success: 'Precies op volgorde. Je weet nu hoe Luau je code leest.',
+          success: 'Perfectly in order. Now you know how Luau reads your code.',
         },
       ],
-      summary: ['Luau voert code van boven naar beneden uit.', 'Eén instructie per regel maakt code leesbaar.', 'De volgorde van regels bepaalt de volgorde van wat er gebeurt.'],
+      summary: ['Luau runs code from top to bottom.', 'One instruction per line keeps code readable.', 'The order of lines decides the order of what happens.'],
     },
 
     // ------------------------------------------------------------------ 8
     {
       id: 'c0-roblox-studio',
       courseId: 'course-0',
-      title: 'Roblox Studio: Explorer, Properties en Output',
-      objective: 'Je kunt Roblox Studio openen en vindt de Explorer, Properties, Workspace en Output.',
+      title: 'Roblox Studio: Explorer, Properties and Output',
+      objective: 'You can open Roblox Studio and find the Explorer, Properties, Workspace and Output.',
       minutes: 10,
       prerequisites: ['code-basics'],
       concepts: ['studio-basics'],
       steps: [
         {
           type: 'explain',
-          title: 'Wat is Roblox Studio?',
-          body: `**Roblox Studio** is het gratis programma waarmee je Roblox-games bouwt. Je plaatst er onderdelen in een 3D-wereld én je schrijft er je scripts.
+          title: 'What is Roblox Studio?',
+          body: `**Roblox Studio** is the free program you use to build Roblox games. You place parts in a 3D world there, and you write your scripts.
 
-Vier vensters gebruik je constant:
-- **Explorer**: een lijst van alles in je game, zoals een mappenstructuur.
-- **Properties**: de eigenschappen van wat je hebt geselecteerd, zoals kleur, grootte en naam.
-- **Output**: hier verschijnen berichten van \`print\` en foutmeldingen.
-- **Workspace**: geen venster, maar een map in de Explorer. Alles wat in de 3D-wereld zichtbaar is, staat in Workspace.`,
+You use four windows all the time:
+- **Explorer**: a list of everything in your game, like a folder structure.
+- **Properties**: the properties of what you selected, such as color, size and name.
+- **Output**: messages from \`print\` and error messages appear here.
+- **Workspace**: not a window, but a folder in the Explorer. Everything visible in the 3D world is in Workspace.`,
         },
         {
           type: 'studio',
-          title: 'Open Roblox Studio en vind de vensters',
-          body: 'Deze stappen doe je zelf in Roblox Studio. Vink elke stap af als het gelukt is.',
+          title: 'Open Roblox Studio and find the windows',
+          body: 'You do these steps yourself in Roblox Studio. Tick each step when it worked.',
           steps: [
-            { text: 'Open Roblox Studio en log in.', detail: 'Heb je het nog niet? Download het gratis via create.roblox.com.' },
-            { text: 'Kies een nieuwe **Baseplate**-template.', detail: 'Dat is een lege wereld met een grijze vloer: perfect om te oefenen.' },
-            { text: 'Zoek het venster **Explorer**.', detail: 'Zie je het niet? Open het via het menu of tabblad **Window** (in de oudere indeling: tabblad **View**).' },
-            { text: 'Klap **Workspace** open in de Explorer en klik op **Baseplate**.' },
-            { text: 'Kijk in het venster **Properties**: je ziet nu de eigenschappen van de Baseplate, zoals Color en Size.' },
-            { text: 'Open het venster **Output** op dezelfde manier als de Explorer.', detail: 'Laat dit venster altijd open staan als je scripts test.' },
+            { text: 'Open Roblox Studio and log in.', detail: "Don't have it yet? Download it for free from create.roblox.com." },
+            { text: 'Choose a new **Baseplate** template.', detail: 'That is an empty world with a grey floor: perfect for practising.' },
+            { text: 'Find the **Explorer** window.', detail: "Can't see it? Open it from the **Window** menu or tab (in the older layout: the **View** tab)." },
+            { text: 'Expand **Workspace** in the Explorer and click **Baseplate**.' },
+            { text: 'Look at the **Properties** window: you now see the properties of the Baseplate, such as Color and Size.' },
+            { text: 'Open the **Output** window the same way as the Explorer.', detail: 'Always keep this window open while testing scripts.' },
           ],
-          expected: 'Je ziet de Explorer, Properties en Output, en de Baseplate is geselecteerd.',
+          expected: 'You see the Explorer, Properties and Output, and the Baseplate is selected.',
         },
         {
           type: 'quiz',
           id: 'c0-studio-q1',
-          question: 'Je wilt de kleur van een onderdeel veranderen zonder code. Welk venster gebruik je?',
+          question: 'You want to change the color of a part without code. Which window do you use?',
           concepts: ['studio-basics'],
           options: [
-            { text: 'Properties', correct: true, feedback: 'Juist. Properties toont alle eigenschappen van het geselecteerde onderdeel.' },
-            { text: 'Output', feedback: 'Output laat berichten en fouten van scripts zien, geen eigenschappen.' },
-            { text: 'Explorer', feedback: 'In de Explorer selecteer je het onderdeel; de kleur zelf verander je in Properties.' },
+            { text: 'Properties', correct: true, feedback: 'Right. Properties shows all properties of the selected part.' },
+            { text: 'Output', feedback: 'Output shows messages and errors from scripts, not properties.' },
+            { text: 'Explorer', feedback: 'In the Explorer you select the part; you change the color itself in Properties.' },
           ],
         },
         {
           type: 'quiz',
           id: 'c0-studio-q2',
-          question: 'Waar verschijnt de tekst van `print("Hallo")` als je game draait in Studio?',
+          question: 'Where does the text of `print("Hello")` appear when your game runs in Studio?',
           concepts: ['studio-basics', 'print'],
           options: [
-            { text: 'In het Output-venster', correct: true, feedback: 'Ja. Daarom laat je Output altijd open tijdens het testen.' },
-            { text: 'Als tekst boven je avatar', feedback: 'Nee, `print` is voor jou als developer. Spelers zien deze berichten niet.' },
-            { text: 'In de Explorer', feedback: 'De Explorer toont onderdelen van je game, geen berichten.' },
+            { text: 'In the Output window', correct: true, feedback: 'Yes. That is why you keep the Output open while testing.' },
+            { text: 'As text above your avatar', feedback: "No, `print` is for you as a developer. Players don't see these messages." },
+            { text: 'In the Explorer', feedback: 'The Explorer shows the parts of your game, not messages.' },
           ],
         },
       ],
-      summary: ['Roblox Studio is het programma waarin je games bouwt en scripts schrijft.', 'Explorer = alles in je game; Properties = eigenschappen van wat geselecteerd is.', 'Output toont print-berichten en fouten.', 'Workspace bevat alles wat zichtbaar is in de 3D-wereld.'],
+      summary: ['Roblox Studio is the program where you build games and write scripts.', 'Explorer = everything in your game; Properties = properties of what is selected.', 'Output shows print messages and errors.', 'Workspace contains everything visible in the 3D world.'],
     },
 
     // ------------------------------------------------------------------ 9
     {
       id: 'c0-script-types',
       courseId: 'course-0',
-      title: 'Script, LocalScript en ModuleScript',
-      objective: 'Je kent de drie soorten scripts en weet waar je een gewoon Script neerzet.',
+      title: 'Script, LocalScript and ModuleScript',
+      objective: 'You know the three kinds of scripts and where to put a normal Script.',
       minutes: 8,
       prerequisites: ['studio-basics'],
       concepts: ['script-types'],
       steps: [
         {
           type: 'explain',
-          title: 'Drie soorten scripts',
-          body: `In Roblox schrijf je code in een **script**: een onderdeel in de Explorer dat code bevat. Er zijn drie soorten:
+          title: 'Three kinds of scripts',
+          body: `In Roblox you write code in a **script**: an item in the Explorer that contains code. There are three kinds:
 
-- **Script**: draait op de **server**, de computer van Roblox die het spel voor iedereen bijhoudt. Hiermee regel je dingen die voor alle spelers gelden, zoals coins geven.
-- **LocalScript**: draait op het apparaat van **één speler** (de **client**). Hiermee regel je dingen die alleen die speler ziet, zoals menu's en knoppen.
-- **ModuleScript**: doet uit zichzelf niets. Het bevat code die andere scripts kunnen hergebruiken.
+- **Script**: runs on the **server**, the Roblox computer that keeps track of the game for everyone. You use it for things that apply to all players, such as giving coins.
+- **LocalScript**: runs on the device of **one player** (the **client**). You use it for things only that player sees, such as menus and buttons.
+- **ModuleScript**: does nothing by itself. It contains code that other scripts can reuse.
 
-Server en client leer je later heel grondig. Voor nu: begin altijd met een gewoon **Script**.`,
+You'll learn about server and client in depth later. For now: always start with a normal **Script**.`,
         },
         {
           type: 'explain',
-          title: 'Waar zet je een Script?',
-          body: `De plek in de Explorer bepaalt of een script draait.
+          title: 'Where do you put a Script?',
+          body: `The place in the Explorer decides whether a script runs.
 
-**ServerScriptService** is de vaste plek voor Scripts die op de server draaien. Spelers kunnen de inhoud daarvan niet zien of downloaden. Dat maakt het de veiligste plek voor je spelregels.
+**ServerScriptService** is the fixed place for Scripts that run on the server. Players can't see or download what is inside. That makes it the safest place for your game rules.
 
-Een LocalScript zet je bijvoorbeeld in **StarterPlayerScripts** of in een interface onder **StarterGui**.`,
+You put a LocalScript for example in **StarterPlayerScripts** or in an interface under **StarterGui**.`,
         },
         {
           type: 'quiz',
           id: 'c0-script-types-q1',
-          question: 'Je maakt een script dat spelers coins geeft. Welke soort script en waar?',
+          question: 'You make a script that gives players coins. Which kind of script and where?',
           concepts: ['script-types'],
           options: [
-            { text: 'Een Script in ServerScriptService', correct: true, feedback: 'Juist. Coins horen op de server bijgehouden te worden, zodat spelers niet kunnen valsspelen.' },
-            { text: 'Een LocalScript in StarterGui', feedback: 'Een LocalScript draait op het apparaat van de speler. Coins daar regelen is onveilig; dat leer je in de cursus over client en server.' },
-            { text: 'Een ModuleScript, dat doet alles automatisch', feedback: 'Een ModuleScript doet uit zichzelf niets; een ander script moet het gebruiken.' },
+            { text: 'A Script in ServerScriptService', correct: true, feedback: "Right. Coins should be tracked on the server, so players can't cheat." },
+            { text: 'A LocalScript in StarterGui', feedback: "A LocalScript runs on the player's device. Handling coins there is unsafe; you'll learn why in the client and server course." },
+            { text: 'A ModuleScript, it does everything automatically', feedback: 'A ModuleScript does nothing by itself; another script has to use it.' },
           ],
         },
         {
           type: 'quiz',
           id: 'c0-script-types-q2',
-          question: 'Wat doet een ModuleScript als niemand het gebruikt?',
+          question: 'What does a ModuleScript do when nobody uses it?',
           concepts: ['script-types'],
           options: [
-            { text: 'Niets', correct: true, feedback: 'Klopt. Een ModuleScript is een gereedschapskist: pas als een ander script hem opent, wordt de code gebruikt.' },
-            { text: 'Het draait vanzelf op de server', feedback: 'Dat doet een gewoon Script. Een ModuleScript wacht tot een ander script het gebruikt.' },
-            { text: 'Het draait vanzelf bij elke speler', feedback: 'Dat lijkt meer op een LocalScript.' },
+            { text: 'Nothing', correct: true, feedback: 'Right. A ModuleScript is a toolbox: its code is only used when another script opens it.' },
+            { text: 'It runs on the server by itself', feedback: 'A normal Script does that. A ModuleScript waits until another script uses it.' },
+            { text: 'It runs for every player by itself', feedback: 'That is more like a LocalScript.' },
           ],
         },
       ],
-      summary: ['Script = server; LocalScript = apparaat van één speler; ModuleScript = herbruikbare code.', 'Server-Scripts zet je in ServerScriptService.', 'Begin bij twijfel met een gewoon Script.'],
+      summary: ['Script = server; LocalScript = device of one player; ModuleScript = reusable code.', 'Server Scripts go in ServerScriptService.', 'When in doubt, start with a normal Script.'],
     },
 
     // ------------------------------------------------------------------ 10
     {
       id: 'c0-first-studio-script',
       courseId: 'course-0',
-      title: 'Je eerste werkende script in Studio',
-      objective: 'Je maakt een Script in ServerScriptService, past het aan en ziet het resultaat in de Output.',
+      title: 'Your first working script in Studio',
+      objective: 'You create a Script in ServerScriptService, change it and see the result in the Output.',
       minutes: 10,
       prerequisites: ['studio-basics', 'script-types', 'print'],
       concepts: ['studio-basics', 'print'],
       steps: [
         {
           type: 'explain',
-          body: `Tijd om alles samen te voegen: je schrijft een script in Roblox Studio en draait het in je eigen game.
+          body: `Time to put it all together: you write a script in Roblox Studio and run it in your own game.
 
-Eerst oefen je de code hier. Daarna zet je precies dezelfde code in Studio.`,
+First you practise the code here. Then you put exactly the same code in Studio.`,
         },
         {
           type: 'exercise',
           id: 'c0-first-studio-ex1',
           mode: 'independent',
-          title: 'Oefen de code',
-          prompt: 'Schrijf twee regels:\n1. een `print` die **Server gestart** laat zien\n2. een `print` die **Welkom bij mijn game** laat zien',
+          title: 'Practise the code',
+          prompt: 'Write two lines:\n1. a `print` that shows **Server started**\n2. a `print` that shows **Welcome to my game**',
           starter: '',
-          checks: [{ kind: 'output', lines: ['Server gestart', 'Welkom bij mijn game'], message: 'De Output moet twee regels hebben: **Server gestart** en daarna **Welkom bij mijn game**.' }],
-          hints: ['Twee regels Output = twee keer `print`.'],
-          solution: 'print("Server gestart")\nprint("Welkom bij mijn game")',
+          checks: [{ kind: 'output', lines: ['Server started', 'Welcome to my game'], message: 'The Output must have two lines: **Server started** and then **Welcome to my game**.' }],
+          hints: ['Two lines of Output = two times `print`.'],
+          solution: 'print("Server started")\nprint("Welcome to my game")',
           concepts: ['print'],
-          success: 'De code werkt. Nu ga je hem in Roblox Studio gebruiken.',
+          success: "The code works. Now you'll use it in Roblox Studio.",
         },
         {
           type: 'studio',
-          title: 'Zet je script in Roblox Studio',
-          exercise: 'studio-first-script',
+          title: 'Put your script in Roblox Studio',
           steps: [
-            { text: 'Open je Baseplate in Roblox Studio, met de Explorer en Output zichtbaar.' },
-            { text: 'Ga in de Explorer met je muis over **ServerScriptService** en klik op het **+**-knopje dat verschijnt.' },
-            { text: 'Kies **Script**.', detail: 'Er opent een editor met de regel `print("Hello world!")`. Die zet Roblox er standaard in.' },
-            { text: 'Vervang die regel door jouw twee regels uit de oefening hierboven.', detail: 'Typ ze zelf over. Dat is goede oefening.' },
-            { text: 'Klik op **Play** (of druk op F5) om je game te starten.' },
-            { text: 'Kijk in het **Output**-venster.', detail: 'Achter je tekst staat iets als "Server - Script:1": wie het bericht stuurde en vanaf welke regel.' },
-            { text: 'Stop de test met **Stop** (Shift + F5).' },
+            { text: 'Open your Baseplate in Roblox Studio, with the Explorer and Output visible.' },
+            { text: 'In the Explorer, hover over **ServerScriptService** and click the **+** button that appears.' },
+            { text: 'Choose **Script**.', detail: 'An editor opens with the line `print("Hello world!")`. Roblox puts that there by default.' },
+            { text: 'Replace that line with your two lines from the exercise above.', detail: 'Type them yourself. That is good practice.' },
+            { text: 'Click **Play** (or press F5) to start your game.' },
+            { text: 'Look at the **Output** window.', detail: 'After your text it says something like "Server - Script:1": who sent the message and from which line.' },
+            { text: 'Stop the test with **Stop** (Shift + F5).' },
           ],
-          expected: 'In de Output zie je "Server gestart" en "Welkom bij mijn game".',
+          expected: 'In the Output you see "Server started" and "Welcome to my game".',
         },
         {
           type: 'quiz',
           id: 'c0-first-studio-q1',
-          question: 'In de Output staat achter je tekst "Server - Script:2". Wat betekent de 2?',
+          question: 'In the Output it says "Server - Script:2" after your text. What does the 2 mean?',
           concepts: ['studio-basics'],
           options: [
-            { text: 'Het bericht kwam van regel 2 van het script', correct: true, feedback: 'Precies. Dat is erg handig om fouten terug te vinden.' },
-            { text: 'Het is het tweede script in je game', feedback: 'Het getal achter de dubbele punt is het regelnummer in dat script.' },
-            { text: 'Er zijn twee spelers', feedback: 'Nee, dat getal is het regelnummer.' },
+            { text: 'The message came from line 2 of the script', correct: true, feedback: 'Exactly. That is very handy for finding mistakes.' },
+            { text: "It's the second script in your game", feedback: 'The number after the colon is the line number in that script.' },
+            { text: 'There are two players', feedback: 'No, that number is the line number.' },
           ],
         },
       ],
-      summary: ['Een server-Script maak je met + bij ServerScriptService.', 'Met Play start je een test; de Output toont je print-berichten.', 'De Output vertelt ook welk script en welke regel een bericht stuurde.'],
+      summary: ['You create a server Script with + on ServerScriptService.', 'Play starts a test; the Output shows your print messages.', 'The Output also tells you which script and which line sent a message.'],
     },
   ],
 };

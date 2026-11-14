@@ -1,8 +1,7 @@
 /**
- * AI Mentor explainer videos: a script is a list of scenes that the in-app player animates
+ * Mentor explainer videos: a script is a list of scenes that the in-app player animates
  * (typed code, highlighted lines, captions, optional Dutch voice-over).
- * Scripts come from the lesson itself (offline) or from Claude (when the student added an API key);
- * AI output is always validated against this schema before it is shown.
+ * Scripts are generated offline from the lesson itself; no AI service or account is needed.
  */
 import { z } from 'zod';
 
@@ -21,26 +20,12 @@ export type MentorScene = z.infer<typeof MentorScene>;
 export const MentorScript = z
   .object({
     lessonId: z.string().max(80),
-    source: z.enum(['builtin', 'ai']),
+    source: z.literal('builtin'),
     language: z.enum(['luau', 'cpp', 'java']),
     scenes: z.array(MentorScene).min(2).max(40),
   })
   .strict();
 export type MentorScript = z.infer<typeof MentorScript>;
-
-/** What the renderer sends to the main process when asking Claude for a script (lesson content only, no personal data). */
-export const MentorRequest = z
-  .object({
-    lessonId: z.string().min(1).max(80),
-    language: z.enum(['luau', 'cpp', 'java']),
-    title: z.string().max(200),
-    objective: z.string().max(400),
-    content: z.string().max(20_000),
-    level: z.enum(['short', 'detailed']),
-    regenerate: z.boolean(),
-  })
-  .strict();
-export type MentorRequest = z.infer<typeof MentorRequest>;
 
 /** Rough reading time for a scene, used when there is no voice-over. */
 export function sceneDurationMs(s: MentorScene): number {

@@ -12,6 +12,7 @@ import { codeTokens, hasSequence, stringValue, tokenize } from './luau-lexer';
 import { explainRunError, type Explanation, type ErrorCategory } from './explain-error';
 import { explainNative } from './explain-native';
 import type { RunResult } from './types';
+import { t } from './i18n';
 
 export type Check =
   | { kind: 'runs'; message?: string }
@@ -135,7 +136,7 @@ export async function evaluate(code: string, checks: Check[], run: Runner, langu
       case 'value': {
         if (endsWithReturn(code)) {
           passed = false;
-          results.push({ check, passed, message: 'Haal de `return` aan het einde van je code weg; deze oefening controleert je variabelen zelf.' });
+          results.push({ check, passed, message: t('Remove the `return` at the end of your code; this exercise checks your variables itself.') });
           continue;
         }
         const r = await run(`${code}\nreturn (${check.expr})`);
@@ -150,7 +151,7 @@ export async function evaluate(code: string, checks: Check[], run: Runner, langu
       }
       case 'test': {
         if (endsWithReturn(code)) {
-          results.push({ check, passed: false, message: 'Haal de `return` aan het einde van je code weg; deze oefening test je code zelf.' });
+          results.push({ check, passed: false, message: t('Remove the `return` at the end of your code; this exercise tests your code itself.') });
           continue;
         }
         const r = await run(`${code}\n${check.harness}`);
@@ -164,16 +165,16 @@ export async function evaluate(code: string, checks: Check[], run: Runner, langu
       }
       case 'variants': {
         if (!code.includes(check.replace)) {
-          results.push({ check, passed: false, message: `Laat de regel \`${check.replace}\` precies zo staan: de controle verandert die waarde om je code met andere getallen te testen.` });
+          results.push({ check, passed: false, message: t('Keep the line `{line}` exactly as it is: the check changes that value to test your code with other numbers.', { line: check.replace }) });
           continue;
         }
         passed = true;
         for (const c of check.cases) {
           const r = await run(code.replace(check.replace, c.with));
-          const got = r.output.filter((o) => o.kind === 'print').flatMap((o) => o.text.split('\n')).map((t) => norm(t));
+          const got = r.output.filter((o) => o.kind === 'print').flatMap((o) => o.text.split('\n')).map((x) => norm(x));
           if (!r.ok || got.length !== c.lines.length || got.some((g, i) => g !== norm(c.lines[i]))) {
             passed = false;
-            results.push({ check, passed: false, message: `${check.message} (Getest met \`${c.with}\`: verwacht ${c.lines.map((l) => `"${l}"`).join(', ') || 'geen output'}, maar je programma liet ${got.length ? got.map((l) => `"${l}"`).join(', ') : 'niets'} zien.)` });
+            results.push({ check, passed: false, message: `${check.message} (${t('Tested with `{line}`: expected {expected}, but your program showed {got}.', { line: c.with, expected: c.lines.map((l) => `"${l}"`).join(', ') || t('no output'), got: got.length ? got.map((l) => `"${l}"`).join(', ') : t('nothing') })})` });
             break;
           }
         }
@@ -196,7 +197,7 @@ export async function evaluate(code: string, checks: Check[], run: Runner, langu
         passed = codeTokensIncludeComment(code);
         break;
     }
-    results.push({ check, passed, message: passed ? '' : (check as { message?: string }).message ?? 'Nog niet helemaal goed.' });
+    results.push({ check, passed, message: passed ? '' : (check as { message?: string }).message ?? t('Not quite right yet.') });
   }
 
   const firstFail = results.find((r) => !r.passed) ?? null;

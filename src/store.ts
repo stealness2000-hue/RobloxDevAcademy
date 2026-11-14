@@ -1,10 +1,13 @@
 import { create } from 'zustand';
 import { call } from './api';
 import { ACHIEVEMENT_BY_ID } from '@shared/achievements';
-import { DEFAULT_SETTINGS, type Award, type ProgressSnapshot, type Settings, type StudioState } from '@shared/types';
+import { DEFAULT_SETTINGS, type Award, type ProgressSnapshot, type Settings } from '@shared/types';
+import type { LicenseStatus } from '@shared/license';
+import type { TranslatorStatus } from '@shared/ipc';
+import { t } from '@shared/i18n';
 
 export type Page =
-  | 'dashboard' | 'learn' | 'lesson' | 'playground' | 'practice' | 'studio' | 'projects' | 'tutor'
+  | 'dashboard' | 'learn' | 'lesson' | 'playground' | 'practice' | 'projects' | 'tutor'
   | 'challenges' | 'knowledge' | 'stats' | 'achievements' | 'settings';
 
 export interface Route {
@@ -25,12 +28,15 @@ interface State {
   snapshot: ProgressSnapshot | null;
   route: Route;
   toasts: Toast[];
-  studio: StudioState | null;
-  refreshStudio(): Promise<void>;
+  license: LicenseStatus | null;
+  refreshLicense(): Promise<void>;
+  translator: TranslatorStatus | null;
+  /** Interface translation status for machine languages. */
+  langStatus: { code: string; machine: boolean; missing: number };
   navigate(page: Page, params?: Record<string, string>): void;
   refresh(): Promise<void>;
   updateSettings(patch: Partial<Settings>): Promise<void>;
-  toast(t: Omit<Toast, 'id'>): void;
+  toast(msg: Omit<Toast, 'id'>): void;
   dismiss(id: number): void;
   showAwards(awards: Award[]): void;
 }
@@ -43,14 +49,16 @@ export const useApp = create<State>((set, get) => ({
   snapshot: null,
   route: { page: 'dashboard' },
   toasts: [],
-  studio: null,
-  async refreshStudio() {
+  license: null,
+  async refreshLicense() {
     try {
-      set({ studio: await call('studio:status') });
+      set({ license: await call('license:status'), translator: await call('mt:status') });
     } catch {
-      /* bridge not ready yet */
+      /* not ready yet */
     }
   },
+  translator: null,
+  langStatus: { code: 'en', machine: false, missing: 0 },
   navigate(page, params) {
     set({ route: { page, params } });
     document.querySelector('.main')?.scrollTo({ top: 0 });
@@ -68,27 +76,27 @@ export const useApp = create<State>((set, get) => ({
       if (patch.theme) void call('window:setTheme', patch.theme);
     } catch {
       set({ settings: prev });
-      get().toast({ kind: 'error', title: 'Instelling niet opgeslagen', body: 'Probeer het opnieuw.' });
+      get().toast({ kind: 'error', title: t('Setting not saved'), body: t('Please try again.') });
     }
   },
-  toast(t) {
+  toast(msg) {
     const id = ++toastId;
-    set({ toasts: [...get().toasts, { ...t, id }] });
-    setTimeout(() => get().dismiss(id), t.kind === 'achievement' ? 6000 : 4000);
+    set({ toasts: [...get().toasts, { ...msg, id }] });
+    setTimeout(() => get().dismiss(id), msg.kind === 'achievement' ? 6000 : 4000);
   },
   dismiss(id) {
-    set({ toasts: get().toasts.filter((t) => t.id !== id) });
+    set({ toasts: get().toasts.filter((x) => x.id !== id) });
   },
   showAwards(awards) {
     const { showXp } = get().settings;
     for (const a of awards) {
       if (a.kind === 'achievement' && a.achievementId) {
         const def = ACHIEVEMENT_BY_ID.get(a.achievementId);
-        get().toast({ kind: 'achievement', title: `Prestatie: ${def?.title ?? a.reason}`, body: def?.description });
+        get().toast({ kind: 'achievement', title: t('Achievement: {name}', { name: def ? t(def.title) : t(a.reason) }), body: def ? t(def.description) : undefined });
       }
     }
     const xp = awards.filter((a) => a.kind === 'xp').reduce((s, a) => s + (a.amount ?? 0), 0);
-    if (xp > 0 && showXp) get().toast({ kind: 'success', title: `+${xp} XP`, body: awards.filter((a) => a.kind === 'xp').map((a) => a.reason).join(' · ') });
+    if (xp > 0 && showXp) get().toast({ kind: 'success', title: `+${xp} XP`, body: awards.filter((a) => a.kind === 'xp').map((a) => t(a.reason)).join(' · ') });
     if (awards.length) void get().refresh();
   },
 }));

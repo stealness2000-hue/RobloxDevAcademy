@@ -187,4 +187,26 @@ CREATE TABLE mentor_scripts (
 );
 `,
   },
+  {
+    version: 5,
+    name: 'translations cache and license; Roblox Studio sync and AI scripts removed',
+    sql: `
+CREATE TABLE translations (
+  lang TEXT NOT NULL,
+  source_hash TEXT NOT NULL,
+  text TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (lang, source_hash)
+);
+CREATE TABLE license (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  license_key TEXT NOT NULL,
+  verified_at TEXT NOT NULL,
+  last_check_at TEXT NOT NULL
+);
+DROP TABLE IF EXISTS studio_sync;
+DROP TABLE IF EXISTS studio_conflicts;
+DROP TABLE IF EXISTS mentor_scripts;
+`,
+  },
 ];

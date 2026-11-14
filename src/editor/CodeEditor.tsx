@@ -35,7 +35,7 @@ interface Props {
 }
 
 export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEditor(
-  { value, onChange, onRun, onSave, onDiagnostics, errorLine, readOnly, minLines = 4, maxLines = 18, fill, ariaLabel = 'Code-editor', robloxCode, language = 'luau' },
+  { value, onChange, onRun, onSave, onDiagnostics, errorLine, readOnly, minLines = 4, maxLines = 18, fill, ariaLabel = 'Code editor', robloxCode, language = 'luau' },
   ref,
 ) {
   const host = useRef<HTMLDivElement>(null);

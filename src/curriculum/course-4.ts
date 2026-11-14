@@ -3,8 +3,8 @@ import type { Course } from './types';
 export const course4: Course = {
   id: 'course-4',
   number: 4,
-  title: 'Functies',
-  description: 'Herbruikbare code maken met parameters en return-waarden. De basis van elk Roblox-systeem.',
+  title: 'Functions',
+  description: 'Making reusable code with parameters and return values. The basis of every Roblox system.',
   level: 'Beginner',
   planned: [],
   lessons: [
@@ -12,335 +12,335 @@ export const course4: Course = {
     {
       id: 'c4-functions',
       courseId: 'course-4',
-      title: 'Wat is een functie?',
-      objective: 'Je kunt een functie maken met local function en hem aanroepen.',
+      title: 'What is a function?',
+      objective: 'You can create a function with local function and call it.',
       minutes: 9,
       prerequisites: ['variables', 'print'],
       concepts: ['functions'],
       steps: [
         {
           type: 'explain',
-          body: `Je gebruikt al vanaf les 2 een functie: \`print\`. Een **functie** is een stuk code met een naam, dat je kunt uitvoeren wanneer je wilt.
+          body: `You have been using a function since lesson 2: \`print\`. A **function** is a piece of code with a name, which you can run whenever you want.
 
-Nu ga je **zelf** functies maken. Dat heeft twee grote voordelen:
-- je schrijft code één keer en gebruikt hem vaak
-- je geeft een stuk code een duidelijke naam, zoals \`resetPlayer\` of \`giveCoins\`
+Now you will make functions **yourself**. That has two big advantages:
+- you write code once and use it often
+- you give a piece of code a clear name, like \`resetPlayer\` or \`giveCoins\`
 
-Een functie **maken** doet nog niets. Pas als je hem **aanroept** (met haakjes), draait de code erin.`,
+**Creating** a function does nothing yet. Only when you **call** it (with brackets) does the code inside run.`,
         },
         {
           type: 'code',
-          code: 'local function sayWelcome()\n    print("Welkom in de game!")\n    print("Veel plezier")\nend\n\nsayWelcome()\nsayWelcome()',
+          code: 'local function sayWelcome()\n    print("Welcome to the game!")\n    print("Have fun")\nend\n\nsayWelcome()\nsayWelcome()',
           runnable: true,
           annotations: [
-            { token: 'function', text: '`local function` maakt een nieuwe functie. Net als bij variabelen zet je er `local` voor.' },
-            { token: 'sayWelcome', text: 'De **naam** van de functie. Kies een werkwoord: wat doet hij?' },
-            { token: '()', text: 'Bij het maken staan hier later de **parameters**. Bij het aanroepen betekenen de haakjes: voer nu uit.' },
-            { token: 'end', text: '`end` sluit de functie af.' },
+            { token: 'function', text: '`local function` creates a new function. Just like with variables, you put `local` in front of it.' },
+            { token: 'sayWelcome', text: 'The **name** of the function. Choose a verb: what does it do?' },
+            { token: '()', text: 'When creating, the **parameters** go here later. When calling, the brackets mean: run it now.' },
+            { token: 'end', text: '`end` closes the function.' },
           ],
-          after: 'De functie wordt twee keer aangeroepen, dus je ziet de twee berichten twee keer.',
+          after: 'The function is called twice, so you see the two messages twice.',
         },
         {
           type: 'predict',
           id: 'c4-functions-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local function beep()\n    print("beep")\nend\nprint("start")',
           concepts: ['functions'],
           options: [
-            { text: 'beep start', feedback: 'De functie is gemaakt, maar nergens aangeroepen.' },
-            { text: 'start', correct: true, feedback: 'Juist. Zonder `beep()` draait de code in de functie nooit.' },
-            { text: 'Een fout', feedback: 'Een functie maken zonder hem te gebruiken is geen fout; hij doet alleen niets.' },
+            { text: 'beep start', feedback: 'The function is created, but never called.' },
+            { text: 'start', correct: true, feedback: 'Right. Without `beep()` the code in the function never runs.' },
+            { text: 'An error', feedback: 'Creating a function without using it is not an error; it just does nothing.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c4-functions-ex1',
           mode: 'guided',
-          title: 'Je eerste functie',
-          prompt: 'Maak een functie `showRules` die twee regels print: **Regel 1: niet vals spelen** en **Regel 2: heb plezier**. Roep hem daarna **één keer** aan.',
+          title: 'Your first function',
+          prompt: 'Create a function `showRules` that prints two lines: **Rule 1: no cheating** and **Rule 2: have fun**. Then call it **once**.',
           starter: '',
           checks: [
-            { kind: 'uses', sequence: ['local', 'function', 'showRules'], message: 'Maak de functie met `local function showRules()`.' },
-            { kind: 'uses', sequence: ['showRules', '(', ')'], message: 'Roep de functie aan met `showRules()`.' },
-            { kind: 'output', lines: ['Regel 1: niet vals spelen', 'Regel 2: heb plezier'], message: 'De Output moet de twee regels precies één keer laten zien.' },
+            { kind: 'uses', sequence: ['local', 'function', 'showRules'], message: 'Create the function with `local function showRules()`.' },
+            { kind: 'uses', sequence: ['showRules', '(', ')'], message: 'Call the function with `showRules()`.' },
+            { kind: 'output', lines: ['Rule 1: no cheating', 'Rule 2: have fun'], message: 'The Output must show the two lines exactly once.' },
           ],
-          hints: ['local function showRules()\n    ...\nend', 'Roep hem aan op een nieuwe regel, na de `end`.'],
-          solution: 'local function showRules()\n    print("Regel 1: niet vals spelen")\n    print("Regel 2: heb plezier")\nend\n\nshowRules()',
+          hints: ['local function showRules()\n    ...\nend', 'Call it on a new line, after the `end`.'],
+          solution: 'local function showRules()\n    print("Rule 1: no cheating")\n    print("Rule 2: have fun")\nend\n\nshowRules()',
           concepts: ['functions'],
-          success: 'Je eerste eigen functie.',
+          success: 'Your first function of your own.',
         },
         {
           type: 'exercise',
           id: 'c4-functions-ex2',
           mode: 'independent',
           kind: 'fix-bug',
-          title: 'Te vroeg aangeroepen',
-          prompt: 'Deze code geeft een fout. Run hem, lees de uitleg en repareer hem door regels te verplaatsen.',
-          starter: 'startRound()\n\nlocal function startRound()\n    print("Ronde gestart")\nend',
-          checks: [{ kind: 'output', lines: ['Ronde gestart'], message: 'De Output moet **Ronde gestart** zijn.' }],
-          hints: ['Luau leest van boven naar beneden. Bestaat `startRound` al op regel 1?', 'Zet de aanroep onder de functie.'],
-          solution: 'local function startRound()\n    print("Ronde gestart")\nend\n\nstartRound()',
+          title: 'Called too early',
+          prompt: 'This code gives an error. Run it, read the explanation and fix it by moving lines.',
+          starter: 'startRound()\n\nlocal function startRound()\n    print("Round started")\nend',
+          checks: [{ kind: 'output', lines: ['Round started'], message: 'The Output must be **Round started**.' }],
+          hints: ['Luau reads from top to bottom. Does `startRound` already exist on line 1?', 'Put the call below the function.'],
+          solution: 'local function startRound()\n    print("Round started")\nend\n\nstartRound()',
           concepts: ['functions', 'order'],
-          success: 'Een local function bestaat pas vanaf de regel waar je hem maakt. Zet functies daarom bovenaan.',
+          success: 'A local function only exists from the line where you create it. That is why functions go at the top.',
         },
       ],
-      summary: ['Een functie is code met een naam die je kunt hergebruiken.', '`local function naam() ... end` maakt hem; `naam()` voert hem uit.', 'Een local function bestaat pas na de regel waarop hij gemaakt is.'],
+      summary: ['A function is code with a name that you can reuse.', '`local function name() ... end` creates it; `name()` runs it.', 'A local function only exists after the line where it is created.'],
     },
 
     // ------------------------------------------------------------------ 2
     {
       id: 'c4-parameters',
       courseId: 'course-4',
-      title: 'Parameters en argumenten',
-      objective: 'Je kunt informatie aan een functie meegeven met parameters.',
+      title: 'Parameters and arguments',
+      objective: 'You can pass information to a function with parameters.',
       minutes: 10,
       prerequisites: ['functions'],
       concepts: ['parameters'],
       steps: [
         {
           type: 'explain',
-          body: `Een functie wordt veel krachtiger als je er informatie aan meegeeft.
+          body: `A function becomes much more powerful when you give it information.
 
-- Een **parameter** is een variabele in de functie die zijn waarde krijgt bij het aanroepen. Je schrijft hem tussen de haakjes bij het **maken**.
-- Een **argument** is de waarde die je meegeeft bij het **aanroepen**.
+- A **parameter** is a variable in the function that gets its value when the function is called. You write it between the brackets when **creating** the function.
+- An **argument** is the value you pass when **calling** it.
 
-Meerdere parameters scheid je met komma's, net als bij \`print\`.`,
+You separate multiple parameters with commas, just like with \`print\`.`,
         },
         {
           type: 'code',
-          code: 'local function greet(playerName, level)\n    print(`Welkom {playerName}, je bent level {level}`)\nend\n\ngreet("Nova", 3)\ngreet("Kai", 12)',
+          code: 'local function greet(playerName, level)\n    print(`Welcome {playerName}, you are level {level}`)\nend\n\ngreet("Nova", 3)\ngreet("Kai", 12)',
           runnable: true,
           annotations: [
-            { token: 'playerName', text: '`playerName` is een **parameter**: binnen de functie is het een variabele.' },
-            { token: '"Nova"', text: '`"Nova"` is het **argument**: de waarde die in `playerName` terechtkomt bij deze aanroep.' },
+            { token: 'playerName', text: '`playerName` is a **parameter**: inside the function it is a variable.' },
+            { token: '"Nova"', text: '`"Nova"` is the **argument**: the value that ends up in `playerName` for this call.' },
           ],
-          after: 'Dezelfde functie, twee verschillende berichten. Het eerste argument gaat naar de eerste parameter, het tweede naar de tweede.',
+          after: 'The same function, two different messages. The first argument goes to the first parameter, the second to the second.',
         },
         {
           type: 'predict',
           id: 'c4-parameters-p1',
-          question: 'Wat laat deze code zien?',
-          code: 'local function show(a, b)\n    print(b, a)\nend\nshow("links", "rechts")',
+          question: 'What does this code show?',
+          code: 'local function show(a, b)\n    print(b, a)\nend\nshow("left", "right")',
           concepts: ['parameters'],
           options: [
-            { text: 'links rechts', feedback: 'Kijk welke parameter print als eerste gebruikt.' },
-            { text: 'rechts links', correct: true, feedback: 'Juist. a = "links", b = "rechts", en de functie print eerst b.' },
+            { text: 'left right', feedback: 'Look at which parameter print uses first.' },
+            { text: 'right left', correct: true, feedback: 'Right. a = "left", b = "right", and the function prints b first.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c4-parameters-ex1',
           mode: 'guided',
-          title: 'Schade melden',
-          prompt: 'Maak een functie `reportDamage(name, amount)` die print: **Nova kreeg 25 schade** (met de waarden van de parameters). Roep hem aan met `"Nova"` en `25`.',
+          title: 'Reporting damage',
+          prompt: 'Create a function `reportDamage(name, amount)` that prints: **Nova took 25 damage** (with the values of the parameters). Call it with `"Nova"` and `25`.',
           starter: '',
           checks: [
-            { kind: 'uses', sequence: ['local', 'function', 'reportDamage', '(', 'name', ',', 'amount', ')'], message: 'Maak de functie met precies `local function reportDamage(name, amount)`.' },
-            { kind: 'output', lines: ['Nova kreeg 25 schade'], message: 'De Output moet **Nova kreeg 25 schade** zijn.' },
+            { kind: 'uses', sequence: ['local', 'function', 'reportDamage', '(', 'name', ',', 'amount', ')'], message: 'Create the function with exactly `local function reportDamage(name, amount)`.' },
+            { kind: 'output', lines: ['Nova took 25 damage'], message: 'The Output must be **Nova took 25 damage**.' },
             { kind: 'test', harness: 'reportDamage("Kai", 7)\nreturn true', message: '' },
           ],
-          hints: ['Gebruik de parameters in de tekst: print(`{name} kreeg {amount} schade`)'],
-          solution: 'local function reportDamage(name, amount)\n    print(`{name} kreeg {amount} schade`)\nend\n\nreportDamage("Nova", 25)',
+          hints: ['Use the parameters in the text: print(`{name} took {amount} damage`)'],
+          solution: 'local function reportDamage(name, amount)\n    print(`{name} took {amount} damage`)\nend\n\nreportDamage("Nova", 25)',
           concepts: ['parameters'],
-          success: 'Goed. Nu werkt dezelfde functie voor elke speler en elke hoeveelheid schade.',
+          success: 'Good. Now the same function works for every player and every amount of damage.',
         },
         {
           type: 'exercise',
           id: 'c4-parameters-ex2',
           mode: 'independent',
-          title: 'Herhalende groet',
-          prompt: 'Maak `cheer(word, times)`: die print `word` precies `times` keer onder elkaar. Roep hem aan met `"Go!"` en `3`.',
+          title: 'Repeating cheer',
+          prompt: 'Create `cheer(word, times)`: it prints `word` exactly `times` times, one under the other. Call it with `"Go!"` and `3`.',
           starter: '',
           checks: [
-            { kind: 'output', lines: ['Go!', 'Go!', 'Go!'], message: 'De Output moet drie keer **Go!** zijn.' },
-            { kind: 'uses', sequence: ['for'], message: 'Gebruik een for-lus in de functie.' },
-            { kind: 'variants', replace: 'cheer("Go!", 3)', cases: [{ with: 'cheer("Hup", 2)', lines: ['Hup', 'Hup'] }], message: 'Je functie gebruikt `word` of `times` nog niet goed.' },
+            { kind: 'output', lines: ['Go!', 'Go!', 'Go!'], message: 'The Output must be **Go!** three times.' },
+            { kind: 'uses', sequence: ['for'], message: 'Use a for loop in the function.' },
+            { kind: 'variants', replace: 'cheer("Go!", 3)', cases: [{ with: 'cheer("Yay", 2)', lines: ['Yay', 'Yay'] }], message: 'Your function does not use `word` or `times` correctly yet.' },
           ],
-          hints: ['Gebruik `times` als eindwaarde van een for-lus binnen de functie.'],
+          hints: ['Use `times` as the end value of a for loop inside the function.'],
           solution: 'local function cheer(word, times)\n    for i = 1, times do\n        print(word)\n    end\nend\n\ncheer("Go!", 3)',
           concepts: ['parameters', 'loops'],
-          success: 'Getest met ("Go!", 3) en ("Hup", 2).',
+          success: 'Tested with ("Go!", 3) and ("Yay", 2).',
         },
       ],
-      summary: ['Parameters staan tussen de haakjes bij het maken van een functie.', 'Argumenten zijn de waarden die je meegeeft bij het aanroepen.', 'De volgorde bepaalt welk argument bij welke parameter hoort.'],
+      summary: ['Parameters go between the brackets when you create a function.', 'Arguments are the values you pass when you call it.', 'The order decides which argument belongs to which parameter.'],
     },
 
     // ------------------------------------------------------------------ 3
     {
       id: 'c4-return',
       courseId: 'course-4',
-      title: 'return: een antwoord teruggeven',
-      objective: 'Je kunt een functie een waarde laten teruggeven en die waarde gebruiken.',
+      title: 'return: giving back an answer',
+      objective: 'You can make a function give back a value and use that value.',
       minutes: 11,
       prerequisites: ['parameters'],
       concepts: ['return-values'],
       steps: [
         {
           type: 'explain',
-          body: `Tot nu toe printten je functies iets. Vaak wil je juist een **antwoord** terugkrijgen om verder mee te rekenen. Dat doe je met \`return\`.
+          body: `So far your functions printed something. Often you actually want to get an **answer** back to keep calculating with. You do that with \`return\`.
 
-\`return waarde\` stopt de functie en geeft de waarde terug aan de plek waar de functie werd aangeroepen. Die waarde kun je opslaan in een variabele.
+\`return value\` stops the function and gives the value back to the place where the function was called. You can store that value in a variable.
 
-**print** laat iets zien. **return** geeft iets terug. Dat is een groot verschil: met een geprinte waarde kan je code verder niets.`,
+**print** shows something. **return** gives something back. That is a big difference: your code cannot do anything else with a printed value.`,
         },
         {
           type: 'code',
           code: 'local function double(number)\n    return number * 2\nend\n\nlocal result = double(21)\nprint(result)\nprint(double(5) + 1)',
           runnable: true,
           annotations: [
-            { token: 'return', text: '`return` geeft de waarde terug en stopt de functie meteen.' },
-            { token: 'result', text: 'De teruggegeven waarde (42) wordt opgeslagen in `result`.' },
+            { token: 'return', text: '`return` gives the value back and stops the function immediately.' },
+            { token: 'result', text: 'The returned value (42) is stored in `result`.' },
           ],
-          after: '`double(5) + 1`: eerst geeft de functie 10 terug, daarna telt Luau er 1 bij op.',
+          after: '`double(5) + 1`: first the function gives back 10, then Luau adds 1.',
         },
         {
           type: 'quiz',
           id: 'c4-return-q1',
-          question: 'Wat is het verschil tussen `print(x)` en `return x` in een functie?',
+          question: 'What is the difference between `print(x)` and `return x` in a function?',
           concepts: ['return-values'],
           options: [
-            { text: 'print laat x zien; return geeft x terug zodat je ermee verder kunt', correct: true, feedback: 'Precies.' },
-            { text: 'Er is geen verschil', feedback: 'Met een geprinte waarde kan je code niets meer doen; met een teruggegeven waarde wel.' },
-            { text: 'return laat x groter zien in de Output', feedback: 'return laat helemaal niets zien.' },
+            { text: 'print shows x; return gives x back so you can keep working with it', correct: true, feedback: 'Exactly.' },
+            { text: 'There is no difference', feedback: 'Your code cannot do anything more with a printed value; with a returned value it can.' },
+            { text: 'return shows x bigger in the Output', feedback: 'return shows nothing at all.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c4-return-ex1',
           mode: 'guided',
-          title: 'Prijs met korting',
-          prompt: 'Maak `applyDiscount(price, percent)` die de prijs **na korting** teruggeeft. Voorbeeld: `applyDiscount(200, 25)` geeft `150`.',
-          starter: 'local function applyDiscount(price, percent)\n    -- jouw code\nend\n\nprint(applyDiscount(200, 25))',
+          title: 'Price with discount',
+          prompt: 'Create `applyDiscount(price, percent)` that returns the price **after the discount**. Example: `applyDiscount(200, 25)` gives `150`.',
+          starter: 'local function applyDiscount(price, percent)\n    -- your code\nend\n\nprint(applyDiscount(200, 25))',
           checks: [
-            { kind: 'uses', sequence: ['return'], message: 'Gebruik `return` om de nieuwe prijs terug te geven.' },
-            { kind: 'test', harness: 'if applyDiscount(200, 25) ~= 150 then return "applyDiscount(200, 25) moet 150 teruggeven." end\nif applyDiscount(80, 50) ~= 40 then return "applyDiscount(80, 50) moet 40 teruggeven." end\nif applyDiscount(99, 0) ~= 99 then return "applyDiscount(99, 0) moet 99 teruggeven." end\nreturn true', message: '' },
+            { kind: 'uses', sequence: ['return'], message: 'Use `return` to give back the new price.' },
+            { kind: 'test', harness: 'if applyDiscount(200, 25) ~= 150 then return "applyDiscount(200, 25) must return 150." end\nif applyDiscount(80, 50) ~= 40 then return "applyDiscount(80, 50) must return 40." end\nif applyDiscount(99, 0) ~= 99 then return "applyDiscount(99, 0) must return 99." end\nreturn true', message: '' },
           ],
-          hints: ['De korting is `price * percent / 100`.', 'return price - price * percent / 100'],
+          hints: ['The discount is `price * percent / 100`.', 'return price - price * percent / 100'],
           solution: 'local function applyDiscount(price, percent)\n    return price - price * percent / 100\nend\n\nprint(applyDiscount(200, 25))',
           concepts: ['return-values', 'parameters'],
-          success: 'De Academy testte je functie met drie verschillende prijzen en kortingen. Allemaal goed.',
+          success: 'The Academy tested your function with three different prices and discounts. All good.',
         },
         {
           type: 'exercise',
           id: 'c4-return-ex2',
           mode: 'independent',
-          title: 'Mag ik dit kopen?',
-          prompt: 'Maak `canAfford(coins, price)` die `true` teruggeeft als de speler genoeg coins heeft (minstens de prijs), en anders `false`.',
+          title: 'Can I buy this?',
+          prompt: 'Create `canAfford(coins, price)` that returns `true` when the player has enough coins (at least the price), and otherwise `false`.',
           starter: '',
           checks: [
-            { kind: 'test', harness: 'return typeof(canAfford) == "function" or "Maak een functie met de naam `canAfford`."', message: '' },
-            { kind: 'test', harness: 'if canAfford(100, 100) ~= true then return "canAfford(100, 100) moet true zijn." end\nif canAfford(150, 100) ~= true then return "canAfford(150, 100) moet true zijn." end\nif canAfford(99, 100) ~= false then return "canAfford(99, 100) moet false zijn." end\nreturn true', message: '' },
+            { kind: 'test', harness: 'return typeof(canAfford) == "function" or "Create a function named `canAfford`."', message: '' },
+            { kind: 'test', harness: 'if canAfford(100, 100) ~= true then return "canAfford(100, 100) must be true." end\nif canAfford(150, 100) ~= true then return "canAfford(150, 100) must be true." end\nif canAfford(99, 100) ~= false then return "canAfford(99, 100) must be false." end\nreturn true', message: '' },
           ],
-          hints: ['Een vergelijking geeft al true of false: je kunt hem direct teruggeven.', 'return coins >= price'],
+          hints: ['A comparison already gives true or false: you can return it directly.', 'return coins >= price'],
           solution: 'local function canAfford(coins, price)\n    return coins >= price\nend',
           concepts: ['return-values', 'comparisons'],
-          success: 'Kort en correct. Zulke kleine functies maken je winkelcode leesbaar.',
+          success: 'Short and correct. Small functions like this make your shop code easy to read.',
         },
       ],
-      summary: ['`return waarde` geeft een waarde terug en stopt de functie.', 'De teruggegeven waarde kun je opslaan of direct gebruiken.', 'print laat zien; return geeft terug.'],
+      summary: ['`return value` gives back a value and stops the function.', 'You can store the returned value or use it directly.', 'print shows; return gives back.'],
     },
 
     // ------------------------------------------------------------------ 4
     {
       id: 'c4-scope-callbacks',
       courseId: 'course-4',
-      title: 'Scope, anonieme functies en callbacks',
-      objective: 'Je begrijpt dat variabelen in een functie lokaal zijn, en dat je een functie kunt doorgeven als waarde.',
+      title: 'Scope, anonymous functions and callbacks',
+      objective: 'You understand that variables in a function are local, and that you can pass a function around as a value.',
       minutes: 11,
       prerequisites: ['functions', 'return-values'],
       concepts: ['functions'],
       steps: [
         {
           type: 'explain',
-          body: `**Scope binnen functies.** Een variabele die je **in** een functie maakt, bestaat alleen in die functie. Variabelen van **buiten** kan de functie wel gebruiken en veranderen.
+          body: `**Scope inside functions.** A variable you create **inside** a function only exists in that function. The function can still use and change variables from **outside**.
 
-**Functies zijn waarden.** Je kunt een functie in een variabele stoppen, of aan een andere functie meegeven. Een functie zonder naam heet een **anonieme functie**: \`function() ... end\`.
+**Functions are values.** You can put a function in a variable, or pass it to another function. A function without a name is called an **anonymous function**: \`function() ... end\`.
 
-Een functie die je meegeeft om later uit te voeren, heet een **callback**. Dit is extreem belangrijk in Roblox: bij events zeg je "als dit gebeurt, voer dán deze functie uit".`,
+A function you pass along to be run later is called a **callback**. This is extremely important in Roblox: with events you say "when this happens, run this function".`,
         },
         {
           type: 'code',
           code: 'local total = 0\n\nlocal function addCoins(amount)\n    local bonus = 5\n    total += amount + bonus\nend\n\naddCoins(10)\naddCoins(20)\nprint(total)\nprint(bonus)',
           runnable: true,
-          after: '`total` (van buiten) is aangepast: 40. `bonus` bestond alleen in de functie, dus buiten is hij `nil`.',
+          after: '`total` (from outside) was changed: 40. `bonus` only existed inside the function, so outside it is `nil`.',
         },
         {
           type: 'code',
-          title: 'Een callback',
-          code: 'local function doTwice(callback)\n    callback()\n    callback()\nend\n\ndoTwice(function()\n    print("Hallo!")\nend)',
+          title: 'A callback',
+          code: 'local function doTwice(callback)\n    callback()\n    callback()\nend\n\ndoTwice(function()\n    print("Hello!")\nend)',
           runnable: true,
-          after: 'De anonieme functie wordt meegegeven als argument, en `doTwice` roept hem twee keer aan. In Roblox schrijf je straks: `part.Touched:Connect(function() ... end)`. Dat is precies dit patroon.',
+          after: 'The anonymous function is passed as an argument, and `doTwice` calls it twice. In Roblox you will soon write `part.Touched:Connect(function() ... end)`. That is exactly this pattern.',
         },
         {
           type: 'predict',
           id: 'c4-scope-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local function setup()\n    local secret = 42\nend\nsetup()\nprint(secret)',
           concepts: ['functions'],
           options: [
-            { text: '42', feedback: '`secret` is een local binnen de functie: buiten de functie bestaat hij niet.' },
-            { text: 'nil', correct: true, feedback: 'Juist. `secret` bestaat alleen binnen `setup`.' },
+            { text: '42', feedback: '`secret` is a local inside the function: outside the function it does not exist.' },
+            { text: 'nil', correct: true, feedback: 'Right. `secret` only exists inside `setup`.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c4-callback-ex1',
           mode: 'independent',
-          title: 'Doe iets met elk getal',
-          prompt: 'Maak `forEachNumber(count, callback)`: die roept `callback(i)` aan voor i = 1 tot en met `count`.\nRoep hem daarna aan met `3` en een anonieme functie die `"Getal " .. n` print.',
+          title: 'Do something with every number',
+          prompt: 'Create `forEachNumber(count, callback)`: it calls `callback(i)` for i = 1 up to `count`.\nThen call it with `3` and an anonymous function that prints `"Number " .. n`.',
           starter: '',
           checks: [
-            { kind: 'output', lines: ['Getal 1', 'Getal 2', 'Getal 3'], message: 'De Output moet Getal 1, Getal 2, Getal 3 zijn.' },
-            { kind: 'uses', sequence: ['function', '(', 'n', ')'], message: 'Geef een anonieme functie met parameter `n` mee: `function(n) ... end`.' },
-            { kind: 'test', harness: 'local seen = 0\nforEachNumber(4, function(x) seen += x end)\nif seen ~= 10 then return "forEachNumber(4, ...) moet de callback aanroepen met 1, 2, 3 en 4." end\nreturn true', message: '' },
+            { kind: 'output', lines: ['Number 1', 'Number 2', 'Number 3'], message: 'The Output must be Number 1, Number 2, Number 3.' },
+            { kind: 'uses', sequence: ['function', '(', 'n', ')'], message: 'Pass an anonymous function with parameter `n`: `function(n) ... end`.' },
+            { kind: 'test', harness: 'local seen = 0\nforEachNumber(4, function(x) seen += x end)\nif seen ~= 10 then return "forEachNumber(4, ...) must call the callback with 1, 2, 3 and 4." end\nreturn true', message: '' },
           ],
-          hints: ['In forEachNumber: een for-lus die `callback(i)` aanroept.', 'forEachNumber(3, function(n)\n    print("Getal " .. n)\nend)'],
-          solution: 'local function forEachNumber(count, callback)\n    for i = 1, count do\n        callback(i)\n    end\nend\n\nforEachNumber(3, function(n)\n    print("Getal " .. n)\nend)',
+          hints: ['In forEachNumber: a for loop that calls `callback(i)`.', 'forEachNumber(3, function(n)\n    print("Number " .. n)\nend)'],
+          solution: 'local function forEachNumber(count, callback)\n    for i = 1, count do\n        callback(i)\n    end\nend\n\nforEachNumber(3, function(n)\n    print("Number " .. n)\nend)',
           concepts: ['functions', 'parameters'],
-          success: 'Je schreef een functie die een andere functie aanroept. Dit is de kern van events in Roblox.',
+          success: 'You wrote a function that calls another function. This is the heart of events in Roblox.',
         },
       ],
-      summary: ['Variabelen in een functie zijn lokaal: buiten de functie bestaan ze niet.', 'Een functie kun je als waarde doorgeven.', 'Een callback is een functie die later voor je wordt aangeroepen, zoals bij Roblox-events.'],
+      summary: ['Variables in a function are local: they do not exist outside the function.', 'You can pass a function around as a value.', 'A callback is a function that is called for you later, like with Roblox events.'],
     },
 
     // ------------------------------------------------------------------ 5 project
     {
       id: 'c4-project-damage',
       courseId: 'course-4',
-      title: 'Project: schadeberekening',
-      objective: 'Je bouwt een herbruikbare schadefunctie zoals in een echte combat-game.',
+      title: 'Project: damage calculation',
+      objective: 'You build a reusable damage function like in a real combat game.',
       minutes: 15,
       prerequisites: ['return-values', 'conditions'],
       concepts: ['functions', 'return-values', 'conditions'],
       steps: [
         {
           type: 'explain',
-          body: `In een game met gevechten moet schade overal op dezelfde manier berekend worden: bij zwaarden, pijlen en spreuken. Daarom maak je er één functie voor.
+          body: `In a game with fights, damage has to be calculated the same way everywhere: for swords, arrows and spells. That is why you make one function for it.
 
-Regels van deze game:
-- schade = \`baseDamage\` × \`multiplier\`
-- bij een **critical hit** wordt de schade verdubbeld
-- het pantser van de tegenstander (\`armor\`) gaat er daarna vanaf
-- schade is nooit lager dan **0**`,
+Rules of this game:
+- damage = \`baseDamage\` × \`multiplier\`
+- on a **critical hit** the damage is doubled
+- the opponent's armour (\`armor\`) is subtracted after that
+- damage is never lower than **0**`,
         },
         {
           type: 'exercise',
           id: 'c4-project-ex1',
           mode: 'independent',
           title: 'calculateDamage',
-          prompt: 'Maak `calculateDamage(baseDamage, multiplier, isCritical, armor)` die de schade **teruggeeft** volgens de regels hierboven.\nVoorbeelden:\n- `calculateDamage(10, 2, false, 5)` → 15\n- `calculateDamage(10, 2, true, 5)` → 35\n- `calculateDamage(10, 1, false, 50)` → 0',
-          starter: 'local function calculateDamage(baseDamage, multiplier, isCritical, armor)\n    -- jouw code\nend\n\nprint(calculateDamage(10, 2, false, 5))',
+          prompt: 'Create `calculateDamage(baseDamage, multiplier, isCritical, armor)` that **returns** the damage according to the rules above.\nExamples:\n- `calculateDamage(10, 2, false, 5)` → 15\n- `calculateDamage(10, 2, true, 5)` → 35\n- `calculateDamage(10, 1, false, 50)` → 0',
+          starter: 'local function calculateDamage(baseDamage, multiplier, isCritical, armor)\n    -- your code\nend\n\nprint(calculateDamage(10, 2, false, 5))',
           checks: [
-            { kind: 'uses', sequence: ['return'], message: 'Geef de schade terug met `return`.' },
-            { kind: 'test', harness: 'local cases = { {10, 2, false, 5, 15}, {10, 2, true, 5, 35}, {10, 1, false, 50, 0}, {7, 3, true, 0, 42}, {1, 1, false, 1, 0} }\nfor _, c in cases do\n    local got = calculateDamage(c[1], c[2], c[3], c[4])\n    if got ~= c[5] then\n        return `calculateDamage({c[1]}, {c[2]}, {tostring(c[3])}, {c[4]}) gaf {tostring(got)}, maar moet {c[5]} zijn.`\n    end\nend\nreturn true', message: '' },
+            { kind: 'uses', sequence: ['return'], message: 'Give back the damage with `return`.' },
+            { kind: 'test', harness: 'local cases = { {10, 2, false, 5, 15}, {10, 2, true, 5, 35}, {10, 1, false, 50, 0}, {7, 3, true, 0, 42}, {1, 1, false, 1, 0} }\nfor _, c in cases do\n    local got = calculateDamage(c[1], c[2], c[3], c[4])\n    if got ~= c[5] then\n        return `calculateDamage({c[1]}, {c[2]}, {tostring(c[3])}, {c[4]}) gave {tostring(got)}, but it must be {c[5]}.`\n    end\nend\nreturn true', message: '' },
           ],
-          hints: ['Begin met `local damage = baseDamage * multiplier`.', 'Verdubbel met een if: `if isCritical then damage *= 2 end`.', 'Trek armor af en gebruik daarna `if damage < 0 then damage = 0 end` (of `math.max(0, damage)`).'],
+          hints: ['Start with `local damage = baseDamage * multiplier`.', 'Double it with an if: `if isCritical then damage *= 2 end`.', 'Subtract armor and then use `if damage < 0 then damage = 0 end` (or `math.max(0, damage)`).'],
           solution: 'local function calculateDamage(baseDamage, multiplier, isCritical, armor)\n    local damage = baseDamage * multiplier\n    if isCritical then\n        damage *= 2\n    end\n    damage -= armor\n    if damage < 0 then\n        damage = 0\n    end\n    return damage\nend\n\nprint(calculateDamage(10, 2, false, 5))',
           concepts: ['functions', 'return-values', 'conditions'],
-          success: 'Je functie is getest met vijf verschillende gevechtssituaties. Deze functie zou zo in een echte Roblox-game passen.',
+          success: 'Your function was tested with five different combat situations. It would fit right into a real Roblox game.',
         },
       ],
-      summary: ['Eén functie voor één regel van je game: overal dezelfde berekening.', 'Je combineerde parameters, if-statements en return.', 'Volgende cursus: veel gegevens bewaren in tabellen.'],
+      summary: ['One function for one rule of your game: the same calculation everywhere.', 'You combined parameters, if statements and return.', 'Next course: storing lots of data in tables.'],
     },
   ],
 };

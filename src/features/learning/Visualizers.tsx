@@ -8,13 +8,14 @@ import { CodeEditor } from '@/editor/CodeEditor';
 import { Prose, inline } from '@/components/ui';
 import { call } from '@/api';
 import { codeTokens } from '@shared/luau-lexer';
+import { t } from '@/i18n';
 
 function declaredLocals(code: string): string[] {
-  const t = codeTokens(code);
+  const toks = codeTokens(code);
   const names: string[] = [];
-  t.forEach((tok, i) => {
-    if (tok.value === 'local' && t[i + 1]?.type === 'name' && t[i + 2]?.value !== '(' && t[i + 1].value !== 'function') {
-      if (!names.includes(t[i + 1].value)) names.push(t[i + 1].value);
+  toks.forEach((tok, i) => {
+    if (tok.value === 'local' && toks[i + 1]?.type === 'name' && toks[i + 2]?.value !== '(' && toks[i + 1].value !== 'function') {
+      if (!names.includes(toks[i + 1].value)) names.push(toks[i + 1].value);
     }
   });
   return names.slice(0, 8);
@@ -26,7 +27,7 @@ export function VariableVisualizer({ initial, title, body }: { initial: string; 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(async () => {
+    const timer = setTimeout(async () => {
       const names = declaredLocals(code);
       if (!names.length) {
         setBoxes([]);
@@ -35,13 +36,13 @@ export function VariableVisualizer({ initial, title, body }: { initial: string; 
       }
       const r = await call('luau:evalRun', `${code}\nreturn ${names.map((n) => `typeof(${n}), tostring(${n})`).join(', ')}`);
       if (!r.ok) {
-        setError('De code bevat nog een fout. Pas hem aan om de doosjes te zien.');
+        setError(t('The code still has a mistake. Change it to see the boxes.'));
         return;
       }
       setError(null);
       setBoxes(names.map((n, i) => ({ name: n, type: String(r.values[i * 2] ?? 'nil'), value: String(r.values[i * 2 + 1] ?? 'nil') })));
     }, 350);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, [code]);
 
   return (
@@ -49,7 +50,7 @@ export function VariableVisualizer({ initial, title, body }: { initial: string; 
       {title && <h2 className="step-title">{title}</h2>}
       {body && <Prose text={body} />}
       <div className="viz">
-        <CodeEditor value={code} onChange={setCode} minLines={3} ariaLabel="Code voor de variabelen-visualisatie" />
+        <CodeEditor value={code} onChange={setCode} minLines={3} ariaLabel={t('Code for the variable visualisation')} />
         <div className="viz-boxes" aria-live="polite">
           {boxes.map((b) => (
             <div key={b.name} className="var-box">
@@ -58,7 +59,7 @@ export function VariableVisualizer({ initial, title, body }: { initial: string; 
               <div className="var-type">{b.type}</div>
             </div>
           ))}
-          {!boxes.length && !error && <div className="faint small">Maak een variabele met <code>local</code> om een doosje te zien.</div>}
+          {!boxes.length && !error && <div className="faint small">{inline(t('Create a variable with `local` to see a box.'))}</div>}
           {error && <div className="small" style={{ color: 'var(--warning)' }}>{error}</div>}
         </div>
       </div>
@@ -70,25 +71,25 @@ export function VariableVisualizer({ initial, title, body }: { initial: string; 
 export function ConditionVisualizer() {
   const [coins, setCoins] = useState(120);
   const [limit] = useState(100);
-  const code = `local coins = ${coins}\n\nif coins >= ${limit} then\n    print("Je kunt het kopen!")\nelse\n    print("Nog niet genoeg coins")\nend`;
+  const code = `local coins = ${coins}\n\nif coins >= ${limit} then\n    print("You can buy it!")\nelse\n    print("Not enough coins yet")\nend`;
   const [out, setOut] = useState<string[]>([]);
   useEffect(() => {
-    const t = setTimeout(async () => setOut((await call('luau:evalRun', code)).output.map((o) => o.text)), 150);
-    return () => clearTimeout(t);
+    const timer = setTimeout(async () => setOut((await call('luau:evalRun', code)).output.map((o) => o.text)), 150);
+    return () => clearTimeout(timer);
   }, [code]);
   const result = coins >= limit;
   return (
     <div className="viz-card">
-      <div className="viz-head"><h3>Hoe een if-statement beslist</h3><span className="badge">echte uitvoering</span></div>
+      <div className="viz-head"><h3>{t('How an if statement decides')}</h3><span className="badge">{t('really run')}</span></div>
       <label className="field" style={{ maxWidth: 360 }}>
-        <span className="small muted">Waarde van <code>coins</code>: <strong className="mono">{coins}</strong></span>
-        <input type="range" min={0} max={250} value={coins} onChange={(e) => setCoins(Number(e.target.value))} aria-label="Waarde van coins" />
+        <span className="small muted">{inline(t('Value of `coins`:'))} <strong className="mono">{coins}</strong></span>
+        <input type="range" min={0} max={250} value={coins} onChange={(e) => setCoins(Number(e.target.value))} aria-label={t('Value of coins')} />
       </label>
       <div className="trace mono">
         <div><span className="faint">1</span> coins = {coins}</div>
         <div><span className="faint">2</span> {coins} &gt;= {limit}</div>
-        <div><span className="faint">3</span> <span className={result ? 'ok' : 'no'}>{result ? 'TRUE' : 'FALSE'}</span> → {result ? 'het then-blok draait' : 'het else-blok draait'}</div>
-        <div><span className="faint">→</span> Resultaat: <strong>{out.join(' ') || '…'}</strong></div>
+        <div><span className="faint">3</span> <span className={result ? 'ok' : 'no'}>{result ? 'TRUE' : 'FALSE'}</span> → {result ? t('the then block runs') : t('the else block runs')}</div>
+        <div><span className="faint">→</span> {t('Result:')} <strong>{out.join(' ') || '…'}</strong></div>
       </div>
     </div>
   );
@@ -107,25 +108,25 @@ export function LoopVisualizer() {
   }, [code]);
   useEffect(() => {
     if (shown >= out.length) return;
-    const t = setTimeout(() => setShown((s) => s + 1), 380);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setShown((s) => s + 1), 380);
+    return () => clearTimeout(timer);
   }, [shown, out]);
   return (
     <div className="viz-card">
-      <div className="viz-head"><h3>Een for-lus, stap voor stap</h3><span className="badge">echte uitvoering</span></div>
+      <div className="viz-head"><h3>{t('A for loop, step by step')}</h3><span className="badge">{t('really run')}</span></div>
       <div className="row" style={{ gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
         <pre className="mono trace" style={{ margin: 0 }}>{code}</pre>
         <div className="col" style={{ gap: 4, minWidth: 200 }}>
           {out.slice(0, shown).map((o, i) => (
-            <div key={i} className="iter mono">Herhaling {i + 1} <ArrowRight size={12} /> <strong>{o}</strong></div>
+            <div key={i} className="iter mono">{t('Repetition {n}', { n: i + 1 })} <ArrowRight size={12} /> <strong>{o}</strong></div>
           ))}
         </div>
       </div>
       <div className="row">
-        <label className="small muted">Aantal herhalingen</label>
-        <input type="range" min={1} max={8} value={n} onChange={(e) => setN(Number(e.target.value))} aria-label="Aantal herhalingen" />
+        <label className="small muted">{t('Number of repetitions')}</label>
+        <input type="range" min={1} max={8} value={n} onChange={(e) => setN(Number(e.target.value))} aria-label={t('Number of repetitions')} />
         <span className="mono">{n}</span>
-        <button className="btn sm" onClick={() => setShown(0)}><Play size={12} /> Opnieuw afspelen</button>
+        <button className="btn sm" onClick={() => setShown(0)}><Play size={12} /> {t('Play again')}</button>
       </div>
     </div>
   );
@@ -137,20 +138,20 @@ export function EventVisualizer() {
   const [pulse, setPulse] = useState(0);
   const fire = () => {
     setPulse((p) => p + 1);
-    setLog((l) => [...l.slice(-4), connected ? 'Event afgevuurd → callback draait: print("Geklikt!")' : 'Event afgevuurd → geen verbinding, er gebeurt niets']);
+    setLog((l) => [...l.slice(-4), connected ? t('Event fired → callback runs: {code}', { code: 'print("Clicked!")' }) : t('Event fired → no connection, nothing happens')]);
   };
   return (
     <div className="viz-card">
-      <div className="viz-head"><h3>Event → verbinding → callback</h3><span className="badge warning">simulatie van Roblox</span></div>
-      <pre className="mono trace" style={{ margin: 0 }}>{'button.MouseButton1Click:Connect(function()\n    print("Geklikt!")\nend)'}</pre>
+      <div className="viz-head"><h3>{t('Event → connection → callback')}</h3><span className="badge warning">{t('simulation of Roblox')}</span></div>
+      <pre className="mono trace" style={{ margin: 0 }}>{'button.MouseButton1Click:Connect(function()\n    print("Clicked!")\nend)'}</pre>
       <div className="event-flow">
-        <button className="btn" onClick={fire}><MousePointerClick size={15} /> Klik op de knop</button>
+        <button className="btn" onClick={fire}><MousePointerClick size={15} /> {t('Click the button')}</button>
         <div className={`flow-line ${connected ? 'on' : 'off'}`} key={pulse}><span className="dot" /></div>
-        <div className={`flow-node ${connected ? '' : 'dim'}`}>callback-functie</div>
+        <div className={`flow-node ${connected ? '' : 'dim'}`}>{t('callback function')}</div>
       </div>
       <div className="row">
         <button className="btn sm" onClick={() => setConnected(!connected)}>{connected ? ':Disconnect()' : ':Connect()'}</button>
-        <span className="small muted">{connected ? 'De functie is verbonden met het event.' : 'De verbinding is verbroken.'}</span>
+        <span className="small muted">{connected ? t('The function is connected to the event.') : t('The connection is broken.')}</span>
       </div>
       <div className="console" style={{ minHeight: 60 }}>{log.map((l, i) => <div key={i} className="line">{l}</div>)}</div>
     </div>
@@ -169,27 +170,27 @@ export function ClientServerVisualizer() {
   };
   return (
     <div className="viz-card">
-      <div className="viz-head"><h3>RemoteEvent: client vraagt, server beslist</h3><span className="badge warning">simulatie van Roblox</span></div>
+      <div className="viz-head"><h3>{t('RemoteEvent: the client asks, the server decides')}</h3><span className="badge warning">{t('simulation of Roblox')}</span></div>
       <div className="cs-grid">
         <div className="cs-col">
-          <div className="cs-title"><Laptop size={15} /> CLIENT (apparaat van de speler)</div>
-          <div className="small muted">LocalScript: knop "Koop zwaard ({price} coins)"</div>
-          <label className="row small"><input type="checkbox" checked={cheat} onChange={(e) => setCheat(e.target.checked)} /> Speler probeert vals te spelen: stuurt "ik heb 9999 coins"</label>
-          <button className="btn primary sm" onClick={send}>buyEvent:FireServer("Zwaard"{cheat ? ', 9999' : ''})</button>
+          <div className="cs-title"><Laptop size={15} /> {t("CLIENT (the player's device)")}</div>
+          <div className="small muted">{t('LocalScript: button "Buy sword ({price} coins)"', { price })}</div>
+          <label className="row small"><input type="checkbox" checked={cheat} onChange={(e) => setCheat(e.target.checked)} /> {t('Player tries to cheat: sends "I have 9999 coins"')}</label>
+          <button className="btn primary sm" onClick={send}>buyEvent:FireServer("Sword"{cheat ? ', 9999' : ''})</button>
         </div>
         <div className="cs-wire">
-          <div className={`packet ${phase}`}>{cheat ? '"Zwaard", 9999' : '"Zwaard"'}</div>
+          <div className={`packet ${phase}`}>{cheat ? '"Sword", 9999' : '"Sword"'}</div>
         </div>
         <div className="cs-col">
           <div className="cs-title"><Server size={15} /> SERVER (Roblox)</div>
-          <div className="small muted">Script: echte coins van deze speler (alleen de server weet dit):</div>
-          <div className="row"><input type="range" min={0} max={200} value={coins} onChange={(e) => setCoins(Number(e.target.value))} aria-label="Echte coins op de server" /><span className="mono">{coins}</span></div>
+          <div className="small muted">{t("Script: this player's real coins (only the server knows this):")}</div>
+          <div className="row"><input type="range" min={0} max={200} value={coins} onChange={(e) => setCoins(Number(e.target.value))} aria-label={t('Real coins on the server')} /><span className="mono">{coins}</span></div>
           {phase === 'done' && (
             <div className={`feedback ${verdict ? 'ok' : 'bad'}`}>
               {verdict ? <ShieldCheck size={16} /> : <ShieldX size={16} />}
               <div className="small">
-                {inline(`Server controleert zijn eigen gegevens: \`${coins} >= ${price}\` is **${verdict ? 'true' : 'false'}**. ${verdict ? 'Aankoop goedgekeurd.' : 'Aankoop geweigerd.'}`)}
-                {cheat && <div style={{ marginTop: 4 }}>{inline('Het getal 9999 van de client wordt **genegeerd**: de server vertrouwt de client nooit.')}</div>}
+                {inline(`${t('The server checks its own data: `{check}` is **{result}**.', { check: `${coins} >= ${price}`, result: verdict ? 'true' : 'false' })} ${verdict ? t('Purchase approved.') : t('Purchase refused.')}`)}
+                {cheat && <div style={{ marginTop: 4 }}>{inline(t('The number 9999 from the client is **ignored**: the server never trusts the client.'))}</div>}
               </div>
             </div>
           )}

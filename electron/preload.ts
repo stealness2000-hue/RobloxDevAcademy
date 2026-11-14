@@ -12,8 +12,8 @@ const CHANNELS = new Set([
   'progress:snapshot', 'progress:openLesson', 'progress:saveLessonState', 'progress:completeLesson', 'progress:recordAttempt', 'progress:recordQuiz',
   'luau:run', 'luau:evalRun', 'luau:check', 'luau:autocomplete', 'files:list', 'files:create', 'files:rename', 'files:remove', 'files:save', 'files:saveDraft',
   'files:revisions', 'files:restore', 'stats:get', 'data:export', 'data:backupNow', 'data:listBackups', 'data:restoreBackup', 'data:reset',
-  'data:deleteProfile', 'settings:pickBackground', 'code:run', 'code:toolchain', 'ai:status', 'ai:setKey', 'ai:clearKey', 'mentor:aiScript', 'mentor:cached', 'studio:status', 'studio:startPairing', 'studio:unpair', 'studio:openExercise', 'studio:requestCheck',
-  'studio:installPlugin', 'studio:push', 'studio:resolveConflict', 'studio:clearLogs',
+  'data:deleteProfile', 'settings:pickBackground', 'code:run', 'code:toolchain',
+  'license:status', 'license:activate', 'license:deactivate', 'mt:status', 'mt:download', 'mt:remove', 'mt:translate',
 ]);
 
 contextBridge.exposeInMainWorld('academy', {

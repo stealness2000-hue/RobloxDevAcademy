@@ -1,9 +1,9 @@
 {
-  "name": "roblox-dev-academy",
-  "productName": "Roblox Dev Academy",
-  "version": "0.5.0",
-  "description": "Leer Roblox-programmeren met Luau, vanaf nul.",
-  "author": "Roblox Dev Academy",
+  "name": "lumora-academy",
+  "productName": "Lumora Academy",
+  "version": "0.6.0",
+  "description": "Learn to code Roblox games with Luau, from zero. Also C++ and Java.",
+  "author": "Lumora Academy",
   "license": "UNLICENSED",
   "private": true,
   "type": "module",
@@ -16,11 +16,10 @@
     "test": "vitest run",
     "dist": "npm run build && node scripts/package-win.mjs",
     "test:e2e": "node tests/e2e/acceptance.mjs",
-    "tour": "node tests/e2e/tour.mjs",
-    "test:studio": "node tests/e2e/studio-bridge.mjs"
+    "tour": "node tests/e2e/tour.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.8.0",
+    "@huggingface/transformers": "^4.3.2",
     "@luau-rs/luau": "0.739.0",
     "lucide-react": "1.72.0",
     "monaco-editor": "0.57.0",
@@ -48,8 +47,8 @@
     "wait-on": "9.5.1"
   },
   "build": {
-    "appId": "academy.robloxdev.app",
-    "productName": "Roblox Dev Academy",
+    "appId": "academy.lumora.app",
+    "productName": "Lumora Academy",
     "directories": {
       "output": "release",
       "buildResources": "assets"
@@ -61,13 +60,10 @@
     ],
     "asarUnpack": [
       "node_modules/@luau-rs/luau/**",
-      "node_modules/sql.js/dist/**"
-    ],
-    "extraResources": [
-      {
-        "from": "studio-plugin",
-        "to": "studio-plugin"
-      }
+      "node_modules/sql.js/dist/**",
+      "node_modules/onnxruntime-node/**",
+      "node_modules/sharp/**",
+      "node_modules/@img/**"
     ],
     "win": {
       "target": [
@@ -80,9 +76,9 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "Roblox Dev Academy",
+      "shortcutName": "Lumora Academy",
       "deleteAppDataOnUninstall": false,
-      "artifactName": "Roblox-Dev-Academy-Setup.${ext}"
+      "artifactName": "Lumora-Academy-Setup.${ext}"
     },
     "electronFuses": {
       "runAsNode": false,

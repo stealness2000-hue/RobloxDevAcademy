@@ -3,8 +3,8 @@ import type { Course } from './types';
 export const course5: Course = {
   id: 'course-5',
   number: 5,
-  title: 'Tabellen',
-  description: 'Lijsten en woordenboeken: inventarissen, instellingen en spelersgegevens bewaren.',
+  title: 'Tables',
+  description: 'Lists and dictionaries: storing inventories, settings and player data.',
   level: 'Beginner',
   planned: [],
   lessons: [
@@ -12,380 +12,380 @@ export const course5: Course = {
     {
       id: 'c5-arrays',
       courseId: 'course-5',
-      title: 'Lijsten (arrays)',
-      objective: 'Je kunt een lijst maken, een item ophalen met een index en de lengte opvragen met #.',
+      title: 'Lists (arrays)',
+      objective: 'You can create a list, get an item with an index and ask for the length with #.',
       minutes: 10,
       prerequisites: ['variables'],
       concepts: ['tables'],
       steps: [
         {
           type: 'explain',
-          body: `Een variabele bewaart één waarde. Maar een inventaris heeft veel items. Daarvoor heeft Luau **tabellen**: één waarde waar veel waarden in passen.
+          body: `A variable holds one value. But an inventory has lots of items. For that Luau has **tables**: one value that many values fit into.
 
-De eenvoudigste tabel is een **lijst** (programmeurs zeggen ook **array**). Je schrijft de waarden tussen **accolades** \`{ }\`, gescheiden door komma's.
+The simplest table is a **list** (programmers also say **array**). You write the values between **curly braces** \`{ }\`, separated by commas.
 
-Elk item heeft een **index**: zijn plek in de lijst. In Luau begint de eerste plek bij **1** (in veel andere talen bij 0).`,
+Every item has an **index**: its spot in the list. In Luau the first spot is **1** (in many other languages it is 0).`,
         },
         {
           type: 'code',
-          code: 'local inventory = {"Zwaard", "Schild", "Drank"}\n\nprint(inventory[1])\nprint(inventory[3])\nprint(#inventory)\nprint(inventory[4])',
+          code: 'local inventory = {"Sword", "Shield", "Potion"}\n\nprint(inventory[1])\nprint(inventory[3])\nprint(#inventory)\nprint(inventory[4])',
           runnable: true,
           annotations: [
-            { token: '{', text: '`{` begint een tabel; `}` sluit hem af.' },
-            { token: '[', text: '`inventory[1]` haalt het item op plek 1 op. Het getal tussen de blokhaken is de **index**.' },
-            { token: '#', text: '`#inventory` geeft het aantal items in de lijst: 3.' },
+            { token: '{', text: '`{` starts a table; `}` closes it.' },
+            { token: '[', text: '`inventory[1]` gets the item in spot 1. The number between the square brackets is the **index**.' },
+            { token: '#', text: '`#inventory` gives the number of items in the list: 3.' },
           ],
-          after: 'Plek 4 bestaat niet, dus je krijgt `nil`.',
+          after: 'Spot 4 does not exist, so you get `nil`.',
         },
         {
           type: 'explain',
-          title: 'Een item veranderen',
-          body: 'Met een index kun je ook een item vervangen: `inventory[2] = "IJzeren schild"`. Het oude item is dan weg.',
+          title: 'Changing an item',
+          body: 'With an index you can also replace an item: `inventory[2] = "Iron shield"`. The old item is then gone.',
         },
         {
           type: 'predict',
           id: 'c5-arrays-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local scores = {10, 25, 40}\nscores[1] = 99\nprint(scores[1] + scores[3])',
           concepts: ['tables'],
           options: [
-            { text: '50', feedback: 'scores[1] is veranderd in 99.' },
-            { text: '139', correct: true, feedback: 'Juist: 99 + 40.' },
-            { text: '65', feedback: 'scores[3] is 40, niet 25. Index 3 is de derde plek.' },
+            { text: '50', feedback: 'scores[1] was changed to 99.' },
+            { text: '139', correct: true, feedback: 'Right: 99 + 40.' },
+            { text: '65', feedback: 'scores[3] is 40, not 25. Index 3 is the third spot.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c5-arrays-ex1',
           mode: 'guided',
-          title: 'Je teamlijst',
-          prompt: 'Maak een lijst `team` met de namen **"Mia"**, **"Sam"** en **"Liv"**. Print daarna de **tweede** naam en het **aantal** namen.',
+          title: 'Your team list',
+          prompt: 'Create a list `team` with the names **"Mia"**, **"Sam"** and **"Liv"**. Then print the **second** name and the **number** of names.',
           starter: '',
           checks: [
-            { kind: 'test', harness: 'if typeof(team) ~= "table" then return "Maak een tabel `team` met accolades { }." end\nif #team ~= 3 or team[1] ~= "Mia" or team[2] ~= "Sam" or team[3] ~= "Liv" then return "`team` moet precies \\"Mia\\", \\"Sam\\" en \\"Liv\\" bevatten, in die volgorde." end\nreturn true', message: '' },
-            { kind: 'output', lines: ['Sam', '3'], message: 'De Output moet eerst **Sam** en dan **3** zijn.' },
-            { kind: 'uses', sequence: ['#', 'team'], message: 'Gebruik `#team` voor het aantal.' },
+            { kind: 'test', harness: 'if typeof(team) ~= "table" then return "Create a table `team` with curly braces { }." end\nif #team ~= 3 or team[1] ~= "Mia" or team[2] ~= "Sam" or team[3] ~= "Liv" then return "`team` must contain exactly \\"Mia\\", \\"Sam\\" and \\"Liv\\", in that order." end\nreturn true', message: '' },
+            { kind: 'output', lines: ['Sam', '3'], message: 'The Output must be **Sam** first and then **3**.' },
+            { kind: 'uses', sequence: ['#', 'team'], message: 'Use `#team` for the number.' },
           ],
-          hints: ['local team = {"Mia", "Sam", "Liv"}', 'team[2] is de tweede naam.'],
+          hints: ['local team = {"Mia", "Sam", "Liv"}', 'team[2] is the second name.'],
           solution: 'local team = {"Mia", "Sam", "Liv"}\nprint(team[2])\nprint(#team)',
           concepts: ['tables'],
-          success: 'Je eerste tabel.',
+          success: 'Your first table.',
         },
         {
           type: 'exercise',
           id: 'c5-arrays-ex2',
           mode: 'independent',
-          title: 'Laatste item',
-          prompt: 'Print het **laatste** item van `queue`, zonder het nummer zelf in te typen. Het moet werken hoe lang de lijst ook is.',
-          starter: 'local queue = {"Speler1", "Speler2", "Speler3", "Speler4"}\n',
+          title: 'Last item',
+          prompt: 'Print the **last** item of `queue`, without typing the number yourself. It must work however long the list is.',
+          starter: 'local queue = {"Player1", "Player2", "Player3", "Player4"}\n',
           checks: [
-            { kind: 'output', lines: ['Speler4'], message: 'De Output moet het laatste item zijn: **Speler4**.' },
-            { kind: 'variants', replace: 'local queue = {"Speler1", "Speler2", "Speler3", "Speler4"}', cases: [{ with: 'local queue = {"A", "B"}', lines: ['B'] }], message: 'Je code werkt niet voor een lijst van een andere lengte. Gebruik `#queue` als index.' },
+            { kind: 'output', lines: ['Player4'], message: 'The Output must be the last item: **Player4**.' },
+            { kind: 'variants', replace: 'local queue = {"Player1", "Player2", "Player3", "Player4"}', cases: [{ with: 'local queue = {"A", "B"}', lines: ['B'] }], message: 'Your code does not work for a list of a different length. Use `#queue` as the index.' },
           ],
-          hints: ['De lengte van de lijst is ook de index van het laatste item.', 'queue[#queue]'],
-          solution: 'local queue = {"Speler1", "Speler2", "Speler3", "Speler4"}\nprint(queue[#queue])',
+          hints: ['The length of the list is also the index of the last item.', 'queue[#queue]'],
+          solution: 'local queue = {"Player1", "Player2", "Player3", "Player4"}\nprint(queue[#queue])',
           concepts: ['tables'],
-          success: '`lijst[#lijst]` is een patroon dat je vaak gaat gebruiken.',
+          success: '`list[#list]` is a pattern you will use a lot.',
         },
       ],
-      summary: ['Een lijst maak je met `{a, b, c}`.', 'Indexen beginnen bij 1: `lijst[1]` is het eerste item.', '`#lijst` is het aantal items; een index die niet bestaat geeft `nil`.'],
+      summary: ['You create a list with `{a, b, c}`.', 'Indexes start at 1: `list[1]` is the first item.', '`#list` is the number of items; an index that does not exist gives `nil`.'],
     },
 
     // ------------------------------------------------------------------ 2
     {
       id: 'c5-insert-remove',
       courseId: 'course-5',
-      title: 'Toevoegen en verwijderen',
-      objective: 'Je kunt items toevoegen met table.insert en verwijderen met table.remove.',
+      title: 'Adding and removing',
+      objective: 'You can add items with table.insert and remove them with table.remove.',
       minutes: 9,
       prerequisites: ['tables'],
       concepts: ['tables'],
       steps: [
         {
           type: 'explain',
-          body: `In een game verandert een inventaris steeds: items komen erbij en gaan weg.
+          body: `In a game an inventory changes all the time: items come in and go out.
 
-- \`table.insert(lijst, waarde)\` zet een waarde **achteraan** de lijst.
-- \`table.insert(lijst, plek, waarde)\` zet hem op een **bepaalde plek**; de rest schuift op.
-- \`table.remove(lijst, plek)\` haalt het item op die plek weg en **geeft het terug**; de rest schuift naar voren.
-- \`table.remove(lijst)\` zonder plek haalt het **laatste** item weg.`,
+- \`table.insert(list, value)\` puts a value at the **end** of the list.
+- \`table.insert(list, position, value)\` puts it at a **specific spot**; the rest moves up.
+- \`table.remove(list, position)\` takes the item at that spot out and **gives it back**; the rest moves forward.
+- \`table.remove(list)\` without a position removes the **last** item.`,
         },
         {
           type: 'code',
-          code: 'local backpack = {"Zwaard"}\ntable.insert(backpack, "Fakkel")\ntable.insert(backpack, 1, "Kaart")\nprint(table.concat(backpack, ", "))\n\nlocal removed = table.remove(backpack, 2)\nprint("Weggegooid: " .. removed)\nprint(table.concat(backpack, ", "))',
+          code: 'local backpack = {"Sword"}\ntable.insert(backpack, "Torch")\ntable.insert(backpack, 1, "Map")\nprint(table.concat(backpack, ", "))\n\nlocal removed = table.remove(backpack, 2)\nprint("Thrown away: " .. removed)\nprint(table.concat(backpack, ", "))',
           runnable: true,
-          after: '`table.concat(lijst, ", ")` plakt alle items aan elkaar met een komma ertussen: handig om een lijst te bekijken.',
+          after: '`table.concat(list, ", ")` joins all items together with a comma in between: handy for looking at a list.',
         },
         {
           type: 'exercise',
           id: 'c5-insert-ex1',
           mode: 'guided',
-          title: 'Loot oppakken',
-          prompt: 'Voeg **"Diamant"** achteraan toe aan `loot` en verwijder daarna het **eerste** item. Print de lijst met `table.concat(loot, ", ")`.',
-          starter: 'local loot = {"Steen", "Goud"}\n',
+          title: 'Picking up loot',
+          prompt: 'Add **"Diamond"** to the end of `loot` and then remove the **first** item. Print the list with `table.concat(loot, ", ")`.',
+          starter: 'local loot = {"Stone", "Gold"}\n',
           checks: [
-            { kind: 'uses', sequence: ['table', '.', 'insert'], message: 'Gebruik `table.insert`.' },
-            { kind: 'uses', sequence: ['table', '.', 'remove'], message: 'Gebruik `table.remove`.' },
-            { kind: 'output', lines: ['Goud, Diamant'], message: 'Na het toevoegen en verwijderen moet de lijst **Goud, Diamant** zijn.' },
+            { kind: 'uses', sequence: ['table', '.', 'insert'], message: 'Use `table.insert`.' },
+            { kind: 'uses', sequence: ['table', '.', 'remove'], message: 'Use `table.remove`.' },
+            { kind: 'output', lines: ['Gold, Diamond'], message: 'After adding and removing, the list must be **Gold, Diamond**.' },
           ],
-          hints: ['table.insert(loot, "Diamant")', 'table.remove(loot, 1)'],
-          solution: 'local loot = {"Steen", "Goud"}\ntable.insert(loot, "Diamant")\ntable.remove(loot, 1)\nprint(table.concat(loot, ", "))',
+          hints: ['table.insert(loot, "Diamond")', 'table.remove(loot, 1)'],
+          solution: 'local loot = {"Stone", "Gold"}\ntable.insert(loot, "Diamond")\ntable.remove(loot, 1)\nprint(table.concat(loot, ", "))',
           concepts: ['tables'],
-          success: 'Precies zo werkt een inventaris achter de schermen.',
+          success: 'This is exactly how an inventory works behind the scenes.',
         },
         {
           type: 'exercise',
           id: 'c5-insert-ex2',
           mode: 'independent',
-          title: 'Wachtrij',
-          prompt: 'In een minigame wacht `queue` op een ronde. Haal de **eerste** speler uit de wachtrij met `table.remove`, sla hem op in `nextPlayer` en print **Aan de beurt:** gevolgd door de naam. Print daarna hoeveel spelers er nog wachten.',
+          title: 'Queue',
+          prompt: 'In a minigame, `queue` is waiting for a round. Take the **first** player out of the queue with `table.remove`, store them in `nextPlayer` and print **Your turn:** followed by the name. Then print how many players are still waiting.',
           starter: 'local queue = {"Ava", "Ben", "Cas"}\n',
           checks: [
-            { kind: 'value', expr: 'nextPlayer', equals: 'Ava', message: '`nextPlayer` moet de eerste speler zijn: "Ava".' },
-            { kind: 'output', lines: ['Aan de beurt: Ava', '2'], message: 'De Output moet **Aan de beurt: Ava** en daarna **2** zijn.' },
+            { kind: 'value', expr: 'nextPlayer', equals: 'Ava', message: '`nextPlayer` must be the first player: "Ava".' },
+            { kind: 'output', lines: ['Your turn: Ava', '2'], message: 'The Output must be **Your turn: Ava** and then **2**.' },
           ],
-          hints: ['table.remove geeft het verwijderde item terug: `local nextPlayer = table.remove(queue, 1)`'],
-          solution: 'local queue = {"Ava", "Ben", "Cas"}\nlocal nextPlayer = table.remove(queue, 1)\nprint("Aan de beurt: " .. nextPlayer)\nprint(#queue)',
+          hints: ['table.remove gives back the removed item: `local nextPlayer = table.remove(queue, 1)`'],
+          solution: 'local queue = {"Ava", "Ben", "Cas"}\nlocal nextPlayer = table.remove(queue, 1)\nprint("Your turn: " .. nextPlayer)\nprint(#queue)',
           concepts: ['tables'],
-          success: 'Een echte wachtrij, zoals in ronde-gebaseerde games.',
+          success: 'A real queue, like in round-based games.',
         },
       ],
-      summary: ['`table.insert(lijst, waarde)` voegt achteraan toe.', '`table.remove(lijst, plek)` verwijdert en geeft het item terug.', '`table.concat(lijst, ", ")` maakt van een lijst één tekst.'],
+      summary: ['`table.insert(list, value)` adds to the end.', '`table.remove(list, position)` removes and gives back the item.', '`table.concat(list, ", ")` turns a list into one text.'],
     },
 
     // ------------------------------------------------------------------ 3
     {
       id: 'c5-iterate',
       courseId: 'course-5',
-      title: 'Door een tabel lopen',
-      objective: 'Je kunt met een for-lus elk item van een tabel langsgaan.',
+      title: 'Looping through a table',
+      objective: 'You can go through every item of a table with a for loop.',
       minutes: 10,
       prerequisites: ['tables', 'loops'],
       concepts: ['tables', 'loops'],
       steps: [
         {
           type: 'explain',
-          body: `Wil je iets doen met **elk** item in een lijst? Dan loop je erdoorheen met een for-lus die twee variabelen krijgt:
+          body: `Want to do something with **every** item in a list? Then you loop through it with a for loop that gets two variables:
 
-\`for index, value in lijst do\`
+\`for index, value in list do\`
 
-- \`index\` is de plek (1, 2, 3, ...)
-- \`value\` is het item op die plek
+- \`index\` is the spot (1, 2, 3, ...)
+- \`value\` is the item at that spot
 
-Heb je de index niet nodig, dan schrijf je \`_\` (een liggend streepje). Dat betekent: deze waarde negeer ik.
+If you do not need the index, write \`_\` (an underscore). That means: I ignore this value.
 
-In oudere Roblox-code zie je \`in ipairs(lijst)\` of \`in pairs(lijst)\`. Dat werkt ook, maar in Luau mag je de tabel ook direct gebruiken.`,
+In older Roblox code you will see \`in ipairs(list)\` or \`in pairs(list)\`. That works too, but in Luau you can also use the table directly.`,
         },
         {
           type: 'code',
-          code: 'local items = {"Zwaard", "Schild", "Drank"}\nfor index, item in items do\n    print(index, item)\nend\n\nlocal prices = {50, 120, 30}\nlocal total = 0\nfor _, price in prices do\n    total += price\nend\nprint("Totaal: " .. total)',
+          code: 'local items = {"Sword", "Shield", "Potion"}\nfor index, item in items do\n    print(index, item)\nend\n\nlocal prices = {50, 120, 30}\nlocal total = 0\nfor _, price in prices do\n    total += price\nend\nprint("Total: " .. total)',
           runnable: true,
         },
         {
           type: 'exercise',
           id: 'c5-iterate-ex1',
           mode: 'guided',
-          title: 'Hoogste score',
-          prompt: 'Zoek met een for-lus de **hoogste** score in `scores` en sla hem op in `best`. Print `best`.',
+          title: 'Highest score',
+          prompt: 'Use a for loop to find the **highest** score in `scores` and store it in `best`. Print `best`.',
           starter: 'local scores = {40, 95, 12, 77}\nlocal best = 0\n',
           checks: [
-            { kind: 'uses', sequence: ['for'], message: 'Loop met een for-lus door de scores.' },
-            { kind: 'value', expr: 'best', equals: 95, message: '`best` moet 95 zijn.' },
-            { kind: 'variants', replace: 'local scores = {40, 95, 12, 77}', cases: [{ with: 'local scores = {3, 8, 150}', lines: ['150'] }, { with: 'local scores = {7}', lines: ['7'] }], message: 'Je code vindt niet in elke lijst de hoogste score.' },
+            { kind: 'uses', sequence: ['for'], message: 'Loop through the scores with a for loop.' },
+            { kind: 'value', expr: 'best', equals: 95, message: '`best` must be 95.' },
+            { kind: 'variants', replace: 'local scores = {40, 95, 12, 77}', cases: [{ with: 'local scores = {3, 8, 150}', lines: ['150'] }, { with: 'local scores = {7}', lines: ['7'] }], message: 'Your code does not find the highest score in every list.' },
           ],
-          hints: ['Vergelijk elke score met `best`: is hij hoger, dan wordt hij de nieuwe `best`.', 'for _, score in scores do\n    if score > best then\n        best = score\n    end\nend'],
+          hints: ['Compare each score with `best`: if it is higher, it becomes the new `best`.', 'for _, score in scores do\n    if score > best then\n        best = score\n    end\nend'],
           solution: 'local scores = {40, 95, 12, 77}\nlocal best = 0\nfor _, score in scores do\n    if score > best then\n        best = score\n    end\nend\nprint(best)',
           concepts: ['tables', 'loops'],
-          success: 'Getest met drie verschillende lijsten. Zo maak je een leaderboard.',
+          success: 'Tested with three different lists. This is how you make a leaderboard.',
         },
         {
           type: 'exercise',
           id: 'c5-iterate-ex2',
           mode: 'independent',
-          title: 'Heb ik de sleutel?',
-          prompt: 'Zoek in `inventory` of er een **"Sleutel"** in zit. Print **Deur open** als die erin zit, en anders **Deur op slot**. Stop met zoeken zodra je hem gevonden hebt.',
-          starter: 'local inventory = {"Fakkel", "Sleutel", "Brood"}\n',
+          title: 'Do I have the key?',
+          prompt: 'Search `inventory` for a **"Key"**. Print **Door open** if it is there, and otherwise **Door locked**. Stop searching as soon as you have found it.',
+          starter: 'local inventory = {"Torch", "Key", "Bread"}\n',
           checks: [
-            { kind: 'output', lines: ['Deur open'], message: 'Met een Sleutel in de inventaris: **Deur open**.' },
-            { kind: 'variants', replace: 'local inventory = {"Fakkel", "Sleutel", "Brood"}', cases: [{ with: 'local inventory = {"Fakkel", "Brood"}', lines: ['Deur op slot'] }, { with: 'local inventory = {}', lines: ['Deur op slot'] }, { with: 'local inventory = {"Sleutel", "Sleutel"}', lines: ['Deur open'] }], message: 'Je code werkt niet voor elke inventaris. Print maar één bericht, na het zoeken.' },
+            { kind: 'output', lines: ['Door open'], message: 'With a Key in the inventory: **Door open**.' },
+            { kind: 'variants', replace: 'local inventory = {"Torch", "Key", "Bread"}', cases: [{ with: 'local inventory = {"Torch", "Bread"}', lines: ['Door locked'] }, { with: 'local inventory = {}', lines: ['Door locked'] }, { with: 'local inventory = {"Key", "Key"}', lines: ['Door open'] }], message: 'Your code does not work for every inventory. Print only one message, after searching.' },
           ],
-          hints: ['Gebruik een variabele `hasKey = false` vóór de lus.', 'Zet hem op true als je de sleutel vindt, en gebruik `break`.', 'Print het bericht pas ná de lus.'],
-          solution: 'local inventory = {"Fakkel", "Sleutel", "Brood"}\nlocal hasKey = false\nfor _, item in inventory do\n    if item == "Sleutel" then\n        hasKey = true\n        break\n    end\nend\nif hasKey then\n    print("Deur open")\nelse\n    print("Deur op slot")\nend',
+          hints: ['Use a variable `hasKey = false` before the loop.', 'Set it to true when you find the key, and use `break`.', 'Print the message only after the loop.'],
+          solution: 'local inventory = {"Torch", "Key", "Bread"}\nlocal hasKey = false\nfor _, item in inventory do\n    if item == "Key" then\n        hasKey = true\n        break\n    end\nend\nif hasKey then\n    print("Door open")\nelse\n    print("Door locked")\nend',
           concepts: ['tables', 'loops', 'conditions'],
-          success: 'Getest met vier verschillende inventarissen, ook een lege.',
+          success: 'Tested with four different inventories, including an empty one.',
         },
       ],
-      summary: ['`for index, value in lijst do` loopt door elk item.', 'Gebruik `_` voor een waarde die je niet nodig hebt.', 'Zoeken: variabele vóór de lus, `break` als je het gevonden hebt.'],
+      summary: ['`for index, value in list do` goes through every item.', 'Use `_` for a value you do not need.', 'Searching: variable before the loop, `break` when you have found it.'],
     },
 
     // ------------------------------------------------------------------ 4
     {
       id: 'c5-dictionaries',
       courseId: 'course-5',
-      title: 'Dictionaries: sleutels en waarden',
-      objective: 'Je kunt gegevens opslaan onder een naam (sleutel) en die opvragen, aanpassen en verwijderen.',
+      title: 'Dictionaries: keys and values',
+      objective: 'You can store data under a name (key) and read, change and remove it.',
       minutes: 11,
       prerequisites: ['tables'],
       concepts: ['dictionaries'],
       steps: [
         {
           type: 'explain',
-          body: `Een lijst gebruikt nummers als index. Maar soms wil je gegevens onder een **naam** opslaan: de health, de coins en het level van een speler.
+          body: `A list uses numbers as the index. But sometimes you want to store data under a **name**: a player's health, coins and level.
 
-Zo'n tabel heet een **dictionary** (woordenboek). Elke **sleutel** (key) heeft een **waarde** (value).
+A table like that is called a **dictionary**. Every **key** has a **value**.
 
-- maken: \`{ coins = 100, level = 3 }\`
-- ophalen: \`player.coins\` of \`player["coins"]\`
-- aanpassen of toevoegen: \`player.coins = 150\`
-- verwijderen: \`player.coins = nil\``,
+- create: \`{ coins = 100, level = 3 }\`
+- read: \`player.coins\` or \`player["coins"]\`
+- change or add: \`player.coins = 150\`
+- remove: \`player.coins = nil\``,
         },
         {
           type: 'code',
           code: 'local player = {\n    name = "Nova",\n    coins = 100,\n    level = 3,\n}\n\nprint(player.name)\nplayer.coins += 50\nplayer.isVip = true\nprint(player.coins, player.isVip)\nprint(player["level"])',
           runnable: true,
           annotations: [
-            { token: 'name', text: '`name` is een **sleutel**; `"Nova"` is de **waarde** die erbij hoort.' },
-            { token: '.', text: 'Met een punt haal je de waarde van een sleutel op: `player.name`.' },
+            { token: 'name', text: '`name` is a **key**; `"Nova"` is the **value** that belongs to it.' },
+            { token: '.', text: 'With a dot you read the value of a key: `player.name`.' },
           ],
-          after: '`player.isVip = true` voegt een nieuwe sleutel toe die er eerst nog niet was.',
+          after: '`player.isVip = true` adds a new key that was not there before.',
         },
         {
           type: 'code',
-          title: 'Door een dictionary lopen',
-          code: 'local prices = { Zwaard = 100, Schild = 80 }\nfor itemName, price in prices do\n    print(itemName, price)\nend',
+          title: 'Looping through a dictionary',
+          code: 'local prices = { Sword = 100, Shield = 80 }\nfor itemName, price in prices do\n    print(itemName, price)\nend',
           runnable: true,
-          after: 'Bij een dictionary krijg je in de lus de sleutel en de waarde. Let op: de **volgorde** is bij dictionaries niet gegarandeerd.',
+          after: 'With a dictionary the loop gives you the key and the value. Careful: the **order** is not guaranteed for dictionaries.',
         },
         {
           type: 'exercise',
           id: 'c5-dict-ex1',
           mode: 'guided',
-          title: 'Spelersprofiel',
-          prompt: 'Maak een dictionary `stats` met de sleutels `health` (**100**), `speed` (**16**) en `team` (**"Rood"**). Verlaag daarna `health` met 30 en print `stats.health`.',
+          title: 'Player profile',
+          prompt: 'Create a dictionary `stats` with the keys `health` (**100**), `speed` (**16**) and `team` (**"Red"**). Then lower `health` by 30 and print `stats.health`.',
           starter: '',
           checks: [
-            { kind: 'test', harness: 'if typeof(stats) ~= "table" then return "Maak een tabel `stats`." end\nif stats.speed ~= 16 then return "`stats.speed` moet 16 zijn." end\nif stats.team ~= "Rood" then return "`stats.team` moet \\"Rood\\" zijn." end\nif stats.health ~= 70 then return "Na het verlagen moet `stats.health` 70 zijn." end\nreturn true', message: '' },
-            { kind: 'output', lines: ['70'], message: 'De Output moet **70** zijn.' },
+            { kind: 'test', harness: 'if typeof(stats) ~= "table" then return "Create a table `stats`." end\nif stats.speed ~= 16 then return "`stats.speed` must be 16." end\nif stats.team ~= "Red" then return "`stats.team` must be \\"Red\\"." end\nif stats.health ~= 70 then return "After lowering it, `stats.health` must be 70." end\nreturn true', message: '' },
+            { kind: 'output', lines: ['70'], message: 'The Output must be **70**.' },
           ],
-          hints: ['local stats = { health = 100, speed = 16, team = "Rood" }', 'stats.health -= 30'],
-          solution: 'local stats = { health = 100, speed = 16, team = "Rood" }\nstats.health -= 30\nprint(stats.health)',
+          hints: ['local stats = { health = 100, speed = 16, team = "Red" }', 'stats.health -= 30'],
+          solution: 'local stats = { health = 100, speed = 16, team = "Red" }\nstats.health -= 30\nprint(stats.health)',
           concepts: ['dictionaries'],
-          success: 'Zo bewaren Roblox-games de gegevens van elke speler.',
+          success: 'This is how Roblox games store the data of every player.',
         },
         {
           type: 'exercise',
           id: 'c5-dict-ex2',
           mode: 'independent',
-          title: 'Prijs opzoeken',
-          prompt: '`prices` is een dictionary met itemnamen en prijzen. Print de prijs van het item in `wanted`. Bestaat het item niet (de prijs is `nil`), print dan **Item bestaat niet**.',
-          starter: 'local prices = { Zwaard = 100, Schild = 80, Drank = 15 }\nlocal wanted = "Schild"\n',
+          title: 'Looking up a price',
+          prompt: '`prices` is a dictionary of item names and prices. Print the price of the item in `wanted`. If the item does not exist (the price is `nil`), print **Item does not exist**.',
+          starter: 'local prices = { Sword = 100, Shield = 80, Potion = 15 }\nlocal wanted = "Shield"\n',
           checks: [
-            { kind: 'output', lines: ['80'], message: 'De prijs van een Schild is **80**.' },
-            { kind: 'variants', replace: 'local wanted = "Schild"', cases: [{ with: 'local wanted = "Drank"', lines: ['15'] }, { with: 'local wanted = "Draak"', lines: ['Item bestaat niet'] }], message: 'Je code werkt niet voor elk item. Gebruik `prices[wanted]`.' },
+            { kind: 'output', lines: ['80'], message: 'The price of a Shield is **80**.' },
+            { kind: 'variants', replace: 'local wanted = "Shield"', cases: [{ with: 'local wanted = "Potion"', lines: ['15'] }, { with: 'local wanted = "Dragon"', lines: ['Item does not exist'] }], message: 'Your code does not work for every item. Use `prices[wanted]`.' },
           ],
-          hints: ['Met een variabele als sleutel gebruik je blokhaken: `prices[wanted]`.', 'Sla de prijs op en controleer met `if price then`.'],
-          solution: 'local prices = { Zwaard = 100, Schild = 80, Drank = 15 }\nlocal wanted = "Schild"\nlocal price = prices[wanted]\nif price then\n    print(price)\nelse\n    print("Item bestaat niet")\nend',
+          hints: ['With a variable as the key you use square brackets: `prices[wanted]`.', 'Store the price and check it with `if price then`.'],
+          solution: 'local prices = { Sword = 100, Shield = 80, Potion = 15 }\nlocal wanted = "Shield"\nlocal price = prices[wanted]\nif price then\n    print(price)\nelse\n    print("Item does not exist")\nend',
           concepts: ['dictionaries', 'nil'],
-          success: '`tabel[variabele]` gebruik je straks overal, bijvoorbeeld om op de server prijzen op te zoeken.',
+          success: 'You will use `table[variable]` everywhere, for example to look up prices on the server.',
         },
       ],
-      summary: ['Een dictionary bewaart waarden onder een sleutel: `{ coins = 100 }`.', 'Ophalen met `t.sleutel`, of met `t[variabele]` als de sleutel in een variabele staat.', 'Een sleutel op `nil` zetten verwijdert hem.'],
+      summary: ['A dictionary stores values under a key: `{ coins = 100 }`.', 'Read with `t.key`, or with `t[variable]` when the key is in a variable.', 'Setting a key to `nil` removes it.'],
     },
 
     // ------------------------------------------------------------------ 5
     {
       id: 'c5-nested',
       courseId: 'course-5',
-      title: 'Tabellen in tabellen',
-      objective: 'Je kunt geneste tabellen gebruiken voor configuratie en lijsten van objecten.',
+      title: 'Tables inside tables',
+      objective: 'You can use nested tables for configuration and lists of objects.',
       minutes: 10,
       prerequisites: ['dictionaries', 'tables'],
       concepts: ['dictionaries', 'tables'],
       steps: [
         {
           type: 'explain',
-          body: `Een waarde in een tabel mag zelf ook een tabel zijn. Zo kun je complexe gegevens netjes ordenen.
+          body: `A value in a table can itself be a table. That lets you organise complex data neatly.
 
-Twee veelgebruikte vormen in Roblox-games:
-- een **configuratie**: alle instellingen van je game in één tabel
-- een **lijst van objecten**: bijvoorbeeld een lijst items, waarbij elk item een dictionary is met naam, prijs en zeldzaamheid`,
+Two common shapes in Roblox games:
+- a **configuration**: all settings of your game in one table
+- a **list of objects**: for example a list of items, where each item is a dictionary with a name, price and rarity`,
         },
         {
           type: 'code',
-          code: 'local shop = {\n    { name = "Zwaard", price = 100, rarity = "Zeldzaam" },\n    { name = "Fakkel", price = 10, rarity = "Gewoon" },\n}\n\nprint(shop[1].name)\nprint(shop[2].price)\n\nfor _, item in shop do\n    print(`{item.name} kost {item.price} ({item.rarity})`)\nend',
+          code: 'local shop = {\n    { name = "Sword", price = 100, rarity = "Rare" },\n    { name = "Torch", price = 10, rarity = "Common" },\n}\n\nprint(shop[1].name)\nprint(shop[2].price)\n\nfor _, item in shop do\n    print(`{item.name} costs {item.price} ({item.rarity})`)\nend',
           runnable: true,
-          after: '`shop[1]` is het eerste item (een dictionary); `.name` haalt de naam daaruit.',
+          after: '`shop[1]` is the first item (a dictionary); `.name` gets the name out of it.',
         },
         {
           type: 'predict',
           id: 'c5-nested-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local config = { round = { length = 120, minPlayers = 2 } }\nprint(config.round.minPlayers)',
           concepts: ['dictionaries'],
           options: [
-            { text: '120', feedback: 'Dat is `length`.' },
-            { text: '2', correct: true, feedback: 'Juist: eerst `round`, daarin `minPlayers`.' },
-            { text: 'nil', feedback: '`minPlayers` zit in `config.round`, en die bestaat.' },
+            { text: '120', feedback: 'That is `length`.' },
+            { text: '2', correct: true, feedback: 'Right: first `round`, inside it `minPlayers`.' },
+            { text: 'nil', feedback: '`minPlayers` is inside `config.round`, and that exists.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c5-nested-ex1',
           mode: 'independent',
-          title: 'Wat kan ik betalen?',
-          prompt: 'Loop door de lijst `shop` en print de **naam** van elk item dat de speler kan betalen (prijs ≤ `coins`).',
-          starter: 'local coins = 60\nlocal shop = {\n    { name = "Zwaard", price = 100 },\n    { name = "Fakkel", price = 10 },\n    { name = "Boog", price = 60 },\n}\n',
+          title: 'What can I afford?',
+          prompt: 'Loop through the list `shop` and print the **name** of every item the player can afford (price ≤ `coins`).',
+          starter: 'local coins = 60\nlocal shop = {\n    { name = "Sword", price = 100 },\n    { name = "Torch", price = 10 },\n    { name = "Bow", price = 60 },\n}\n',
           checks: [
-            { kind: 'output', lines: ['Fakkel', 'Boog'], message: 'Met 60 coins kan de speler een **Fakkel** en een **Boog** kopen.' },
-            { kind: 'variants', replace: 'local coins = 60', cases: [{ with: 'local coins = 5', lines: [] }, { with: 'local coins = 1000', lines: ['Zwaard', 'Fakkel', 'Boog'] }], message: 'Je code klopt niet voor elk aantal coins.' },
+            { kind: 'output', lines: ['Torch', 'Bow'], message: 'With 60 coins the player can buy a **Torch** and a **Bow**.' },
+            { kind: 'variants', replace: 'local coins = 60', cases: [{ with: 'local coins = 5', lines: [] }, { with: 'local coins = 1000', lines: ['Sword', 'Torch', 'Bow'] }], message: 'Your code is not right for every number of coins.' },
           ],
-          hints: ['for _, item in shop do ... end', 'Binnen de lus: if item.price <= coins then print(item.name) end'],
-          solution: 'local coins = 60\nlocal shop = {\n    { name = "Zwaard", price = 100 },\n    { name = "Fakkel", price = 10 },\n    { name = "Boog", price = 60 },\n}\nfor _, item in shop do\n    if item.price <= coins then\n        print(item.name)\n    end\nend',
+          hints: ['for _, item in shop do ... end', 'Inside the loop: if item.price <= coins then print(item.name) end'],
+          solution: 'local coins = 60\nlocal shop = {\n    { name = "Sword", price = 100 },\n    { name = "Torch", price = 10 },\n    { name = "Bow", price = 60 },\n}\nfor _, item in shop do\n    if item.price <= coins then\n        print(item.name)\n    end\nend',
           concepts: ['tables', 'dictionaries', 'loops'],
-          success: 'Getest met 5, 60 en 1000 coins.',
+          success: 'Tested with 5, 60 and 1000 coins.',
         },
       ],
-      summary: ['Een waarde in een tabel mag ook een tabel zijn.', 'Je leest geneste waarden stap voor stap: `config.round.length`.', 'Een lijst van dictionaries is perfect voor winkels en inventarissen.'],
+      summary: ['A value in a table can also be a table.', 'You read nested values step by step: `config.round.length`.', 'A list of dictionaries is perfect for shops and inventories.'],
     },
 
     // ------------------------------------------------------------------ 6 project
     {
       id: 'c5-project-inventory',
       courseId: 'course-5',
-      title: 'Project: inventarissysteem',
-      objective: 'Je bouwt een werkend inventarissysteem met tabellen en functies.',
+      title: 'Project: inventory system',
+      objective: 'You build a working inventory system with tables and functions.',
       minutes: 18,
       prerequisites: ['dictionaries', 'functions', 'return-values'],
       concepts: ['dictionaries', 'functions', 'tables'],
       steps: [
         {
           type: 'explain',
-          body: `Je bouwt de kern van een inventaris zoals in een echte Roblox-game. De inventaris is een dictionary: de **sleutel** is de itemnaam, de **waarde** is hoeveel de speler ervan heeft, bijvoorbeeld \`{ Appel = 3, Zwaard = 1 }\`.
+          body: `You build the core of an inventory like in a real Roblox game. The inventory is a dictionary: the **key** is the item name, the **value** is how many the player has, for example \`{ Apple = 3, Sword = 1 }\`.
 
-Je maakt drie functies die samen het systeem vormen.`,
+You make three functions that together form the system.`,
         },
         {
           type: 'exercise',
           id: 'c5-project-ex1',
           mode: 'independent',
-          title: 'Drie inventarisfuncties',
-          prompt: 'Maak deze drie functies:\n1. `addItem(inventory, name, amount)`: telt `amount` op bij het item (bestaat het nog niet, dan begint het bij 0).\n2. `removeItem(inventory, name, amount)`: haalt `amount` weg en geeft `true` terug. Heeft de speler te weinig, verander dan niets en geef `false` terug. Komt het aantal op 0, verwijder dan de sleutel (zet hem op `nil`).\n3. `countItems(inventory)`: geeft het **totaal** aantal items terug (alle aantallen opgeteld).',
-          starter: 'local function addItem(inventory, name, amount)\n    -- 1\nend\n\nlocal function removeItem(inventory, name, amount)\n    -- 2\nend\n\nlocal function countItems(inventory)\n    -- 3\nend\n\nlocal bag = {}\naddItem(bag, "Appel", 3)\naddItem(bag, "Zwaard", 1)\naddItem(bag, "Appel", 2)\nprint(countItems(bag))',
+          title: 'Three inventory functions',
+          prompt: 'Create these three functions:\n1. `addItem(inventory, name, amount)`: adds `amount` to the item (if it does not exist yet, it starts at 0).\n2. `removeItem(inventory, name, amount)`: takes `amount` away and returns `true`. If the player has too few, change nothing and return `false`. If the count reaches 0, remove the key (set it to `nil`).\n3. `countItems(inventory)`: returns the **total** number of items (all counts added up).',
+          starter: 'local function addItem(inventory, name, amount)\n    -- 1\nend\n\nlocal function removeItem(inventory, name, amount)\n    -- 2\nend\n\nlocal function countItems(inventory)\n    -- 3\nend\n\nlocal bag = {}\naddItem(bag, "Apple", 3)\naddItem(bag, "Sword", 1)\naddItem(bag, "Apple", 2)\nprint(countItems(bag))',
           checks: [
-            { kind: 'output', lines: ['6'], message: 'Na 3 + 1 + 2 items moet `countItems(bag)` **6** zijn.' },
-            { kind: 'test', harness: 'local b = {}\naddItem(b, "Hout", 4)\nif b.Hout ~= 4 then return "addItem(b, \\"Hout\\", 4) op een lege inventaris moet Hout op 4 zetten." end\naddItem(b, "Hout", 1)\nif b.Hout ~= 5 then return "Nog 1 Hout toevoegen moet 5 geven." end\nif removeItem(b, "Hout", 9) ~= false then return "removeItem met te weinig items moet false teruggeven." end\nif b.Hout ~= 5 then return "Als er te weinig is, mag removeItem niets veranderen." end\nif removeItem(b, "Hout", 2) ~= true then return "removeItem(b, \\"Hout\\", 2) moet true teruggeven." end\nif b.Hout ~= 3 then return "Na 2 weghalen moet er 3 Hout over zijn." end\nremoveItem(b, "Hout", 3)\nif b.Hout ~= nil then return "Als het aantal 0 wordt, moet de sleutel verwijderd worden (nil)." end\nif removeItem(b, "Goud", 1) ~= false then return "Een item dat niet bestaat weghalen moet false teruggeven." end\nif countItems({}) ~= 0 then return "countItems van een lege inventaris moet 0 zijn." end\nif countItems({ A = 2, B = 5 }) ~= 7 then return "countItems({ A = 2, B = 5 }) moet 7 zijn." end\nreturn true', message: '' },
+            { kind: 'output', lines: ['6'], message: 'After 3 + 1 + 2 items, `countItems(bag)` must be **6**.' },
+            { kind: 'test', harness: 'local b = {}\naddItem(b, "Wood", 4)\nif b.Wood ~= 4 then return "addItem(b, \\"Wood\\", 4) on an empty inventory must set Wood to 4." end\naddItem(b, "Wood", 1)\nif b.Wood ~= 5 then return "Adding 1 more Wood must give 5." end\nif removeItem(b, "Wood", 9) ~= false then return "removeItem with too few items must return false." end\nif b.Wood ~= 5 then return "When there are too few, removeItem must not change anything." end\nif removeItem(b, "Wood", 2) ~= true then return "removeItem(b, \\"Wood\\", 2) must return true." end\nif b.Wood ~= 3 then return "After removing 2, 3 Wood must be left." end\nremoveItem(b, "Wood", 3)\nif b.Wood ~= nil then return "When the count reaches 0, the key must be removed (nil)." end\nif removeItem(b, "Gold", 1) ~= false then return "Removing an item that does not exist must return false." end\nif countItems({}) ~= 0 then return "countItems of an empty inventory must be 0." end\nif countItems({ A = 2, B = 5 }) ~= 7 then return "countItems({ A = 2, B = 5 }) must be 7." end\nreturn true', message: '' },
           ],
           hints: [
-            'addItem: `inventory[name] = (inventory[name] or 0) + amount`. `x or 0` geeft 0 als x nil is.',
-            'removeItem: haal eerst `local current = inventory[name] or 0` op en vergelijk met `amount`.',
-            'countItems: loop met `for _, count in inventory do` en tel op.',
+            'addItem: `inventory[name] = (inventory[name] or 0) + amount`. `x or 0` gives 0 when x is nil.',
+            'removeItem: first get `local current = inventory[name] or 0` and compare it with `amount`.',
+            'countItems: loop with `for _, count in inventory do` and add up.',
           ],
-          solution: 'local function addItem(inventory, name, amount)\n    inventory[name] = (inventory[name] or 0) + amount\nend\n\nlocal function removeItem(inventory, name, amount)\n    local current = inventory[name] or 0\n    if current < amount then\n        return false\n    end\n    current -= amount\n    if current == 0 then\n        inventory[name] = nil\n    else\n        inventory[name] = current\n    end\n    return true\nend\n\nlocal function countItems(inventory)\n    local total = 0\n    for _, count in inventory do\n        total += count\n    end\n    return total\nend\n\nlocal bag = {}\naddItem(bag, "Appel", 3)\naddItem(bag, "Zwaard", 1)\naddItem(bag, "Appel", 2)\nprint(countItems(bag))',
+          solution: 'local function addItem(inventory, name, amount)\n    inventory[name] = (inventory[name] or 0) + amount\nend\n\nlocal function removeItem(inventory, name, amount)\n    local current = inventory[name] or 0\n    if current < amount then\n        return false\n    end\n    current -= amount\n    if current == 0 then\n        inventory[name] = nil\n    else\n        inventory[name] = current\n    end\n    return true\nend\n\nlocal function countItems(inventory)\n    local total = 0\n    for _, count in inventory do\n        total += count\n    end\n    return total\nend\n\nlocal bag = {}\naddItem(bag, "Apple", 3)\naddItem(bag, "Sword", 1)\naddItem(bag, "Apple", 2)\nprint(countItems(bag))',
           concepts: ['dictionaries', 'functions', 'return-values'],
-          success: 'Je inventarissysteem doorstond elf tests. Dit is dezelfde logica die je later met een ModuleScript en DataStores in een echte game gebruikt.',
+          success: 'Your inventory system passed eleven tests. This is the same logic you will later use with a ModuleScript and DataStores in a real game.',
         },
       ],
-      summary: ['Je combineerde dictionaries, functies, return en lussen tot één systeem.', '`x or 0` is een handig patroon voor waarden die nog niet bestaan.', 'Je beheerst nu de volledige Luau-basis. Daarna volgt de Roblox-engine zelf.'],
+      summary: ['You combined dictionaries, functions, return and loops into one system.', '`x or 0` is a handy pattern for values that do not exist yet.', 'You now know all the Luau basics. Next up is the Roblox engine itself.'],
     },
   ],
 };

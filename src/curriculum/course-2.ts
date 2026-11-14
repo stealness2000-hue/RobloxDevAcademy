@@ -3,8 +3,8 @@ import type { Course } from './types';
 export const course2: Course = {
   id: 'course-2',
   number: 2,
-  title: 'Voorwaarden en logica',
-  description: 'Je code keuzes laten maken: vergelijken, if, elseif, else, and, or en not.',
+  title: 'Conditions and logic',
+  description: 'Making your code choose: comparisons, if, elseif, else, and, or and not.',
   level: 'Beginner',
   planned: [],
   lessons: [
@@ -12,133 +12,133 @@ export const course2: Course = {
     {
       id: 'c2-comparisons',
       courseId: 'course-2',
-      title: 'Vergelijken: waar of niet waar?',
-      objective: 'Je kunt twee waarden vergelijken met ==, ~=, <, >, <= en >=, en weet dat de uitkomst een boolean is.',
+      title: 'Comparing: true or false?',
+      objective: 'You can compare two values with ==, ~=, <, >, <= and >=, and know that the result is a boolean.',
       minutes: 8,
       prerequisites: ['booleans', 'variables'],
       concepts: ['comparisons'],
       steps: [
         {
           type: 'explain',
-          body: `In een game stel je steeds vragen: heeft de speler genoeg coins? Is zijn health op? Zit hij in het goede team?
+          body: `In a game you ask questions all the time: does the player have enough coins? Is their health gone? Are they on the right team?
 
-Zo'n vraag schrijf je als een **vergelijking**. Het antwoord is altijd een boolean: \`true\` (waar) of \`false\` (niet waar).
+You write a question like that as a **comparison**. The answer is always a boolean: \`true\` or \`false\`.
 
-- \`==\` is gelijk aan
-- \`~=\` is **niet** gelijk aan
-- \`<\` kleiner dan, \`>\` groter dan
-- \`<=\` kleiner dan of gelijk aan, \`>=\` groter dan of gelijk aan`,
+- \`==\` is equal to
+- \`~=\` is **not** equal to
+- \`<\` less than, \`>\` greater than
+- \`<=\` less than or equal to, \`>=\` greater than or equal to`,
         },
         {
           type: 'code',
-          code: 'local coins = 120\nprint(coins >= 100)\nprint(coins == 50)\nprint(coins ~= 50)\nprint("rood" == "Rood")',
+          code: 'local coins = 120\nprint(coins >= 100)\nprint(coins == 50)\nprint(coins ~= 50)\nprint("red" == "Red")',
           runnable: true,
           annotations: [
-            { token: '>=', text: '`>=` vraagt: is de linkerkant **groter dan of gelijk aan** de rechterkant? 120 >= 100 is `true`.' },
-            { token: '==', text: '`==` (twee is-tekens) vraagt: zijn deze twee waarden **gelijk**? Let op: één `=` geeft een waarde, twee `==` vergelijkt.' },
-            { token: '~=', text: '`~=` vraagt: zijn ze **niet** gelijk? In veel andere talen schrijf je dit als `!=`, in Luau als `~=`.' },
+            { token: '>=', text: '`>=` asks: is the left side **greater than or equal to** the right side? 120 >= 100 is `true`.' },
+            { token: '==', text: '`==` (two equals signs) asks: are these two values **equal**? Careful: one `=` gives a value, two `==` compare.' },
+            { token: '~=', text: '`~=` asks: are they **not** equal? In many other languages you write this as `!=`, in Luau as `~=`.' },
           ],
-          after: 'De laatste regel is `false`: tekst vergelijken is hoofdlettergevoelig.',
+          after: 'The last line is `false`: comparing text is case-sensitive.',
         },
         {
           type: 'quiz',
           id: 'c2-comparisons-q1',
-          question: 'Wat is het verschil tussen `=` en `==`?',
+          question: 'What is the difference between `=` and `==`?',
           concepts: ['comparisons'],
           options: [
-            { text: '`=` geeft een waarde, `==` vergelijkt twee waarden', correct: true, feedback: 'Precies. `coins = 10` stopt 10 in coins; `coins == 10` vraagt of coins 10 is.' },
-            { text: 'Er is geen verschil', feedback: 'Er is een groot verschil: het ene is een opdracht, het andere een vraag.' },
-            { text: '`==` is een sterkere versie van `=`', feedback: 'Niet sterker, maar iets anders: `==` stelt een vraag en geeft true of false terug.' },
+            { text: '`=` gives a value, `==` compares two values', correct: true, feedback: 'Exactly. `coins = 10` puts 10 in coins; `coins == 10` asks whether coins is 10.' },
+            { text: 'There is no difference', feedback: 'There is a big difference: one is an instruction, the other a question.' },
+            { text: '`==` is a stronger version of `=`', feedback: 'Not stronger, but different: `==` asks a question and gives back true or false.' },
           ],
         },
         {
           type: 'predict',
           id: 'c2-comparisons-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local level = 10\nprint(level < 10)',
           concepts: ['comparisons'],
           options: [
-            { text: 'true', feedback: 'Is 10 kleiner dan 10? Nee, het is precies gelijk.' },
-            { text: 'false', correct: true, feedback: 'Juist. 10 is niet kleiner dan 10. Met `<=` zou het wel `true` zijn.' },
-            { text: '10', feedback: 'Een vergelijking geeft altijd true of false, niet een getal.' },
+            { text: 'true', feedback: 'Is 10 less than 10? No, it is exactly equal.' },
+            { text: 'false', correct: true, feedback: 'Right. 10 is not less than 10. With `<=` it would be `true`.' },
+            { text: '10', feedback: 'A comparison always gives true or false, not a number.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c2-comparisons-ex1',
           mode: 'guided',
-          title: 'Is de speler sterk genoeg?',
-          prompt: 'Maak een variabele `canEnter` die `true` is als `level` **minstens 5** is. Gebruik een vergelijking, niet zelf `true` typen.',
-          starter: 'local level = 7\nlocal canEnter = -- jouw vergelijking hier\nprint(canEnter)',
+          title: 'Is the player strong enough?',
+          prompt: 'Create a variable `canEnter` that is `true` when `level` is **at least 5**. Use a comparison; do not type `true` yourself.',
+          starter: 'local level = 7\nlocal canEnter = -- your comparison here\nprint(canEnter)',
           checks: [
-            { kind: 'value', expr: 'canEnter', type: 'boolean', message: '`canEnter` moet een boolean zijn: het resultaat van een vergelijking.' },
-            { kind: 'output', lines: ['true'], message: 'Met level 7 moet `canEnter` `true` zijn.' },
-            { kind: 'variants', replace: 'local level = 7', cases: [{ with: 'local level = 5', lines: ['true'] }, { with: 'local level = 4', lines: ['false'] }], message: '`canEnter` klopt niet voor elk level. "Minstens 5" betekent: 5 telt ook mee.' },
+            { kind: 'value', expr: 'canEnter', type: 'boolean', message: '`canEnter` must be a boolean: the result of a comparison.' },
+            { kind: 'output', lines: ['true'], message: 'With level 7, `canEnter` must be `true`.' },
+            { kind: 'variants', replace: 'local level = 7', cases: [{ with: 'local level = 5', lines: ['true'] }, { with: 'local level = 4', lines: ['false'] }], message: '`canEnter` is not right for every level. "At least 5" means: 5 counts too.' },
           ],
-          hints: ['"Minstens 5" betekent groter dan of gelijk aan 5.', '`local canEnter = level >= 5`'],
+          hints: ['"At least 5" means greater than or equal to 5.', '`local canEnter = level >= 5`'],
           solution: 'local level = 7\nlocal canEnter = level >= 5\nprint(canEnter)',
           concepts: ['comparisons'],
-          success: 'Goed. De Academy testte je code ook met level 5 en 4: allebei correct.',
+          success: 'Good. The Academy also tested your code with level 5 and 4: both correct.',
         },
         {
           type: 'exercise',
           id: 'c2-comparisons-ex2',
           mode: 'independent',
-          title: 'Zelfde team?',
-          prompt: 'Er zijn twee variabelen: `myTeam` en `otherTeam`. Maak `isEnemy`: die is `true` als de teams **niet gelijk** zijn. Print `isEnemy`.',
-          starter: 'local myTeam = "Rood"\nlocal otherTeam = "Blauw"\n',
+          title: 'Same team?',
+          prompt: 'There are two variables: `myTeam` and `otherTeam`. Create `isEnemy`: it is `true` when the teams are **not equal**. Print `isEnemy`.',
+          starter: 'local myTeam = "Red"\nlocal otherTeam = "Blue"\n',
           checks: [
-            { kind: 'value', expr: 'isEnemy', equals: true, message: 'Met Rood en Blauw moet `isEnemy` `true` zijn.' },
-            { kind: 'uses', sequence: ['~='], message: 'Gebruik `~=` (niet gelijk aan).' },
-            { kind: 'variants', replace: 'local otherTeam = "Blauw"', cases: [{ with: 'local otherTeam = "Rood"', lines: ['false'] }], message: 'Als beide teams Rood zijn, moet `isEnemy` `false` zijn.' },
+            { kind: 'value', expr: 'isEnemy', equals: true, message: 'With Red and Blue, `isEnemy` must be `true`.' },
+            { kind: 'uses', sequence: ['~='], message: 'Use `~=` (not equal to).' },
+            { kind: 'variants', replace: 'local otherTeam = "Blue"', cases: [{ with: 'local otherTeam = "Red"', lines: ['false'] }], message: 'When both teams are Red, `isEnemy` must be `false`.' },
           ],
-          hints: ['Welk teken betekent "niet gelijk aan" in Luau?'],
-          solution: 'local myTeam = "Rood"\nlocal otherTeam = "Blauw"\nlocal isEnemy = myTeam ~= otherTeam\nprint(isEnemy)',
+          hints: ['Which sign means "not equal to" in Luau?'],
+          solution: 'local myTeam = "Red"\nlocal otherTeam = "Blue"\nlocal isEnemy = myTeam ~= otherTeam\nprint(isEnemy)',
           concepts: ['comparisons'],
-          success: 'Precies. Dit soort vergelijkingen gebruik je straks in elk wapen- en teamsysteem.',
+          success: 'Exactly. You will use comparisons like this in every weapon and team system.',
         },
       ],
-      summary: ['Een vergelijking geeft `true` of `false`.', '`==` gelijk, `~=` niet gelijk, `<` `>` `<=` `>=` groter/kleiner.', '`=` geeft een waarde, `==` vergelijkt.', 'Tekst vergelijken is hoofdlettergevoelig.'],
+      summary: ['A comparison gives `true` or `false`.', '`==` equal, `~=` not equal, `<` `>` `<=` `>=` greater/less.', '`=` gives a value, `==` compares.', 'Comparing text is case-sensitive.'],
     },
 
     // ------------------------------------------------------------------ 2
     {
       id: 'c2-if',
       courseId: 'course-2',
-      title: 'If-statements',
-      objective: 'Je kunt code alleen laten uitvoeren als een voorwaarde waar is, met if ... then ... end.',
+      title: 'If statements',
+      objective: 'You can make code run only when a condition is true, with if ... then ... end.',
       minutes: 10,
       prerequisites: ['comparisons'],
       concepts: ['conditions'],
       steps: [
         {
           type: 'explain',
-          body: `Met een **if-statement** laat je code alleen draaien als iets waar is. Je leest het als een zin: "**als** dit waar is, **dan** doe je dit".
+          body: `With an **if statement** code only runs when something is true. You read it like a sentence: "**if** this is true, **then** do this".
 
-De vorm is altijd:
-- \`if\` gevolgd door een voorwaarde
+The shape is always:
+- \`if\` followed by a condition
 - \`then\`
-- de code die alleen soms moet draaien (ingesprongen)
-- \`end\` om het blok af te sluiten`,
+- the code that should only run sometimes (indented)
+- \`end\` to close the block`,
         },
         {
           type: 'code',
-          title: 'Je eerste if-statement',
-          code: 'local coins = 120\n\nif coins >= 100 then\n    print("Je kunt het kopen!")\nend\n\nprint("Klaar met controleren")',
+          title: 'Your first if statement',
+          code: 'local coins = 120\n\nif coins >= 100 then\n    print("You can buy it!")\nend\n\nprint("Done checking")',
           runnable: true,
           annotations: [
-            { token: 'if', text: '`if` begint de vraag: "als ...".' },
-            { token: 'coins >= 100', text: 'De **voorwaarde**: een vergelijking die true of false oplevert.' },
-            { token: 'then', text: '`then` sluit de vraag af: "... dan". Vergeet je hem, dan krijg je een fout.' },
-            { token: 'end', text: '`end` sluit het if-blok af. Alles daarna draait altijd weer.' },
+            { token: 'if', text: '`if` starts the question: "if ...".' },
+            { token: 'coins >= 100', text: 'The **condition**: a comparison that gives true or false.' },
+            { token: 'then', text: '`then` closes the question: "... then". If you forget it, you get an error.' },
+            { token: 'end', text: '`end` closes the if block. Everything after it always runs again.' },
           ],
-          after: 'Zet coins eens op 50 in je hoofd: dan wordt regel 4 overgeslagen, maar "Klaar met controleren" verschijnt altijd.',
+          after: 'Imagine coins is 50: then line 4 is skipped, but "Done checking" always appears.',
         },
         {
           type: 'visual',
           kind: 'condition',
-          title: 'Kijk hoe Luau beslist',
-          body: 'Schuif met de waarde van `coins` en zie wanneer de voorwaarde `true` of `false` wordt.',
+          title: 'Watch Luau decide',
+          body: 'Slide the value of `coins` and see when the condition becomes `true` or `false`.',
           code: '',
         },
         {
@@ -146,289 +146,289 @@ De vorm is altijd:
           id: 'c2-if-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Wat ontbreekt?',
-          prompt: 'Deze code geeft een fout. Run hem, lees de uitleg en repareer hem.',
+          title: 'What is missing?',
+          prompt: 'This code gives an error. Run it, read the explanation and fix it.',
           starter: 'local health = 0\n\nif health <= 0\n    print("Game over")\nend',
           checks: [
-            { kind: 'output', lines: ['Game over'], message: 'De Output moet **Game over** zijn.' },
-            { kind: 'variants', replace: 'local health = 0', cases: [{ with: 'local health = 50', lines: [] }], message: 'Met health 50 mag er niets verschijnen.' },
+            { kind: 'output', lines: ['Game over'], message: 'The Output must be **Game over**.' },
+            { kind: 'variants', replace: 'local health = 0', cases: [{ with: 'local health = 50', lines: [] }], message: 'With health 50 nothing may appear.' },
           ],
-          hints: ['Kijk naar regel 3. Hoe eindigt een if-regel altijd?'],
+          hints: ['Look at line 3. How does an if line always end?'],
           solution: 'local health = 0\n\nif health <= 0 then\n    print("Game over")\nend',
           concepts: ['conditions'],
-          success: 'Gerepareerd. Een vergeten `then` is de meest gemaakte if-fout.',
+          success: 'Fixed. A forgotten `then` is the most common if mistake.',
         },
         {
           type: 'exercise',
           id: 'c2-if-ex2',
           mode: 'independent',
-          title: 'Level omhoog',
-          prompt: 'Schrijf een if-statement: als `xp` **100 of meer** is, print dan **Level up!**. Anders gebeurt er niets.',
+          title: 'Level up',
+          prompt: 'Write an if statement: if `xp` is **100 or more**, print **Level up!**. Otherwise nothing happens.',
           starter: 'local xp = 130\n',
           checks: [
-            { kind: 'uses', sequence: ['if'], message: 'Gebruik een `if`-statement.' },
-            { kind: 'output', lines: ['Level up!'], message: 'Met 130 xp moet **Level up!** verschijnen.' },
-            { kind: 'variants', replace: 'local xp = 130', cases: [{ with: 'local xp = 100', lines: ['Level up!'] }, { with: 'local xp = 99', lines: [] }], message: 'Je if-statement klopt nog niet voor elke waarde van xp.' },
+            { kind: 'uses', sequence: ['if'], message: 'Use an `if` statement.' },
+            { kind: 'output', lines: ['Level up!'], message: 'With 130 xp, **Level up!** must appear.' },
+            { kind: 'variants', replace: 'local xp = 130', cases: [{ with: 'local xp = 100', lines: ['Level up!'] }, { with: 'local xp = 99', lines: [] }], message: 'Your if statement is not right yet for every value of xp.' },
           ],
-          hints: ['De vorm: `if voorwaarde then` ... `end`', '"100 of meer" schrijf je als `xp >= 100`.'],
+          hints: ['The shape: `if condition then` ... `end`', '"100 or more" is written as `xp >= 100`.'],
           solution: 'local xp = 130\nif xp >= 100 then\n    print("Level up!")\nend',
           concepts: ['conditions', 'comparisons'],
-          success: 'Werkt voor 130, 100 en 99. Zo werken alle level-systemen.',
+          success: 'Works for 130, 100 and 99. This is how every level system works.',
         },
       ],
-      summary: ['`if voorwaarde then ... end` draait code alleen als de voorwaarde waar is.', 'Vergeet `then` en `end` niet.', 'Spring de code binnen het blok in, zodat je ziet wat erbij hoort.'],
+      summary: ['`if condition then ... end` runs code only when the condition is true.', 'Do not forget `then` and `end`.', 'Indent the code inside the block, so you can see what belongs to it.'],
     },
 
     // ------------------------------------------------------------------ 3
     {
       id: 'c2-else',
       courseId: 'course-2',
-      title: 'else en elseif',
-      objective: 'Je kunt kiezen tussen meerdere mogelijkheden met else en elseif.',
+      title: 'else and elseif',
+      objective: 'You can choose between several options with else and elseif.',
       minutes: 10,
       prerequisites: ['conditions'],
       concepts: ['conditions'],
       steps: [
         {
           type: 'explain',
-          body: `Vaak wil je ook iets doen als de voorwaarde **niet** waar is. Daarvoor is \`else\` ("anders").
+          body: `Often you also want to do something when the condition is **not** true. That is what \`else\` ("otherwise") is for.
 
-Heb je meer dan twee mogelijkheden? Dan gebruik je \`elseif\` ("anders als"). Luau controleert de voorwaarden **van boven naar beneden** en voert alleen het **eerste** blok uit dat waar is. Daarna slaat hij de rest over.
+More than two options? Then you use \`elseif\` ("otherwise if"). Luau checks the conditions **from top to bottom** and only runs the **first** block that is true. Then it skips the rest.
 
-Er is maar één \`end\`, helemaal onderaan.`,
+There is only one \`end\`, at the very bottom.`,
         },
         {
           type: 'code',
-          code: 'local health = 35\n\nif health > 70 then\n    print("Gezond")\nelseif health > 30 then\n    print("Gewond")\nelse\n    print("Bijna dood!")\nend',
+          code: 'local health = 35\n\nif health > 70 then\n    print("Healthy")\nelseif health > 30 then\n    print("Hurt")\nelse\n    print("Almost dead!")\nend',
           runnable: true,
-          after: 'health is 35: de eerste voorwaarde (35 > 70) is false, de tweede (35 > 30) is true, dus je ziet **Gewond**. Het else-blok wordt overgeslagen.',
+          after: 'health is 35: the first condition (35 > 70) is false, the second (35 > 30) is true, so you see **Hurt**. The else block is skipped.',
         },
         {
           type: 'predict',
           id: 'c2-else-p1',
-          question: 'Wat laat deze code zien?',
-          code: 'local score = 90\nif score > 50 then\n    print("Goed")\nelseif score > 80 then\n    print("Super")\nend',
+          question: 'What does this code show?',
+          code: 'local score = 90\nif score > 50 then\n    print("Good")\nelseif score > 80 then\n    print("Great")\nend',
           concepts: ['conditions'],
           options: [
-            { text: 'Super', feedback: '90 > 80 is wel waar, maar Luau stopt bij het eerste blok dat waar is.' },
-            { text: 'Goed', correct: true, feedback: 'Juist. 90 > 50 is al waar, dus de elseif wordt niet eens bekeken. De volgorde doet ertoe!' },
-            { text: 'Goed Super', feedback: 'Er wordt altijd maar één blok uitgevoerd.' },
+            { text: 'Great', feedback: '90 > 80 is true, but Luau stops at the first block that is true.' },
+            { text: 'Good', correct: true, feedback: 'Right. 90 > 50 is already true, so the elseif is not even checked. Order matters!' },
+            { text: 'Good Great', feedback: 'Only one block ever runs.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c2-else-ex1',
           mode: 'guided',
-          title: 'Kopen of niet',
-          prompt: 'Maak de code af: print **Gekocht!** als `coins` minstens `price` is, en anders **Te weinig coins**.',
-          starter: 'local coins = 80\nlocal price = 100\n\nif coins >= price then\n    print("Gekocht!")\nend',
+          title: 'Buy or not',
+          prompt: 'Finish the code: print **Bought!** when `coins` is at least `price`, and otherwise **Not enough coins**.',
+          starter: 'local coins = 80\nlocal price = 100\n\nif coins >= price then\n    print("Bought!")\nend',
           checks: [
-            { kind: 'uses', sequence: ['else'], message: 'Voeg een `else`-blok toe.' },
-            { kind: 'output', lines: ['Te weinig coins'], message: 'Met 80 coins en prijs 100 moet **Te weinig coins** verschijnen.' },
-            { kind: 'variants', replace: 'local coins = 80', cases: [{ with: 'local coins = 100', lines: ['Gekocht!'] }, { with: 'local coins = 500', lines: ['Gekocht!'] }], message: 'Met genoeg coins moet **Gekocht!** verschijnen.' },
+            { kind: 'uses', sequence: ['else'], message: 'Add an `else` block.' },
+            { kind: 'output', lines: ['Not enough coins'], message: 'With 80 coins and price 100, **Not enough coins** must appear.' },
+            { kind: 'variants', replace: 'local coins = 80', cases: [{ with: 'local coins = 100', lines: ['Bought!'] }, { with: 'local coins = 500', lines: ['Bought!'] }], message: 'With enough coins, **Bought!** must appear.' },
           ],
-          hints: ['`else` komt vóór de `end`, op een eigen regel.', 'if ... then\n    ...\nelse\n    print("Te weinig coins")\nend'],
-          solution: 'local coins = 80\nlocal price = 100\n\nif coins >= price then\n    print("Gekocht!")\nelse\n    print("Te weinig coins")\nend',
+          hints: ['`else` comes before the `end`, on its own line.', 'if ... then\n    ...\nelse\n    print("Not enough coins")\nend'],
+          solution: 'local coins = 80\nlocal price = 100\n\nif coins >= price then\n    print("Bought!")\nelse\n    print("Not enough coins")\nend',
           concepts: ['conditions'],
-          success: 'Goed. Elke winkel in een Roblox-game begint met precies deze vraag.',
+          success: 'Good. Every shop in a Roblox game starts with exactly this question.',
         },
         {
           type: 'exercise',
           id: 'c2-else-ex2',
           mode: 'independent',
-          title: 'Medailles',
-          prompt: 'Geef een medaille op basis van `time` (seconden voor een obby):\n- minder dan 30 → **Goud**\n- minder dan 60 → **Zilver**\n- anders → **Brons**',
+          title: 'Medals',
+          prompt: 'Give a medal based on `time` (seconds for an obby):\n- less than 30 → **Gold**\n- less than 60 → **Silver**\n- otherwise → **Bronze**',
           starter: 'local time = 45\n',
           checks: [
-            { kind: 'uses', sequence: ['elseif'], message: 'Gebruik `elseif` voor de tweede mogelijkheid.' },
-            { kind: 'output', lines: ['Zilver'], message: 'Met time 45 hoort **Zilver** te verschijnen.' },
-            { kind: 'variants', replace: 'local time = 45', cases: [{ with: 'local time = 10', lines: ['Goud'] }, { with: 'local time = 30', lines: ['Zilver'] }, { with: 'local time = 60', lines: ['Brons'] }, { with: 'local time = 200', lines: ['Brons'] }], message: 'Je medailles kloppen niet voor alle tijden. Let op de volgorde en op "minder dan".' },
+            { kind: 'uses', sequence: ['elseif'], message: 'Use `elseif` for the second option.' },
+            { kind: 'output', lines: ['Silver'], message: 'With time 45, **Silver** should appear.' },
+            { kind: 'variants', replace: 'local time = 45', cases: [{ with: 'local time = 10', lines: ['Gold'] }, { with: 'local time = 30', lines: ['Silver'] }, { with: 'local time = 60', lines: ['Bronze'] }, { with: 'local time = 200', lines: ['Bronze'] }], message: 'Your medals are not right for every time. Watch the order and "less than".' },
           ],
-          hints: ['Begin met de strengste voorwaarde (Goud) bovenaan.', '"minder dan 30" is `time < 30`.'],
-          solution: 'local time = 45\nif time < 30 then\n    print("Goud")\nelseif time < 60 then\n    print("Zilver")\nelse\n    print("Brons")\nend',
+          hints: ['Start with the strictest condition (Gold) at the top.', '"less than 30" is `time < 30`.'],
+          solution: 'local time = 45\nif time < 30 then\n    print("Gold")\nelseif time < 60 then\n    print("Silver")\nelse\n    print("Bronze")\nend',
           concepts: ['conditions'],
-          success: 'Getest met 10, 30, 45, 60 en 200 seconden: alles klopt.',
+          success: 'Tested with 10, 30, 45, 60 and 200 seconds: all correct.',
         },
       ],
-      summary: ['`else` draait als geen enkele voorwaarde waar is.', '`elseif` voegt extra voorwaarden toe.', 'Luau voert alleen het eerste ware blok uit: de volgorde doet ertoe.', 'Eén `end` sluit het hele if-statement af.'],
+      summary: ['`else` runs when no condition is true.', '`elseif` adds extra conditions.', 'Luau only runs the first true block: order matters.', 'One `end` closes the whole if statement.'],
     },
 
     // ------------------------------------------------------------------ 4
     {
       id: 'c2-logic',
       courseId: 'course-2',
-      title: 'and, or en not',
-      objective: 'Je kunt voorwaarden combineren met and en or, en omdraaien met not.',
+      title: 'and, or and not',
+      objective: 'You can combine conditions with and and or, and flip them with not.',
       minutes: 10,
       prerequisites: ['conditions'],
       concepts: ['logic'],
       steps: [
         {
           type: 'explain',
-          body: `Soms hangt een beslissing af van meer dan één ding:
-- \`and\` (en): **beide** kanten moeten waar zijn. "De speler heeft de sleutel **en** staat bij de deur."
-- \`or\` (of): **minstens één** kant moet waar zijn. "De speler is VIP **of** heeft betaald."
-- \`not\` (niet): draait waar en niet waar om. \`not true\` is \`false\`.`,
+          body: `Sometimes a decision depends on more than one thing:
+- \`and\`: **both** sides must be true. "The player has the key **and** is standing at the door."
+- \`or\`: **at least one** side must be true. "The player is VIP **or** has paid."
+- \`not\`: flips true and false. \`not true\` is \`false\`.`,
         },
         {
           type: 'code',
-          code: 'local hasKey = true\nlocal nearDoor = false\nlocal isVip = true\n\nprint(hasKey and nearDoor)\nprint(hasKey or nearDoor)\nprint(not nearDoor)\n\nif hasKey and isVip then\n    print("VIP-deur gaat open")\nend',
+          code: 'local hasKey = true\nlocal nearDoor = false\nlocal isVip = true\n\nprint(hasKey and nearDoor)\nprint(hasKey or nearDoor)\nprint(not nearDoor)\n\nif hasKey and isVip then\n    print("VIP door opens")\nend',
           runnable: true,
           after: '`true and false` is false, `true or false` is true, `not false` is true.',
         },
         {
           type: 'quiz',
           id: 'c2-logic-q1',
-          question: 'Een deur opent als de speler **level 10 of hoger** is, **of** een VIP-pas heeft. Welke voorwaarde klopt?',
+          question: 'A door opens if the player is **level 10 or higher**, **or** has a VIP pass. Which condition is right?',
           concepts: ['logic'],
           options: [
-            { text: 'level >= 10 or hasPass', correct: true, feedback: 'Juist: één van beide is genoeg, dus `or`.' },
-            { text: 'level >= 10 and hasPass', feedback: 'Met `and` moet de speler allebei hebben. Dat is strenger dan gevraagd.' },
-            { text: 'not level >= 10', feedback: '`not` draait de voorwaarde om; dan gaat de deur juist open voor lage levels.' },
+            { text: 'level >= 10 or hasPass', correct: true, feedback: 'Right: one of the two is enough, so `or`.' },
+            { text: 'level >= 10 and hasPass', feedback: 'With `and` the player needs both. That is stricter than asked.' },
+            { text: 'not level >= 10', feedback: '`not` flips the condition; then the door opens for low levels instead.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c2-logic-ex1',
           mode: 'guided',
-          title: 'Mag de speler aanvallen?',
-          prompt: 'Een speler mag alleen aanvallen als hij **leeft** (`health > 0`) **en** **niet** in de safezone staat. Print **Aanval!** als dat zo is, en anders **Kan niet aanvallen**.',
+          title: 'Can the player attack?',
+          prompt: 'A player may only attack when they are **alive** (`health > 0`) **and** **not** in the safe zone. Print **Attack!** if so, and otherwise **Cannot attack**.',
           starter: 'local health = 50\nlocal inSafeZone = false\n',
           checks: [
-            { kind: 'uses', sequence: ['and'], message: 'Combineer de twee voorwaarden met `and`.' },
-            { kind: 'uses', sequence: ['not'], message: 'Gebruik `not` voor "niet in de safezone".' },
-            { kind: 'output', lines: ['Aanval!'], message: 'Met health 50 en buiten de safezone moet **Aanval!** verschijnen.' },
-            { kind: 'variants', replace: 'local inSafeZone = false', cases: [{ with: 'local inSafeZone = true', lines: ['Kan niet aanvallen'] }], message: 'In de safezone mag de speler niet aanvallen.' },
-            { kind: 'variants', replace: 'local health = 50', cases: [{ with: 'local health = 0', lines: ['Kan niet aanvallen'] }], message: 'Met health 0 mag de speler niet aanvallen.' },
+            { kind: 'uses', sequence: ['and'], message: 'Combine the two conditions with `and`.' },
+            { kind: 'uses', sequence: ['not'], message: 'Use `not` for "not in the safe zone".' },
+            { kind: 'output', lines: ['Attack!'], message: 'With health 50 and outside the safe zone, **Attack!** must appear.' },
+            { kind: 'variants', replace: 'local inSafeZone = false', cases: [{ with: 'local inSafeZone = true', lines: ['Cannot attack'] }], message: 'In the safe zone the player may not attack.' },
+            { kind: 'variants', replace: 'local health = 50', cases: [{ with: 'local health = 0', lines: ['Cannot attack'] }], message: 'With health 0 the player may not attack.' },
           ],
-          hints: ['De voorwaarde bestaat uit twee delen met `and` ertussen.', '`if health > 0 and not inSafeZone then`'],
-          solution: 'local health = 50\nlocal inSafeZone = false\nif health > 0 and not inSafeZone then\n    print("Aanval!")\nelse\n    print("Kan niet aanvallen")\nend',
+          hints: ['The condition has two parts with `and` between them.', '`if health > 0 and not inSafeZone then`'],
+          solution: 'local health = 50\nlocal inSafeZone = false\nif health > 0 and not inSafeZone then\n    print("Attack!")\nelse\n    print("Cannot attack")\nend',
           concepts: ['logic', 'conditions'],
-          success: 'Getest in de safezone, erbuiten en met 0 health: alles klopt.',
+          success: 'Tested in the safe zone, outside it and with 0 health: all correct.',
         },
         {
           type: 'exercise',
           id: 'c2-logic-ex2',
           mode: 'independent',
-          title: 'Weekendbonus',
-          prompt: 'Spelers krijgen dubbele coins als het `isWeekend` is **of** als ze `isVip` zijn. Print **Dubbele coins** of **Normale coins**.',
+          title: 'Weekend bonus',
+          prompt: 'Players get double coins when it `isWeekend` **or** when they are `isVip`. Print **Double coins** or **Normal coins**.',
           starter: 'local isWeekend = false\nlocal isVip = true\n',
           checks: [
-            { kind: 'uses', sequence: ['or'], message: 'Gebruik `or`: één van beide is genoeg.' },
-            { kind: 'output', lines: ['Dubbele coins'], message: 'Een VIP krijgt altijd **Dubbele coins**.' },
-            { kind: 'variants', replace: 'local isVip = true', cases: [{ with: 'local isVip = false', lines: ['Normale coins'] }], message: 'Geen weekend en geen VIP: dan **Normale coins**.' },
+            { kind: 'uses', sequence: ['or'], message: 'Use `or`: one of the two is enough.' },
+            { kind: 'output', lines: ['Double coins'], message: 'A VIP always gets **Double coins**.' },
+            { kind: 'variants', replace: 'local isVip = true', cases: [{ with: 'local isVip = false', lines: ['Normal coins'] }], message: 'No weekend and no VIP: then **Normal coins**.' },
           ],
           hints: ['if isWeekend or isVip then ...'],
-          solution: 'local isWeekend = false\nlocal isVip = true\nif isWeekend or isVip then\n    print("Dubbele coins")\nelse\n    print("Normale coins")\nend',
+          solution: 'local isWeekend = false\nlocal isVip = true\nif isWeekend or isVip then\n    print("Double coins")\nelse\n    print("Normal coins")\nend',
           concepts: ['logic'],
-          success: 'Precies. `or` is ideaal voor bonussen met meerdere voorwaarden.',
+          success: 'Exactly. `or` is perfect for bonuses with several conditions.',
         },
       ],
-      summary: ['`and`: beide kanten waar.', '`or`: minstens één kant waar.', '`not`: draait true en false om.', 'Booleans kun je direct als voorwaarde gebruiken: `if isVip then`.'],
+      summary: ['`and`: both sides true.', '`or`: at least one side true.', '`not`: flips true and false.', 'You can use booleans directly as a condition: `if isVip then`.'],
     },
 
     // ------------------------------------------------------------------ 5
     {
       id: 'c2-truthy-nested',
       courseId: 'course-2',
-      title: 'nil als voorwaarde en geneste if-statements',
-      objective: 'Je weet welke waarden als "waar" tellen en kunt een if-statement in een ander if-statement zetten.',
+      title: 'nil as a condition and nested if statements',
+      objective: 'You know which values count as "true" and can put an if statement inside another if statement.',
       minutes: 9,
       prerequisites: ['conditions', 'nil'],
       concepts: ['conditions', 'nil'],
       steps: [
         {
           type: 'explain',
-          body: `Een voorwaarde hoeft geen vergelijking te zijn. Luau kijkt alleen: is het **waar genoeg**?
+          body: `A condition does not have to be a comparison. Luau only checks: is it **true enough**?
 
-In Luau tellen alleen \`false\` en \`nil\` als niet waar. **Alle andere waarden tellen als waar**, ook \`0\` en lege tekst \`""\`.
+In Luau only \`false\` and \`nil\` count as not true. **All other values count as true**, including \`0\` and empty text \`""\`.
 
-Dat is handig in Roblox: \`if tool then\` betekent "als er een tool is (niet nil)". Dat gebruik je straks heel vaak om te controleren of iets bestaat.`,
+That is handy in Roblox: \`if tool then\` means "if there is a tool (not nil)". You will use that very often to check whether something exists.`,
         },
         {
           type: 'predict',
           id: 'c2-truthy-p1',
-          question: 'Wat laat deze code zien?',
-          code: 'local coins = 0\nif coins then\n    print("ja")\nelse\n    print("nee")\nend',
+          question: 'What does this code show?',
+          code: 'local coins = 0\nif coins then\n    print("yes")\nelse\n    print("no")\nend',
           concepts: ['conditions'],
           options: [
-            { text: 'nee', feedback: 'In veel andere talen wel, maar in Luau is 0 gewoon een waarde, dus "waar genoeg".' },
-            { text: 'ja', correct: true, feedback: 'Juist. Alleen `false` en `nil` tellen als niet waar. 0 telt als waar.' },
+            { text: 'no', feedback: 'In many other languages it would, but in Luau 0 is just a value, so "true enough".' },
+            { text: 'yes', correct: true, feedback: 'Right. Only `false` and `nil` count as not true. 0 counts as true.' },
           ],
         },
         {
           type: 'explain',
-          title: 'Geneste if-statements',
-          body: `Je mag een if-statement **binnen** een ander if-statement zetten. Dat heet **nesten**.
+          title: 'Nested if statements',
+          body: `You can put an if statement **inside** another if statement. That is called **nesting**.
 
-Spring elk niveau een stap verder in. Elk \`if\` krijgt zijn eigen \`end\`.`,
+Indent each level one step further. Every \`if\` gets its own \`end\`.`,
         },
         {
           type: 'code',
-          code: 'local hasTicket = true\nlocal age = 9\n\nif hasTicket then\n    if age >= 12 then\n        print("Welkom in de achtbaan")\n    else\n        print("Te jong voor de achtbaan")\n    end\nelse\n    print("Koop eerst een ticket")\nend',
+          code: 'local hasTicket = true\nlocal age = 9\n\nif hasTicket then\n    if age >= 12 then\n        print("Welcome to the roller coaster")\n    else\n        print("Too young for the roller coaster")\n    end\nelse\n    print("Buy a ticket first")\nend',
           runnable: true,
         },
         {
           type: 'exercise',
           id: 'c2-nested-ex1',
           mode: 'independent',
-          title: 'Wapen gebruiken',
-          prompt: '`weapon` kan een naam bevatten of `nil` zijn.\n- Is er geen wapen (nil)? Print **Geen wapen**.\n- Is er wel een wapen, en is `ammo` groter dan 0? Print **Schieten met** gevolgd door de naam, bijvoorbeeld **Schieten met Blaster**.\n- Wapen maar geen ammo? Print **Herladen**.',
+          title: 'Using a weapon',
+          prompt: '`weapon` can contain a name or be `nil`.\n- No weapon (nil)? Print **No weapon**.\n- There is a weapon and `ammo` is greater than 0? Print **Shooting with** followed by the name, for example **Shooting with Blaster**.\n- A weapon but no ammo? Print **Reload**.',
           starter: 'local weapon = "Blaster"\nlocal ammo = 5\n',
           checks: [
-            { kind: 'output', lines: ['Schieten met Blaster'], message: 'Met een Blaster en 5 ammo hoort **Schieten met Blaster** te verschijnen.' },
-            { kind: 'variants', replace: 'local ammo = 5', cases: [{ with: 'local ammo = 0', lines: ['Herladen'] }], message: 'Zonder ammo moet **Herladen** verschijnen.' },
-            { kind: 'variants', replace: 'local weapon = "Blaster"', cases: [{ with: 'local weapon = nil', lines: ['Geen wapen'] }, { with: 'local weapon = "Laser"', lines: ['Schieten met Laser'] }], message: 'Je code werkt nog niet voor elk wapen (of geen wapen).' },
+            { kind: 'output', lines: ['Shooting with Blaster'], message: 'With a Blaster and 5 ammo, **Shooting with Blaster** should appear.' },
+            { kind: 'variants', replace: 'local ammo = 5', cases: [{ with: 'local ammo = 0', lines: ['Reload'] }], message: 'Without ammo, **Reload** must appear.' },
+            { kind: 'variants', replace: 'local weapon = "Blaster"', cases: [{ with: 'local weapon = nil', lines: ['No weapon'] }, { with: 'local weapon = "Laser"', lines: ['Shooting with Laser'] }], message: 'Your code does not work yet for every weapon (or no weapon).' },
           ],
-          hints: ['Controleer eerst of `weapon` bestaat: `if weapon then`.', 'Zet de ammo-controle binnen dat eerste if-blok.', 'Gebruik `..` of interpolation om de naam van het wapen te tonen.'],
-          solution: 'local weapon = "Blaster"\nlocal ammo = 5\nif weapon then\n    if ammo > 0 then\n        print("Schieten met " .. weapon)\n    else\n        print("Herladen")\n    end\nelse\n    print("Geen wapen")\nend',
+          hints: ['First check whether `weapon` exists: `if weapon then`.', 'Put the ammo check inside that first if block.', 'Use `..` or interpolation to show the name of the weapon.'],
+          solution: 'local weapon = "Blaster"\nlocal ammo = 5\nif weapon then\n    if ammo > 0 then\n        print("Shooting with " .. weapon)\n    else\n        print("Reload")\n    end\nelse\n    print("No weapon")\nend',
           concepts: ['conditions', 'nil'],
-          success: 'Getest met Blaster, Laser, geen wapen en geen ammo. Allemaal goed.',
+          success: 'Tested with Blaster, Laser, no weapon and no ammo. All good.',
         },
       ],
-      summary: ['Alleen `false` en `nil` tellen als niet waar; 0 en "" tellen als waar.', '`if iets then` controleert of iets bestaat.', 'Je kunt if-statements nesten; elk if krijgt een eigen `end`.'],
+      summary: ['Only `false` and `nil` count as not true; 0 and "" count as true.', '`if something then` checks whether something exists.', 'You can nest if statements; every if gets its own `end`.'],
     },
 
     // ------------------------------------------------------------------ 6 project
     {
       id: 'c2-project-shop',
       courseId: 'course-2',
-      title: 'Project: de winkelcontrole',
-      objective: 'Je bouwt de beslislogica van een Roblox-winkel helemaal zelf.',
+      title: 'Project: the shop check',
+      objective: 'You build the decision logic of a Roblox shop all by yourself.',
       minutes: 15,
       prerequisites: ['conditions', 'logic'],
       concepts: ['conditions', 'logic', 'comparisons'],
       steps: [
         {
           type: 'explain',
-          body: `Een speler klikt in je winkel op "Koop". Voordat hij het item krijgt, moet je game drie dingen controleren:
-1. Heeft de speler het item al? Dan kan hij het niet nog eens kopen.
-2. Is het item alleen voor VIP's, en is de speler geen VIP? Dan mag het niet.
-3. Heeft hij genoeg coins?
+          body: `A player clicks "Buy" in your shop. Before they get the item, your game has to check three things:
+1. Does the player already have the item? Then they cannot buy it again.
+2. Is the item VIP-only, and is the player not a VIP? Then it is not allowed.
+3. Do they have enough coins?
 
-Later leer je dat deze controle altijd op de **server** moet gebeuren. De logica zelf schrijf je nu al.`,
+Later you will learn that this check must always happen on the **server**. You can already write the logic itself now.`,
         },
         {
           type: 'exercise',
           id: 'c2-project-ex1',
           mode: 'independent',
-          title: 'De volledige controle',
-          prompt: 'Print precies één bericht, en controleer in deze volgorde:\n1. `alreadyOwned` is true → **Je hebt dit al**\n2. `vipOnly` is true en `isVip` is false → **Alleen voor VIP**\n3. `coins` is minder dan `price` → **Te weinig coins**\n4. anders → **Gekocht!** en daarna op een nieuwe regel hoeveel coins er over zijn, zoals **Over: 50**',
+          title: 'The complete check',
+          prompt: 'Print exactly one message, and check in this order:\n1. `alreadyOwned` is true → **You already have this**\n2. `vipOnly` is true and `isVip` is false → **VIP only**\n3. `coins` is less than `price` → **Not enough coins**\n4. otherwise → **Bought!** and then on a new line how many coins are left, like **Left: 50**',
           starter: 'local coins = 150\nlocal price = 100\nlocal alreadyOwned = false\nlocal vipOnly = false\nlocal isVip = false\n',
           checks: [
-            { kind: 'output', lines: ['Gekocht!', 'Over: 50'], message: 'Met 150 coins, prijs 100 en geen beperkingen hoort **Gekocht!** en **Over: 50** te verschijnen.' },
-            { kind: 'variants', replace: 'local alreadyOwned = false', cases: [{ with: 'local alreadyOwned = true', lines: ['Je hebt dit al'] }], message: 'Een speler die het item al heeft, moet **Je hebt dit al** zien.' },
-            { kind: 'variants', replace: 'local vipOnly = false', cases: [{ with: 'local vipOnly = true', lines: ['Alleen voor VIP'] }], message: 'Een VIP-item voor een niet-VIP moet **Alleen voor VIP** geven.' },
-            { kind: 'variants', replace: 'local isVip = false', cases: [{ with: 'local isVip = true', lines: ['Gekocht!', 'Over: 50'] }], message: 'Een VIP mag gewoon kopen.' },
-            { kind: 'variants', replace: 'local coins = 150', cases: [{ with: 'local coins = 99', lines: ['Te weinig coins'] }, { with: 'local coins = 100', lines: ['Gekocht!', 'Over: 0'] }], message: 'De coin-controle klopt niet voor elk bedrag.' },
+            { kind: 'output', lines: ['Bought!', 'Left: 50'], message: 'With 150 coins, price 100 and no restrictions, **Bought!** and **Left: 50** should appear.' },
+            { kind: 'variants', replace: 'local alreadyOwned = false', cases: [{ with: 'local alreadyOwned = true', lines: ['You already have this'] }], message: 'A player who already has the item must see **You already have this**.' },
+            { kind: 'variants', replace: 'local vipOnly = false', cases: [{ with: 'local vipOnly = true', lines: ['VIP only'] }], message: 'A VIP item for a non-VIP must give **VIP only**.' },
+            { kind: 'variants', replace: 'local isVip = false', cases: [{ with: 'local isVip = true', lines: ['Bought!', 'Left: 50'] }], message: 'A VIP can simply buy.' },
+            { kind: 'variants', replace: 'local coins = 150', cases: [{ with: 'local coins = 99', lines: ['Not enough coins'] }, { with: 'local coins = 100', lines: ['Bought!', 'Left: 0'] }], message: 'The coin check is not right for every amount.' },
           ],
-          hints: ['Gebruik één if met elseif-blokken, in de volgorde van de opdracht.', 'Voor stap 2: `elseif vipOnly and not isVip then`', 'Reken bij Gekocht! eerst `coins - price` uit.'],
-          solution: 'local coins = 150\nlocal price = 100\nlocal alreadyOwned = false\nlocal vipOnly = false\nlocal isVip = false\n\nif alreadyOwned then\n    print("Je hebt dit al")\nelseif vipOnly and not isVip then\n    print("Alleen voor VIP")\nelseif coins < price then\n    print("Te weinig coins")\nelse\n    coins -= price\n    print("Gekocht!")\n    print(`Over: {coins}`)\nend',
+          hints: ['Use one if with elseif blocks, in the order of the assignment.', 'For step 2: `elseif vipOnly and not isVip then`', 'For Bought!, first calculate `coins - price`.'],
+          solution: 'local coins = 150\nlocal price = 100\nlocal alreadyOwned = false\nlocal vipOnly = false\nlocal isVip = false\n\nif alreadyOwned then\n    print("You already have this")\nelseif vipOnly and not isVip then\n    print("VIP only")\nelseif coins < price then\n    print("Not enough coins")\nelse\n    coins -= price\n    print("Bought!")\n    print(`Left: {coins}`)\nend',
           concepts: ['conditions', 'logic', 'comparisons'],
-          success: 'Je winkellogica is getest in zeven situaties en klopt overal. Dit is echte gamecode.',
+          success: 'Your shop logic was tested in seven situations and is right everywhere. This is real game code.',
         },
       ],
-      summary: ['Je combineerde vergelijkingen, if/elseif/else en and/not.', 'De volgorde van controles bepaalt welk bericht de speler ziet.', 'Volgende cursus: code herhalen met lussen.'],
+      summary: ['You combined comparisons, if/elseif/else and and/not.', 'The order of the checks decides which message the player sees.', 'Next course: repeating code with loops.'],
     },
   ],
 };

@@ -62,7 +62,7 @@ describe('database persistence', () => {
     const repo = new Repository(db);
     repo.completeLesson('a', 'course-0', ['a', 'b']);
     const awards = repo.completeLesson('b', 'course-0', ['a', 'b']);
-    expect(awards.some((a) => a.reason === 'Cursus afgerond')).toBe(true);
+    expect(awards.some((a) => a.reason === 'Course finished')).toBe(true);
     expect(awards.some((a) => a.achievementId === 'course-0')).toBe(true);
     db.close();
   });
@@ -125,12 +125,31 @@ describe('database persistence', () => {
     db.close();
   });
 
+  it('caches machine translations per language and stores one license', async () => {
+    const db = await open();
+    const repo = new Repository(db);
+    repo.saveTranslations('fr', [{ hash: 'h1', text: 'Bonjour' }, { hash: 'h2', text: 'Monde' }]);
+    repo.saveTranslations('fr', [{ hash: 'h1', text: 'Salut' }]);
+    expect([...repo.getTranslations('fr', ['h1', 'h2', 'h3']).entries()]).toEqual([['h1', 'Salut'], ['h2', 'Monde']]);
+    expect(repo.getTranslations('de', ['h1']).size).toBe(0);
+    expect(repo.getLicense()).toBeNull();
+    repo.saveLicense('LUMORA1-abc');
+    repo.saveLicense('LUMORA1-def');
+    expect(repo.getLicense()?.key).toBe('LUMORA1-def');
+    repo.removeLicense();
+    expect(repo.getLicense()).toBeNull();
+    expect(repo.hasSetting('language')).toBe(false);
+    repo.setSettings({ language: 'fr' });
+    expect(repo.hasSetting('language')).toBe(true);
+    db.close();
+  });
+
   it('migrations are applied once and recorded', async () => {
     let db = await open();
-    expect(db.schemaVersion).toBe(4);
+    expect(db.schemaVersion).toBe(5);
     db.close();
     db = await open();
-    expect(db.schemaVersion).toBe(4);
+    expect(db.schemaVersion).toBe(5);
     db.close();
   });
 
@@ -168,40 +187,3 @@ describe('database persistence', () => {
   });
 });
 
-describe('Roblox Studio sync: never overwrite silently', () => {
-  it('creates, updates, detects conflicts and resolves them keeping both versions', async () => {
-    const db = await open();
-    const repo = new Repository(db);
-    const p = 'ServerScriptService.Countdown';
-    const a = repo.studioPull(p, 'print(1)');
-    expect(a.kind).toBe('created');
-    expect(repo.studioPull(p, 'print(1)').kind).toBe('unchanged');
-    // Only Studio changed -> Academy file follows.
-    expect(repo.studioPull(p, 'print(2)').kind).toBe('updated');
-    expect(repo.getFile(a.fileId)!.content).toBe('print(2)');
-    // Academy edits (unsaved draft) AND Studio edits -> conflict, nothing overwritten.
-    repo.saveDraft(a.fileId, 'print("academy")');
-    const c = repo.studioPull(p, 'print("studio")');
-    expect(c.kind).toBe('conflict');
-    expect(repo.getFile(a.fileId)!.draft).toBe('print("academy")');
-    const conflicts = repo.studioConflicts();
-    expect(conflicts).toHaveLength(1);
-    expect(conflicts[0].studioSource).toBe('print("studio")');
-    // Resolve with the Academy version: both versions remain in the revision history.
-    repo.resolveStudioConflict(conflicts[0].id, 'academy');
-    expect(repo.getFile(a.fileId)!.content).toBe('print("academy")');
-    expect(repo.revisions(a.fileId).some((r) => r.content === 'print("studio")')).toBe(true);
-    expect(repo.studioConflicts()).toHaveLength(0);
-    // The next push uses the Studio version as base, so the plugin will accept it.
-    expect(repo.studioPushData(a.fileId)).toEqual({ path: p, source: 'print("academy")', baseSource: 'print("studio")' });
-    // A push that the plugin refuses because Studio changed meanwhile becomes a conflict.
-    repo.studioPushResult(p, 'print("academy")', 'conflict', 'print("studio 2")');
-    expect(repo.studioConflicts()[0].studioSource).toBe('print("studio 2")');
-    // Pairing token hash persists.
-    repo.setStudioTokenHash('ab'.repeat(32));
-    expect(repo.getStudioTokenHash()).toBe('ab'.repeat(32));
-    repo.deleteProfile();
-    expect(repo.getStudioTokenHash()).toBeNull();
-    db.close();
-  });
-});

@@ -53,6 +53,7 @@ export type HintPreference = 'on-request' | 'after-mistake';
 export type ExplanationDepth = 'short' | 'detailed';
 
 export interface Settings {
+  language: string; // code from shared/languages.ts
   theme: ThemeName;
   accent: AccentName;
   uiScale: number; // 0.9 – 1.25
@@ -80,6 +81,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  language: 'en',
   theme: 'dark',
   accent: 'blue',
   uiScale: 1,
@@ -206,22 +208,3 @@ export interface StartupStatus {
   corruptFileKeptAt: string | null;
 }
 
-export interface StudioState {
-  status: 'connected' | 'disconnected' | 'permission-required' | 'plugin-unavailable' | 'studio-not-detected' | 'error';
-  paired: boolean;
-  pairingCode: string | null;
-  pairingExpiresAt: number | null;
-  placeName: string | null;
-  isRunning: boolean;
-  currentExerciseId: string | null;
-  pendingPushes: string[];
-  port: number;
-  error: string | null;
-  plugin: { installed: boolean; upToDate: boolean; path: string; robloxFound: boolean };
-  verifications: import('./studio').StudioVerification[];
-  logs: { kind: 'error' | 'warning' | 'info'; text: string; at: string }[];
-  conflicts: { id: number; path: string; studioSource: string; academySource: string; createdAt: string }[];
-  synced: { path: string; fileId: number; updatedAt: string }[];
-}
-
-export type StudioConnectionState = 'connected' | 'disconnected' | 'studio-not-detected' | 'plugin-unavailable' | 'permission-required';

@@ -1,7 +1,7 @@
 # Builds, tests and publishes the Windows installer for free on GitHub.
 # Trigger: push a version tag, e.g.  git tag v0.3.0 && git push origin v0.3.0
 # The installer becomes downloadable 24/7 at:
-#   https://github.com/<owner>/<repo>/releases/latest/download/Roblox-Dev-Academy-Setup.exe
+#   https://github.com/<owner>/<repo>/releases/latest/download/Lumora-Academy-Setup.exe
 name: Build en publiceer installer
 
 on:
@@ -32,7 +32,7 @@ jobs:
           java -version
           g++ --version || where g++ || true
 
-      - name: Unit, database, curriculum and Studio tests (real Luau, Java and C++)
+      - name: Unit, database, curriculum, license and i18n tests (real Luau, Java and C++)
         run: npm test
         env:
           REQUIRE_TOOLCHAINS: '1'
@@ -43,12 +43,12 @@ jobs:
       - name: Keep installer as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Roblox-Dev-Academy-Setup
-          path: release/Roblox-Dev-Academy-Setup.exe
+          name: Lumora-Academy-Setup
+          path: release/Lumora-Academy-Setup.exe
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: release/Roblox-Dev-Academy-Setup.exe
+          files: release/Lumora-Academy-Setup.exe
           generate_release_notes: true

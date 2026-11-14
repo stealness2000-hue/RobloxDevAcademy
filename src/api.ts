@@ -1,11 +1,13 @@
 import type { Channel, ChannelArgs, ChannelResults } from '@shared/ipc';
 import type { Award } from '@shared/types';
-import type { StudioVerification } from '@shared/studio';
+import type { TranslatorStatus } from '@shared/ipc';
+import { t } from '@shared/i18n';
+import { APP_NAME } from '@shared/brand';
 
 export type Notice =
   | { type: 'awards'; awards: Award[] }
   | { type: 'break'; minutes: number }
-  | { type: 'studio'; verification?: StudioVerification; pull?: { path: string; kind: string }; pushResult?: { path: string; reason: string } };
+  | { type: 'translator'; status: TranslatorStatus };
 
 interface Bridge {
   invoke(channel: string, arg?: unknown): Promise<unknown>;
@@ -21,7 +23,7 @@ declare global {
 }
 
 function bridge(): Bridge {
-  if (!window.academy) throw new Error('De app-brug is niet beschikbaar. Start Roblox Dev Academy via de desktop-app.');
+  if (!window.academy) throw new Error(t('The app bridge is not available. Start {app} from the desktop app.', { app: APP_NAME }));
   return window.academy;
 }
 

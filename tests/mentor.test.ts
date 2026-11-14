@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { ALL_LESSONS, languageOfLesson } from '../src/curriculum';
 import { builtinScript } from '../src/features/mentor/script';
 import { MentorScript, sceneDurationMs } from '../shared/mentor';
-import { AiMentor } from '../electron/services/ai';
 
-describe('AI Mentor video scripts', () => {
+describe('Mentor video scripts', () => {
   it('every lesson (Luau, C++ and Java) gets a valid built-in video script', () => {
     for (const l of ALL_LESSONS) {
       const s = builtinScript(l, languageOfLesson(l.id));
@@ -25,15 +24,10 @@ describe('AI Mentor video scripts', () => {
     }
   });
 
-  it('rejects malformed AI output by schema', () => {
-    expect(MentorScript.safeParse({ lessonId: 'x', source: 'ai', language: 'luau', scenes: [{ kind: 'say', text: '' }] }).success).toBe(false);
-    expect(MentorScript.safeParse({ lessonId: 'x', source: 'ai', language: 'luau', scenes: [{ kind: 'script', text: 'x' }, { kind: 'say', text: 'y' }] }).success).toBe(false);
+  it('rejects malformed scripts by schema', () => {
+    expect(MentorScript.safeParse({ lessonId: 'x', source: 'builtin', language: 'luau', scenes: [{ kind: 'say', text: '' }] }).success).toBe(false);
+    expect(MentorScript.safeParse({ lessonId: 'x', source: 'builtin', language: 'luau', scenes: [{ kind: 'script', text: 'x' }, { kind: 'say', text: 'y' }] }).success).toBe(false);
   });
 
-  it('AI mentor needs a key and refuses to store one without OS encryption', async () => {
-    const noCrypto = new AiMentor({ available: () => false, read: () => null, write: () => {} });
-    expect(() => noCrypto.setKey('sk-ant-' + 'a'.repeat(30))).toThrow(/versleuteling/);
-    await expect(noCrypto.script({ lessonId: 'x', language: 'luau', title: 't', objective: 'o', content: 'c', level: 'short', regenerate: false })).rejects.toThrow(/sleutel/);
-    expect(noCrypto.status().configured).toBe(false);
-  });
+
 });

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, nativeTheme, net, protocol, session, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, nativeTheme, net, protocol, session, shell, utilityProcess } from 'electron';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
@@ -8,35 +8,17 @@ import { AcademyDatabase } from './db/database';
 import { Repository } from './db/repository';
 import { LuauService } from './services/luau';
 import { loadWindowState, trackWindowState } from './services/window-state';
-import { StudioBridge } from './services/studio-bridge';
 import { NativeRunner } from './services/native-runner';
-import { AiMentor } from './services/ai';
-import { MentorScript, type MentorRequest } from '../shared/mentor';
-import { safeStorage } from 'electron';
 
 const native = new NativeRunner();
-const aiKeyFile = () => path.join(app.getPath('userData'), 'ai-key.bin');
-const ai = new AiMentor({
-  available: () => safeStorage.isEncryptionAvailable(),
-  read: () => {
-    try {
-      return safeStorage.decryptString(fs.readFileSync(aiKeyFile()));
-    } catch {
-      return null;
-    }
-  },
-  write: (key) => {
-    if (key) fs.writeFileSync(aiKeyFile(), safeStorage.encryptString(key));
-    else fs.rmSync(aiKeyFile(), { force: true });
-  },
-});
-import { execFile } from 'node:child_process';
-import os from 'node:os';
-import { verifyStudioFacts, type StudioExercise, type StudioFacts, type StudioVerification } from '../shared/studio';
-import { ROBLOX_GLOBALS, explainMessage } from '../shared/explain-error';
-import type { StudioState } from '../shared/types';
 import { EXTERNAL_HOST_ALLOWLIST, schemas, type Channel } from '../shared/ipc';
 import { StudyTracker } from '../shared/study-tracker';
+import { APP_NAME, LEGACY_DATA_FOLDER } from '../shared/brand';
+import { setDictionary, t } from '../shared/i18n';
+import { languageFromLocale } from '../shared/languages';
+import { MAIN_NL } from '../shared/i18n-main-nl';
+import { LicenseService } from './services/license';
+import { Translator } from './services/translator';
 import type { Award } from '../shared/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -59,6 +41,29 @@ const CSP = [
 
 // Test/portable override: keep all data in a separate folder (used by the automated acceptance test).
 if (process.env.RDA_USER_DATA) app.setPath('userData', path.resolve(process.env.RDA_USER_DATA));
+else migrateLegacyData();
+
+/**
+ * v0.5 and older were called "Roblox Dev Academy" and kept data in a folder with that name.
+ * On the first start of the renamed app we copy (never move) that data, so progress is kept and
+ * the old folder stays as a safety copy.
+ */
+function migrateLegacyData() {
+  try {
+    const target = app.getPath('userData');
+    const legacy = path.join(app.getPath('appData'), LEGACY_DATA_FOLDER);
+    if (path.resolve(legacy) === path.resolve(target)) return;
+    if (fs.existsSync(path.join(target, 'data', 'academy.sqlite'))) return;
+    if (!fs.existsSync(path.join(legacy, 'data', 'academy.sqlite'))) return;
+    fs.mkdirSync(target, { recursive: true });
+    for (const item of ['data', 'backups', 'backgrounds', 'window-state.json']) {
+      const from = path.join(legacy, item);
+      if (fs.existsSync(from)) fs.cpSync(from, path.join(target, item), { recursive: true, errorOnExist: false, force: false });
+    }
+  } catch (e) {
+    console.error('Could not copy data from the old app folder', e);
+  }
+}
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } }]);
 
@@ -107,107 +112,41 @@ async function initData() {
   db.dailyBackup();
   repo = new Repository(db);
   luau = new LuauService({ distDir: app.isPackaged ? resourcePath('node_modules', '@luau-rs', 'luau', 'dist') : undefined });
+  // Language: v0.5 users (already onboarded, no language stored) were Dutch; new users get their OS language.
+  if (!repo.hasSetting('language')) repo.setSettings({ language: repo.getProfile()?.onboardedAt ? 'nl' : languageFromLocale(app.getPreferredSystemLanguages()[0] ?? app.getLocale()) });
+  applyMainLanguage(repo.getSettings().language);
+  license = new LicenseService(
+    { get: () => repo.getLicense(), save: (k) => repo.saveLicense(k), remove: () => repo.removeLicense() },
+    (url, init) => net.fetch(url, init),
+  );
+  translator = new Translator({
+    root: path.join(app.getPath('userData'), 'models'),
+    fetch: (url) => net.fetch(url),
+    cache: { get: (lang, keys) => repo.getTranslations(lang, keys), save: (lang, items) => repo.saveTranslations(lang, items) },
+    spawn: spawnTranslateWorker,
+    onStatus: (st) => win?.webContents.send('notice', { type: 'translator', status: st }),
+  });
   tracker = new StudyTracker(repo.getSettings().idleTimeoutMinutes * 60_000, Date.now());
   setInterval(() => tracker.tick(Date.now()), 15_000).unref();
   setInterval(persistStudyTime, 30_000).unref();
 }
 
-// ---------------------------------------------------------------- Roblox Studio bridge
-let bridge: StudioBridge;
-const studioVerifications = new Map<string, StudioVerification>();
-let studioLogs: StudioState['logs'] = [];
+// ---------------------------------------------------------------- language, license, translator
+let license: LicenseService;
+let translator: Translator;
 
-function notifyStudio(extra: Record<string, unknown> = {}) {
-  win?.webContents.send('notice', { type: 'studio', ...extra });
+/** Main-process texts (dialogs, errors) exist in English and Dutch; other languages use English here. */
+function applyMainLanguage(lang: string) {
+  setDictionary(lang, lang === 'nl' ? MAIN_NL : {});
 }
 
-const pluginSourcePath = () =>
-  app.isPackaged ? path.join(process.resourcesPath, 'studio-plugin', 'RobloxDevAcademy.lua') : path.join(app.getAppPath(), 'studio-plugin', 'RobloxDevAcademy.lua');
-const robloxPluginsDir = () => path.join(process.env.LOCALAPPDATA ?? path.join(os.homedir(), 'AppData', 'Local'), 'Roblox', 'Plugins');
-
-function pluginInfo(): StudioState['plugin'] {
-  const target = path.join(robloxPluginsDir(), 'RobloxDevAcademy.lua');
-  const installed = fs.existsSync(target);
-  let upToDate = false;
-  try {
-    upToDate = installed && fs.readFileSync(target, 'utf8') === fs.readFileSync(pluginSourcePath(), 'utf8');
-  } catch {
-    upToDate = false;
-  }
-  return { installed, upToDate, path: target, robloxFound: fs.existsSync(path.dirname(robloxPluginsDir())) };
-}
-
-async function handleStudioFacts(ex: StudioExercise, facts: StudioFacts) {
-  const errors = new Map<string, { line: number; message: string }[]>();
-  for (const s of facts.scripts) {
-    const diags = await luau.check(s.source);
-    errors.set(
-      s.source,
-      diags
-        .filter((d) => d.severity === 'error')
-        .filter((d) => {
-          const m = /Unknown global '([^']+)'/.exec(d.message);
-          return !(m && ROBLOX_GLOBALS.has(m[1]));
-        })
-        .map((d) => ({ line: d.line, message: explainMessage(d.message, s.source, d.line, d.column).what })),
-    );
-  }
-  const v = verifyStudioFacts(ex, facts, (src) => errors.get(src) ?? []);
-  studioVerifications.set(ex.id, v);
-  const used = facts.scripts.find((s) => s.name === v.scriptName);
-  const awards = repo.recordAttempt({
-    exerciseId: ex.id, lessonId: null, concepts: ex.concepts, correct: v.passed, hintsUsed: 0, independent: true,
-    kind: 'exercise', errorCategory: v.passed ? null : 'other', code: used?.source ?? '',
-  });
-  notifyStudio({ verification: v });
-  if (awards.length) win?.webContents.send('notice', { type: 'awards', awards });
-}
-
-async function initStudio() {
-  bridge = new StudioBridge({
-    onFacts: (ex, facts) => void handleStudioFacts(ex, facts),
-    onPushResult: (push, r) => {
-      repo.studioPushResult(push.path, push.source, r.reason, r.currentSource);
-      notifyStudio({ pushResult: { path: push.path, reason: r.reason } });
-    },
-    onPull: (p, source) => {
-      const res = repo.studioPull(p, source);
-      notifyStudio({ pull: { path: p, kind: res.kind } });
-    },
-    onLog: (messages) => {
-      const at = new Date().toISOString();
-      studioLogs = [...messages.map((m) => ({ ...m, at })), ...studioLogs].slice(0, 50);
-      notifyStudio();
-    },
-    onChange: () => notifyStudio(),
-    loadTokenHash: () => repo.getStudioTokenHash(),
-    saveTokenHash: (h) => repo.setStudioTokenHash(h),
-  });
-  try {
-    await bridge.start();
-  } catch {
-    /* the status shows the error (e.g. port in use); the rest of the app keeps working */
-  }
-  const detect = () =>
-    execFile('tasklist', ['/FI', 'IMAGENAME eq RobloxStudioBeta.exe', '/NH'], { windowsHide: true }, (err, out) => {
-      const running = !err && /RobloxStudioBeta\.exe/i.test(out);
-      if (bridge.studioRunning !== running) {
-        bridge.studioRunning = running;
-        notifyStudio();
-      }
-    });
-  detect();
-  setInterval(detect, 8000).unref();
-}
-
-function studioState(): StudioState {
+function spawnTranslateWorker(modelRoot: string) {
+  const child = utilityProcess.fork(path.join(__dirname, 'translate-worker.mjs'), [modelRoot], { serviceName: `${APP_NAME} translator`, stdio: 'ignore' });
   return {
-    ...bridge.snapshot(),
-    plugin: pluginInfo(),
-    verifications: [...studioVerifications.values()],
-    logs: studioLogs,
-    conflicts: repo.studioConflicts(),
-    synced: repo.studioSyncedFiles(),
+    post: (m: unknown) => child.postMessage(m),
+    onMessage: (cb: (m: { id: number; results?: string[]; error?: string }) => void) => child.on('message', cb),
+    onExit: (cb: () => void) => child.on('exit', cb),
+    kill: () => child.kill(),
   };
 }
 
@@ -225,7 +164,7 @@ function createWindow() {
     minWidth: 1024,
     minHeight: 680,
     show: false,
-    title: 'Roblox Dev Academy',
+    title: APP_NAME,
     backgroundColor: THEME_COLORS[theme].background,
     titleBarStyle: 'hidden',
     titleBarOverlay: { color: THEME_COLORS[theme].color, symbolColor: THEME_COLORS[theme].symbolColor, height: 40 },
@@ -265,7 +204,8 @@ function isAppUrl(url: string) {
 function openExternalSafe(url: string): boolean {
   try {
     const u = new URL(url);
-    if (u.protocol !== 'https:' || !EXTERNAL_HOST_ALLOWLIST.includes(u.hostname)) return false;
+    const allowed = EXTERNAL_HOST_ALLOWLIST.includes(u.hostname) || u.hostname === 'gumroad.com' || u.hostname.endsWith('.gumroad.com');
+    if (u.protocol !== 'https:' || !allowed) return false;
     void shell.openExternal(u.toString());
     return true;
   } catch {
@@ -314,6 +254,7 @@ const handlers: Record<Channel, Handler> = {
   'settings:get': () => repo.getSettings(),
   'settings:set': (patch: Parameters<Repository['setSettings']>[0]) => {
     const s = repo.setSettings(patch);
+    if (patch.language) applyMainLanguage(patch.language);
     if (patch.idleTimeoutMinutes) tracker.setIdleTimeout(patch.idleTimeoutMinutes * 60_000);
     return s;
   },
@@ -350,8 +291,8 @@ const handlers: Record<Channel, Handler> = {
   },
   'data:export': async () => {
     const res = await dialog.showSaveDialog(win!, {
-      title: 'Leergegevens exporteren',
-      defaultPath: path.join(app.getPath('documents'), `roblox-dev-academy-export-${new Date().toISOString().slice(0, 10)}.json`),
+      title: t('Export learning data'),
+      defaultPath: path.join(app.getPath('documents'), `lumora-academy-export-${new Date().toISOString().slice(0, 10)}.json`),
       filters: [{ name: 'JSON', extensions: ['json'] }],
     });
     if (res.canceled || !res.filePath) return { saved: false };
@@ -372,27 +313,14 @@ const handlers: Record<Channel, Handler> = {
   'data:deleteProfile': () => {
     db.backup('predelete');
     repo.deleteProfile();
-    bridge.unpair();
   },
-  'ai:status': () => ai.status(),
-  'ai:setKey': (key: string) => ai.setKey(key),
-  'ai:clearKey': () => ai.setKey(null),
-  'mentor:cached': (lessonId: string) => {
-    const raw = repo.getMentorScript(lessonId);
-    if (!raw) return null;
-    const parsed = MentorScript.safeParse(JSON.parse(raw));
-    return parsed.success ? parsed.data : null;
-  },
-  'mentor:aiScript': async (req: MentorRequest) => {
-    if (!req.regenerate) {
-      const raw = repo.getMentorScript(req.lessonId);
-      const cached = raw ? MentorScript.safeParse(JSON.parse(raw)) : null;
-      if (cached?.success) return cached.data;
-    }
-    const script = await ai.script(req);
-    repo.saveMentorScript(req.lessonId, JSON.stringify(script));
-    return script;
-  },
+  'license:status': () => license.status(),
+  'license:activate': (key: string) => license.activate(key),
+  'license:deactivate': () => license.deactivate(),
+  'mt:status': () => translator.status(),
+  'mt:download': () => translator.download(),
+  'mt:remove': () => translator.remove(),
+  'mt:translate': (a: { lang: string; texts: string[] }) => translator.translate(a.lang, a.texts),
   'code:run': async (a: { language: 'cpp' | 'java'; code: string; record: boolean }) => {
     const r = await native.run(a.language, a.code);
     if (a.record) repo.recordRun(r.ok, r.error?.kind ?? null);
@@ -400,48 +328,18 @@ const handlers: Record<Channel, Handler> = {
   },
   'code:toolchain': (a: { language: 'cpp' | 'java'; refresh: boolean }) => native.detect(a.language, a.refresh),
   'settings:pickBackground': async () => {
-    const res = await dialog.showOpenDialog(win!, { title: 'Kies een achtergrond', properties: ['openFile'], filters: [{ name: 'Afbeeldingen', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'] }] });
+    const res = await dialog.showOpenDialog(win!, { title: t('Choose a background'), properties: ['openFile'], filters: [{ name: t('Images'), extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'] }] });
     if (res.canceled || !res.filePaths[0]) return null;
     const src = res.filePaths[0];
     const ext = path.extname(src).slice(1).toLowerCase();
-    if (!['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext)) throw new Error('Kies een PNG-, JPG-, WEBP- of GIF-afbeelding.');
-    if (fs.statSync(src).size > 15 * 1024 * 1024) throw new Error('Deze afbeelding is groter dan 15 MB.');
+    if (!['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(ext)) throw new Error(t('Choose a PNG, JPG, WEBP or GIF image.'));
+    if (fs.statSync(src).size > 15 * 1024 * 1024) throw new Error(t('This image is larger than 15 MB.'));
     const dir = backgroundsDir();
     fs.mkdirSync(dir, { recursive: true });
     for (const old of fs.readdirSync(dir)) if (/^bg-/.test(old)) fs.rmSync(path.join(dir, old), { force: true });
     const name = `bg-${crypto.randomBytes(8).toString('hex')}.${ext}`;
     fs.copyFileSync(src, path.join(dir, name));
     return repo.setSettings({ background: 'custom', customBackground: name });
-  },
-  'studio:status': () => studioState(),
-  'studio:startPairing': () => bridge.startPairing(),
-  'studio:unpair': () => bridge.unpair(),
-  'studio:openExercise': (id: string | null) => bridge.setExercise(id),
-  'studio:requestCheck': () => bridge.requestCheck(),
-  'studio:installPlugin': () => {
-    // Writes exactly one file: our own plugin, into Roblox's local plugins folder.
-    const dir = robloxPluginsDir();
-    fs.mkdirSync(dir, { recursive: true });
-    fs.copyFileSync(pluginSourcePath(), path.join(dir, 'RobloxDevAcademy.lua'));
-    return pluginInfo();
-  },
-  'studio:push': (fileId: number) => {
-    const d = repo.studioPushData(fileId);
-    if (!d) throw new Error('Dit bestand is niet gekoppeld aan een script in Studio.');
-    bridge.queuePush(d.path, d.source, d.baseSource);
-    return true;
-  },
-  'studio:resolveConflict': (a: { id: number; choice: 'studio' | 'academy' }) => {
-    const r = repo.resolveStudioConflict(a.id, a.choice);
-    if (r && a.choice === 'academy') {
-      const d = repo.studioPushData(r.fileId);
-      if (d) bridge.queuePush(d.path, d.source, d.baseSource); // the plugin still asks the student before applying
-    }
-    notifyStudio();
-    return r;
-  },
-  'studio:clearLogs': () => {
-    studioLogs = [];
   },
 };
 
@@ -477,8 +375,8 @@ app.whenReady().then(async () => {
     await initData();
   } catch (e) {
     dialog.showErrorBox(
-      'Roblox Dev Academy kon niet starten',
-      `De leergegevens konden niet worden geopend. Er is niets verwijderd.\n\nTechnische details: ${(e as Error).message}`,
+      t('{app} could not start', { app: APP_NAME }),
+      `${t('Your learning data could not be opened. Nothing was deleted.')}\n\n${t('Technical details:')} ${(e as Error).message}`,
     );
     app.quit();
     return;
@@ -486,8 +384,8 @@ app.whenReady().then(async () => {
   session.defaultSession.setPermissionRequestHandler((_wc, _perm, cb) => cb(false));
   registerAppProtocol();
   registerIpc();
-  await initStudio();
   createWindow();
+  setTimeout(() => void license.recheck().catch(() => undefined), 20_000).unref();
 });
 
 let quitting = false;
@@ -496,7 +394,7 @@ app.on('before-quit', () => {
   quitting = true;
   try {
     persistStudyTime();
-    bridge?.stop();
+    translator?.stop();
     db?.close();
     luau?.dispose();
   } catch (e) {

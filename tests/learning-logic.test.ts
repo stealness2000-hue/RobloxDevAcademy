@@ -59,18 +59,18 @@ describe('mastery & review', () => {
   });
 });
 
-describe('error assistant (Dutch)', () => {
+describe('error assistant', () => {
   it('missing closing bracket', () => {
     const e = explainMessage("syntax error: main.luau:1: Expected ')' (to close '(' at column 6), got <eof>", 'print("Hallo"');
     expect(e.category).toBe('missing-bracket');
-    expect(e.what).toMatch(/sluitend haakje/);
+    expect(e.what).toMatch(/closing bracket/);
     expect(e.line).toBe(1);
     expect(e.column).toBe(6);
   });
   it('nil arithmetic', () => {
     const e = explainMessage('runtime error: main.luau:2: attempt to perform arithmetic (add) on nil and number', 'local coins = nil\nprint(coins + 10)');
     expect(e.category).toBe('nil-arithmetic');
-    expect(e.what).toMatch(/niet bestaat/);
+    expect(e.what).toMatch(/does not exist/);
     expect(e.line).toBe(2);
   });
   it('missing then points at the if line', () => {
@@ -88,12 +88,12 @@ describe('error assistant (Dutch)', () => {
   });
   it('malformed numbers (2coins) are explained', () => {
     const e = explainMessage('syntax error: main.luau:1: Malformed number', 'local 2coins = 5');
-    expect(e.certainty).toBe('zeker');
-    expect(e.what).toMatch(/getal/);
+    expect(e.certainty).toBe('certain');
+    expect(e.what).toMatch(/number/);
   });
   it('unknown messages are labelled honestly', () => {
     const e = explainMessage('something exotic happened', 'x');
-    expect(e.certainty).toBe('onbekend');
+    expect(e.certainty).toBe('unknown');
     expect(e.more).toMatch(/something exotic/);
   });
 });

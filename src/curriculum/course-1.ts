@@ -3,8 +3,8 @@ import type { Course } from './types';
 export const course1: Course = {
   id: 'course-1',
   number: 1,
-  title: 'Luau-fundamenten',
-  description: 'Variabelen, getallen, tekst, true/false en nil. De bouwstenen van elk Roblox-script.',
+  title: 'Luau fundamentals',
+  description: 'Variables, numbers, text, true/false and nil. The building blocks of every Roblox script.',
   level: 'Beginner',
   planned: [],
   lessons: [
@@ -12,225 +12,225 @@ export const course1: Course = {
     {
       id: 'c1-variables',
       courseId: 'course-1',
-      title: 'Wat is een variabele?',
-      objective: 'Je kunt met local een variabele maken, een waarde opslaan en die later gebruiken.',
+      title: 'What is a variable?',
+      objective: 'You can create a variable with local, store a value in it and use it later.',
       minutes: 10,
       prerequisites: ['print', 'strings'],
       concepts: ['variables'],
       steps: [
         {
           type: 'explain',
-          body: `Een **variabele** is een soort doosje waarin je informatie bewaart. Het doosje heeft een **naam**, en erin zit een **waarde**.
+          body: `A **variable** is like a little box where you keep information. The box has a **name**, and inside it is a **value**.
 
-In een game bewaar je zo bijvoorbeeld hoeveel coins een speler heeft, hoe snel hij loopt of hoe zijn level heet. Later kun je die waarde gebruiken of veranderen.`,
+In a game you use this to remember things like how many coins a player has, how fast they walk or what their level is called. Later you can use that value or change it.`,
         },
         {
           type: 'code',
-          title: 'Een variabele maken',
-          body: 'Klik op de onderdelen om te zien wat ze betekenen.',
+          title: 'Creating a variable',
+          body: 'Click the parts to see what they mean.',
           code: 'local coins = 100',
           annotations: [
-            { token: 'local', text: '`local` betekent: maak een **nieuwe** variabele. Het woord zegt ook dat de variabele alleen in dit deel van je code bestaat; dat leer je later precies.' },
-            { token: 'coins', text: '`coins` is de **naam** van de variabele. Die kies je zelf. Kies een naam die zegt wat erin zit.' },
-            { token: '=', text: 'Het `=`-teken betekent hier **"krijgt de waarde"**. Het is geen vraag of iets gelijk is, maar een opdracht: stop deze waarde in het doosje.' },
-            { token: '100', text: '`100` is de **waarde** die wordt opgeslagen: een getal.' },
+            { token: 'local', text: '`local` means: create a **new** variable. It also says the variable only exists in this part of your code; you will learn exactly how later.' },
+            { token: 'coins', text: '`coins` is the **name** of the variable. You choose it yourself. Pick a name that says what is inside.' },
+            { token: '=', text: 'The `=` sign here means **"gets the value"**. It is not a question whether something is equal, but an instruction: put this value in the box.' },
+            { token: '100', text: '`100` is the **value** that is stored: a number.' },
           ],
         },
         {
           type: 'visual',
           kind: 'variable',
-          title: 'Kijk in de doosjes',
-          body: 'Verander de waarden in de code hieronder (bijvoorbeeld 100 naar 200) en zie de doosjes veranderen.',
+          title: 'Look inside the boxes',
+          body: 'Change the values in the code below (for example 100 to 200) and watch the boxes change.',
           code: 'local coins = 100\nlocal playerName = "Builder"',
         },
         {
           type: 'code',
-          title: 'Een variabele gebruiken',
-          body: 'Als je de naam van een variabele gebruikt, zonder aanhalingstekens, krijg je de waarde die erin zit.',
+          title: 'Using a variable',
+          body: 'When you use the name of a variable, without quotes, you get the value that is inside.',
           code: 'local coins = 100\nprint(coins)\nprint("coins")',
           runnable: true,
-          after: 'Regel 2 laat `100` zien: de waarde in het doosje. Regel 3 laat het woord `coins` zien, want met aanhalingstekens is het gewoon tekst.',
+          after: 'Line 2 shows `100`: the value in the box. Line 3 shows the word `coins`, because with quotes it is just text.',
         },
         {
           type: 'exercise',
           id: 'c1-variables-ex1',
           mode: 'guided',
-          title: 'Maak je eerste variabele',
-          prompt: 'Maak zelf een variabele genaamd **score** met de waarde **50**.',
+          title: 'Make your first variable',
+          prompt: 'Create a variable called **score** with the value **50**.',
           starter: '',
           checks: [
-            { kind: 'uses', sequence: ['local', 'score'], message: 'Begin met `local`, gevolgd door de naam `score`.' },
-            { kind: 'uses', sequence: ['score', '='], message: 'Gebruik `=` om de variabele een waarde te geven.' },
-            { kind: 'value', expr: 'score', equals: 50, message: 'De variabele `score` bestaat, maar de waarde is nog niet 50.' },
+            { kind: 'uses', sequence: ['local', 'score'], message: 'Start with `local`, followed by the name `score`.' },
+            { kind: 'uses', sequence: ['score', '='], message: 'Use `=` to give the variable a value.' },
+            { kind: 'value', expr: 'score', equals: 50, message: 'The variable `score` exists, but its value is not 50 yet.' },
           ],
-          hints: ['Kijk naar het voorbeeld `local coins = 100`. Wat moet je veranderen?', 'De vorm is: `local naam = waarde`'],
+          hints: ['Look at the example `local coins = 100`. What do you need to change?', 'The shape is: `local name = value`'],
           solution: 'local score = 50',
           concepts: ['variables'],
-          success: 'Je eerste variabele. In vrijwel elk Roblox-script gebruik je er tientallen.',
+          success: 'Your first variable. Almost every Roblox script uses dozens of them.',
         },
         {
           type: 'exercise',
           id: 'c1-variables-ex2',
           mode: 'independent',
-          title: 'Opslaan en laten zien',
-          prompt: 'Maak een variabele **playerName** met de tekst **Builder** erin. Laat daarna met `print` de **waarde** van die variabele zien.',
+          title: 'Store it and show it',
+          prompt: 'Create a variable **playerName** with the text **Builder** in it. Then use `print` to show the **value** of that variable.',
           starter: '',
           checks: [
-            { kind: 'uses', sequence: ['local', 'playerName', '='], message: 'Maak de variabele met `local playerName = ...`' },
-            { kind: 'value', expr: 'playerName', equals: 'Builder', message: '`playerName` moet de tekst "Builder" bevatten. Vergeet de aanhalingstekens niet.' },
-            { kind: 'uses', sequence: ['print', '(', 'playerName', ')'], message: 'Laat de variabele zien met `print(playerName)`, zonder aanhalingstekens om de naam.' },
-            { kind: 'output', lines: ['Builder'], message: 'De Output moet **Builder** zijn.' },
+            { kind: 'uses', sequence: ['local', 'playerName', '='], message: 'Create the variable with `local playerName = ...`' },
+            { kind: 'value', expr: 'playerName', equals: 'Builder', message: '`playerName` must contain the text "Builder". Do not forget the quotes.' },
+            { kind: 'uses', sequence: ['print', '(', 'playerName', ')'], message: 'Show the variable with `print(playerName)`, without quotes around the name.' },
+            { kind: 'output', lines: ['Builder'], message: 'The Output must be **Builder**.' },
           ],
-          hints: ['Tekst als waarde zet je tussen aanhalingstekens; de naam van de variabele niet.', 'Twee regels: eerst de variabele maken, dan printen.'],
+          hints: ['Text as a value goes between quotes; the name of the variable does not.', 'Two lines: first create the variable, then print it.'],
           solution: 'local playerName = "Builder"\nprint(playerName)',
           concepts: ['variables', 'strings'],
-          success: 'Precies: je bewaarde informatie en gebruikte het later.',
+          success: 'Exactly: you stored information and used it later.',
         },
         {
           type: 'code',
-          title: 'Een waarde veranderen',
-          body: 'Een variabele kun je later een nieuwe waarde geven. Dan schrijf je `local` **niet** opnieuw: de variabele bestaat al.',
+          title: 'Changing a value',
+          body: 'You can give a variable a new value later. Then you do **not** write `local` again: the variable already exists.',
           code: 'local coins = 100\ncoins = 150\nprint(coins)',
           runnable: true,
-          after: 'Na regel 2 zit er `150` in `coins`. De oude waarde is weg.',
+          after: 'After line 2, `coins` contains `150`. The old value is gone.',
         },
         {
           type: 'predict',
           id: 'c1-variables-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local level = 1\nlevel = 2\nlevel = 3\nprint(level)',
           concepts: ['variables'],
           options: [
-            { text: '1', feedback: 'Dat was de eerste waarde, maar daarna kreeg `level` twee keer een nieuwe waarde.' },
-            { text: '3', correct: true, feedback: 'Juist. Elke nieuwe toewijzing vervangt de oude waarde; de laatste was 3.' },
-            { text: '1 2 3', feedback: 'Een variabele bewaart maar één waarde tegelijk.' },
+            { text: '1', feedback: 'That was the first value, but after that `level` got a new value twice.' },
+            { text: '3', correct: true, feedback: 'Right. Every new assignment replaces the old value; the last one was 3.' },
+            { text: '1 2 3', feedback: 'A variable holds only one value at a time.' },
           ],
         },
       ],
-      summary: ['Een variabele is een doosje met een naam en een waarde.', '`local naam = waarde` maakt een nieuwe variabele.', '`=` betekent "krijgt de waarde".', 'Een nieuwe waarde geven doe je zonder `local`: `coins = 150`.'],
+      summary: ['A variable is a box with a name and a value.', '`local name = value` creates a new variable.', '`=` means "gets the value".', 'You give a new value without `local`: `coins = 150`.'],
     },
 
     // ------------------------------------------------------------------ 2
     {
       id: 'c1-numbers',
       courseId: 'course-1',
-      title: 'Getallen en rekenen',
-      objective: 'Je kunt rekenen met + - * / en %, en waarden in variabelen bijwerken.',
+      title: 'Numbers and math',
+      objective: 'You can calculate with + - * / and %, and update values in variables.',
       minutes: 10,
       prerequisites: ['variables'],
       concepts: ['numbers', 'operators'],
       steps: [
         {
           type: 'explain',
-          body: `Getallen (in het Engels **numbers**) schrijf je zonder aanhalingstekens. Ze mogen een komma-getal zijn, maar dan met een **punt**: \`1.5\`.
+          body: `You write **numbers** without quotes. They can have decimals, written with a **dot**: \`1.5\`.
 
-Rekentekens heten **operators**:
-- \`+\` optellen en \`-\` aftrekken
-- \`*\` vermenigvuldigen (geen x!)
-- \`/\` delen
-- \`%\` de **rest** na delen: \`10 % 3\` is \`1\`
-- \`^\` machtsverheffen: \`2 ^ 3\` is \`8\`
+Math signs are called **operators**:
+- \`+\` add and \`-\` subtract
+- \`*\` multiply (not x!)
+- \`/\` divide
+- \`%\` the **remainder** after dividing: \`10 % 3\` is \`1\`
+- \`^\` power: \`2 ^ 3\` is \`8\`
 
-Net als op school gaat \`*\` en \`/\` vóór \`+\` en \`-\`. Met haakjes bepaal je zelf de volgorde.`,
+Just like at school, \`*\` and \`/\` go before \`+\` and \`-\`. With brackets you decide the order yourself.`,
         },
         {
           type: 'code',
-          code: 'local coins = 100\nlocal prijs = 30\nprint(coins - prijs)\nprint(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)',
+          code: 'local coins = 100\nlocal price = 30\nprint(coins - price)\nprint(2 + 3 * 4)\nprint((2 + 3) * 4)\nprint(10 % 3)',
           runnable: true,
-          after: 'Je ziet 70, 14, 20 en 1. Let op regel 4 en 5: de haakjes veranderen de uitkomst.',
+          after: 'You see 70, 14, 20 and 1. Look at lines 4 and 5: the brackets change the result.',
         },
         {
           type: 'explain',
-          title: 'Bijwerken met += en -=',
-          body: `In games verander je vaak een waarde op basis van zichzelf: "geef 10 coins erbij".
+          title: 'Updating with += and -=',
+          body: `In games you often change a value based on itself: "give them 10 more coins".
 
-De lange vorm is \`coins = coins + 10\`: neem de huidige waarde, tel 10 op, en bewaar het resultaat weer in \`coins\`.
+The long form is \`coins = coins + 10\`: take the current value, add 10, and store the result in \`coins\` again.
 
-Luau heeft een kortere vorm: \`coins += 10\`. Er bestaan ook \`-=\`, \`*=\` en \`/=\`.`,
+Luau has a shorter form: \`coins += 10\`. There are also \`-=\`, \`*=\` and \`/=\`.`,
         },
         {
           type: 'predict',
           id: 'c1-numbers-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'local health = 100\nhealth -= 25\nhealth -= 25\nprint(health)',
           concepts: ['operators'],
           options: [
-            { text: '75', feedback: 'Er wordt twee keer 25 afgetrokken.' },
-            { text: '50', correct: true, feedback: 'Juist: 100 - 25 - 25 = 50.' },
-            { text: '-25', feedback: '`-=` trekt iets af van de huidige waarde; het vervangt de waarde niet door -25.' },
+            { text: '75', feedback: '25 is subtracted twice.' },
+            { text: '50', correct: true, feedback: 'Right: 100 - 25 - 25 = 50.' },
+            { text: '-25', feedback: '`-=` subtracts from the current value; it does not replace the value with -25.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c1-numbers-ex1',
           mode: 'guided',
-          title: 'Coins verdienen',
-          prompt: 'Een speler heeft 40 coins en verzamelt **3 munten van 15 coins**. Laat de code `coins` met de juiste berekening bijwerken, zodat de Output **85** is.',
-          starter: 'local coins = 40\n-- werk coins hier bij\n\nprint(coins)',
+          title: 'Earning coins',
+          prompt: 'A player has 40 coins and collects **3 tokens worth 15 coins each**. Make the code update `coins` with the right calculation, so the Output is **85**.',
+          starter: 'local coins = 40\n-- update coins here\n\nprint(coins)',
           checks: [
-            { kind: 'output', lines: ['85'], message: 'De Output moet **85** zijn. Hoeveel is 3 munten van 15 samen?' },
-            { kind: 'notUses', sequence: ['local', 'coins', '=', '85'], message: 'Laat Luau het rekenwerk doen in plaats van het antwoord zelf in te typen.' },
+            { kind: 'output', lines: ['85'], message: 'The Output must be **85**. How much are 3 tokens of 15 together?' },
+            { kind: 'notUses', sequence: ['local', 'coins', '=', '85'], message: 'Let Luau do the math instead of typing the answer yourself.' },
           ],
-          hints: ['3 munten van 15 is `3 * 15`.', 'Gebruik `coins += 3 * 15` op regel 2.'],
+          hints: ['3 tokens of 15 is `3 * 15`.', 'Use `coins += 3 * 15` on line 2.'],
           solution: 'local coins = 40\ncoins += 3 * 15\n\nprint(coins)',
           concepts: ['operators', 'numbers'],
-          success: 'Goed. Zo werkt bijna elk beloningssysteem in Roblox-games.',
+          success: 'Good. Almost every reward system in Roblox games works like this.',
         },
         {
           type: 'exercise',
           id: 'c1-numbers-ex2',
           mode: 'independent',
-          title: 'Hoeveel kun je kopen?',
-          prompt: 'Een zwaard kost **25** coins. De speler heeft **110** coins.\nMaak variabelen `coins` en `price`, en een variabele `rest` die uitrekent hoeveel coins er overblijven na het kopen van zoveel mogelijk zwaarden. Gebruik `%`.',
+          title: 'How much can you buy?',
+          prompt: 'A sword costs **25** coins. The player has **110** coins.\nCreate variables `coins` and `price`, and a variable `rest` that calculates how many coins are left after buying as many swords as possible. Use `%`.',
           starter: '',
           checks: [
-            { kind: 'value', expr: 'coins', equals: 110, message: 'Maak een variabele `coins` met de waarde 110.' },
-            { kind: 'value', expr: 'price', equals: 25, message: 'Maak een variabele `price` met de waarde 25.' },
-            { kind: 'uses', sequence: ['%'], message: 'Gebruik de rest-operator `%`.' },
-            { kind: 'value', expr: 'rest', equals: 10, message: '`rest` klopt nog niet. Wat blijft er over als je 110 door 25 deelt?' },
+            { kind: 'value', expr: 'coins', equals: 110, message: 'Create a variable `coins` with the value 110.' },
+            { kind: 'value', expr: 'price', equals: 25, message: 'Create a variable `price` with the value 25.' },
+            { kind: 'uses', sequence: ['%'], message: 'Use the remainder operator `%`.' },
+            { kind: 'value', expr: 'rest', equals: 10, message: '`rest` is not right yet. What is left over when you divide 110 by 25?' },
           ],
-          hints: ['De rest na delen schrijf je als `a % b`.', '`local rest = coins % price`'],
+          hints: ['The remainder after dividing is written as `a % b`.', '`local rest = coins % price`'],
           solution: 'local coins = 110\nlocal price = 25\nlocal rest = coins % price\nprint(rest)',
           concepts: ['operators', 'variables'],
-          success: 'Precies: na 4 zwaarden blijven er 10 coins over.',
+          success: 'Exactly: after 4 swords, 10 coins are left.',
         },
       ],
-      summary: ['Getallen schrijf je zonder aanhalingstekens; decimalen met een punt.', '+ - * / % ^ zijn de rekenoperators.', '`coins += 10` is kort voor `coins = coins + 10`.'],
+      summary: ['Numbers are written without quotes; decimals with a dot.', '+ - * / % ^ are the math operators.', '`coins += 10` is short for `coins = coins + 10`.'],
     },
 
     // ------------------------------------------------------------------ 3
     {
       id: 'c1-concat',
       courseId: 'course-1',
-      title: 'Tekst aan elkaar plakken',
-      objective: 'Je kunt tekst en waarden combineren met .. en weet wanneer je tostring nodig hebt.',
+      title: 'Joining text together',
+      objective: 'You can combine text and values with .. and know when you need tostring.',
       minutes: 8,
       prerequisites: ['variables', 'strings'],
       concepts: ['concatenation'],
       steps: [
         {
           type: 'explain',
-          body: `Met twee puntjes \`..\` plak je tekst aan elkaar. Programmeurs noemen dat **concatenation**.
+          body: `With two dots \`..\` you join text together. Programmers call that **concatenation**.
 
-\`"Hallo " .. "wereld"\` wordt \`"Hallo wereld"\`. Let op: \`..\` voegt **geen** spatie toe. Die moet je zelf in de tekst zetten.
+\`"Hello " .. "world"\` becomes \`"Hello world"\`. Careful: \`..\` does **not** add a space. You have to put it in the text yourself.
 
-Getallen worden automatisch tekst als je ze plakt: \`"Coins: " .. 100\` wordt \`"Coins: 100"\`.`,
+Numbers automatically become text when you join them: \`"Coins: " .. 100\` becomes \`"Coins: 100"\`.`,
         },
         {
           type: 'code',
-          code: 'local naam = "Builder"\nlocal coins = 250\nprint("Welkom, " .. naam .. "!")\nprint(naam .. " heeft " .. coins .. " coins")',
+          code: 'local name = "Builder"\nlocal coins = 250\nprint("Welcome, " .. name .. "!")\nprint(name .. " has " .. coins .. " coins")',
           runnable: true,
         },
         {
           type: 'predict',
           id: 'c1-concat-p1',
-          question: 'Wat laat deze code zien?',
+          question: 'What does this code show?',
           code: 'print("Level" .. 5)',
           concepts: ['concatenation'],
           options: [
-            { text: 'Level 5', feedback: 'Kijk goed: `..` voegt geen spatie toe.' },
-            { text: 'Level5', correct: true, feedback: 'Juist. Zonder spatie in de tekst plakt `..` alles direct aan elkaar.' },
-            { text: 'Een fout', feedback: 'Een getal plakken aan tekst mag. Luau maakt van 5 automatisch de tekst "5".' },
+            { text: 'Level 5', feedback: 'Look closely: `..` does not add a space.' },
+            { text: 'Level5', correct: true, feedback: 'Right. Without a space in the text, `..` glues everything directly together.' },
+            { text: 'An error', feedback: 'Joining a number to text is allowed. Luau turns 5 into the text "5" automatically.' },
           ],
         },
         {
@@ -238,38 +238,38 @@ Getallen worden automatisch tekst als je ze plakt: \`"Coins: " .. 100\` wordt \`
           id: 'c1-concat-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Plus of puntjes?',
-          prompt: 'Deze code probeert tekst te plakken met `+`. Dat werkt niet in Luau. Klik op **Run Code**, lees de uitleg en repareer de code zodat de Output **Speler: Nova** is.',
-          starter: 'local naam = "Nova"\nprint("Speler: " + naam)',
+          title: 'Plus or dots?',
+          prompt: 'This code tries to join text with `+`. That does not work in Luau. Click **Run Code**, read the explanation and fix the code so the Output is **Player: Nova**.',
+          starter: 'local name = "Nova"\nprint("Player: " + name)',
           checks: [
-            { kind: 'output', lines: ['Speler: Nova'], message: 'De Output moet **Speler: Nova** zijn.' },
-            { kind: 'uses', sequence: ['..'], message: 'Gebruik `..` om tekst aan elkaar te plakken.' },
+            { kind: 'output', lines: ['Player: Nova'], message: 'The Output must be **Player: Nova**.' },
+            { kind: 'uses', sequence: ['..'], message: 'Use `..` to join text together.' },
           ],
-          hints: ['In Luau is `+` alleen voor rekenen. Voor tekst gebruik je een ander teken.', 'Vervang `+` door `..`'],
-          solution: 'local naam = "Nova"\nprint("Speler: " .. naam)',
+          hints: ['In Luau, `+` is only for math. For text you use a different sign.', 'Replace `+` with `..`'],
+          solution: 'local name = "Nova"\nprint("Player: " .. name)',
           concepts: ['concatenation'],
-          success: 'Opgelost. In sommige andere talen werkt + voor tekst, in Luau is het altijd `..`.',
+          success: 'Fixed. In some other languages + works for text; in Luau it is always `..`.',
         },
         {
           type: 'exercise',
           id: 'c1-concat-ex2',
           mode: 'independent',
-          title: 'Een welkomstbericht',
-          prompt: 'Maak variabelen `playerName` (**"Kai"**) en `wins` (**7**). Print met `..` precies: **Kai heeft 7 overwinningen**',
+          title: 'A welcome message',
+          prompt: 'Create variables `playerName` (**"Kai"**) and `wins` (**7**). Use `..` to print exactly: **Kai has 7 wins**',
           starter: '',
           checks: [
-            { kind: 'value', expr: 'playerName', equals: 'Kai', message: '`playerName` moet "Kai" zijn.' },
-            { kind: 'value', expr: 'wins', equals: 7, message: '`wins` moet het getal 7 zijn (zonder aanhalingstekens).' },
-            { kind: 'uses', sequence: ['..'], message: 'Plak de tekst aan elkaar met `..`' },
-            { kind: 'output', lines: ['Kai heeft 7 overwinningen'], message: 'De Output moet precies **Kai heeft 7 overwinningen** zijn. Let op de spaties.' },
+            { kind: 'value', expr: 'playerName', equals: 'Kai', message: '`playerName` must be "Kai".' },
+            { kind: 'value', expr: 'wins', equals: 7, message: '`wins` must be the number 7 (without quotes).' },
+            { kind: 'uses', sequence: ['..'], message: 'Join the text together with `..`' },
+            { kind: 'output', lines: ['Kai has 7 wins'], message: 'The Output must be exactly **Kai has 7 wins**. Watch the spaces.' },
           ],
-          hints: ['Je hebt drie stukken: de naam, de tekst " heeft ", en `wins` met " overwinningen" erachter.', '`playerName .. " heeft " .. wins .. " overwinningen"`'],
-          solution: 'local playerName = "Kai"\nlocal wins = 7\nprint(playerName .. " heeft " .. wins .. " overwinningen")',
+          hints: ['You have three pieces: the name, the text " has ", and `wins` followed by " wins".', '`playerName .. " has " .. wins .. " wins"`'],
+          solution: 'local playerName = "Kai"\nlocal wins = 7\nprint(playerName .. " has " .. wins .. " wins")',
           concepts: ['concatenation', 'variables'],
-          success: 'Mooi. Dit soort berichten maak je straks voor je eigen interface.',
+          success: 'Nice. Soon you will make messages like this for your own interface.',
         },
       ],
-      summary: ['`..` plakt tekst aan elkaar, zonder automatische spatie.', 'Getallen worden automatisch tekst bij `..`.', '`+` is alleen voor rekenen, niet voor tekst.'],
+      summary: ['`..` joins text together, without adding a space.', 'Numbers become text automatically with `..`.', '`+` is only for math, not for text.'],
     },
 
     // ------------------------------------------------------------------ 4
@@ -277,363 +277,363 @@ Getallen worden automatisch tekst als je ze plakt: \`"Coins: " .. 100\` wordt \`
       id: 'c1-interpolation',
       courseId: 'course-1',
       title: 'String interpolation',
-      objective: 'Je kunt waarden in tekst zetten met backticks en {}.',
+      objective: 'You can put values inside text with backticks and {}.',
       minutes: 6,
       prerequisites: ['concatenation'],
       concepts: ['interpolation'],
       steps: [
         {
           type: 'explain',
-          body: `Veel \`..\` achter elkaar wordt snel onoverzichtelijk. Luau heeft daarom **string interpolation**: tekst tussen **backticks** (het teken \` ) waarin je waarden tussen \`{ }\` zet.
+          body: `Lots of \`..\` in a row quickly gets messy. That is why Luau has **string interpolation**: text between **backticks** (the \` sign) with values inside \`{ }\`.
 
-De backtick vind je meestal links bovenaan je toetsenbord, onder Esc.`,
+You usually find the backtick at the top left of your keyboard, below Esc.`,
         },
         {
           type: 'code',
-          code: 'local naam = "Kai"\nlocal wins = 7\nprint(`{naam} heeft {wins} overwinningen`)\nprint(`Over 3 rondes heeft {naam} er {wins + 3}`)',
+          code: 'local name = "Kai"\nlocal wins = 7\nprint(`{name} has {wins} wins`)\nprint(`In 3 rounds {name} will have {wins + 3}`)',
           runnable: true,
-          after: 'Tussen `{ }` mag zelfs een berekening staan, zoals `{wins + 3}`.',
+          after: 'You can even put a calculation between `{ }`, like `{wins + 3}`.',
         },
         {
           type: 'exercise',
           id: 'c1-interp-ex1',
           mode: 'independent',
-          title: 'Herschrijf met interpolation',
-          prompt: 'Herschrijf de `print` zodat hij **backticks en { }** gebruikt in plaats van `..`. De Output moet hetzelfde blijven.',
-          starter: 'local item = "Zwaard"\nlocal prijs = 250\nprint("Een " .. item .. " kost " .. prijs .. " coins")',
+          title: 'Rewrite with interpolation',
+          prompt: 'Rewrite the `print` so it uses **backticks and { }** instead of `..`. The Output must stay the same.',
+          starter: 'local item = "Sword"\nlocal price = 250\nprint("A " .. item .. " costs " .. price .. " coins")',
           checks: [
-            { kind: 'output', lines: ['Een Zwaard kost 250 coins'], message: 'De Output moet **Een Zwaard kost 250 coins** blijven.' },
-            { kind: 'notUses', sequence: ['..'], message: 'Gebruik geen `..` meer: zet de waarden tussen `{ }` in een tekst met backticks.' },
-            { kind: 'stringLiteral', contains: '{item}', message: 'Zet `{item}` in je tekst tussen backticks.' },
+            { kind: 'output', lines: ['A Sword costs 250 coins'], message: 'The Output must stay **A Sword costs 250 coins**.' },
+            { kind: 'notUses', sequence: ['..'], message: 'Do not use `..` anymore: put the values between `{ }` in text with backticks.' },
+            { kind: 'stringLiteral', contains: '{item}', message: 'Put `{item}` in your text between backticks.' },
           ],
-          hints: ['Begin en eindig je tekst met een backtick ` in plaats van een "', 'print(`Een {item} kost ... coins`)'],
-          solution: 'local item = "Zwaard"\nlocal prijs = 250\nprint(`Een {item} kost {prijs} coins`)',
+          hints: ['Start and end your text with a backtick ` instead of a "', 'print(`A {item} costs ... coins`)'],
+          solution: 'local item = "Sword"\nlocal price = 250\nprint(`A {item} costs {price} coins`)',
           concepts: ['interpolation'],
-          success: 'Leesbaarder, toch? De meeste moderne Roblox-code gebruikt deze vorm.',
+          success: 'Easier to read, right? Most modern Roblox code uses this form.',
         },
       ],
-      summary: ['Tekst tussen backticks ` mag waarden bevatten tussen { }.', 'Tussen { } mag ook een berekening.', 'Interpolation is vaak leesbaarder dan veel `..`.'],
+      summary: ['Text between backticks ` can contain values between { }.', 'A calculation is allowed between { } too.', 'Interpolation is often easier to read than lots of `..`.'],
     },
 
     // ------------------------------------------------------------------ 5
     {
       id: 'c1-booleans-nil',
       courseId: 'course-1',
-      title: 'true, false en nil',
-      objective: 'Je kent booleans en nil, en herkent de fout als je met nil rekent.',
+      title: 'true, false and nil',
+      objective: 'You know booleans and nil, and recognise the error when you calculate with nil.',
       minutes: 8,
       prerequisites: ['variables', 'numbers'],
       concepts: ['booleans', 'nil'],
       steps: [
         {
           type: 'explain',
-          body: `Een **boolean** heeft maar twee mogelijke waarden: \`true\` (waar) of \`false\` (niet waar). Ideaal voor ja/nee-vragen in een game: is de deur open? Heeft de speler de sleutel?
+          body: `A **boolean** has only two possible values: \`true\` or \`false\`. Perfect for yes/no questions in a game: is the door open? Does the player have the key?
 
-\`nil\` betekent **"niets"** of "geen waarde". Een variabele die nooit een waarde kreeg, is \`nil\`. Ook een tikfout in een naam geeft \`nil\`, want die naam bestaat niet.
+\`nil\` means **"nothing"** or "no value". A variable that never got a value is \`nil\`. A typo in a name also gives \`nil\`, because that name does not exist.
 
-Let op: \`true\`, \`false\` en \`nil\` schrijf je **zonder** aanhalingstekens. \`"true"\` is gewoon tekst.`,
+Careful: you write \`true\`, \`false\` and \`nil\` **without** quotes. \`"true"\` is just text.`,
         },
         {
           type: 'code',
-          code: 'local deurOpen = false\nlocal heeftSleutel = true\nlocal bonus\nprint(deurOpen, heeftSleutel, bonus)',
+          code: 'local doorOpen = false\nlocal hasKey = true\nlocal bonus\nprint(doorOpen, hasKey, bonus)',
           runnable: true,
-          after: '`bonus` kreeg geen waarde, dus print toont `nil`.',
+          after: '`bonus` got no value, so print shows `nil`.',
         },
         {
           type: 'exercise',
           id: 'c1-nil-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Rekenen met niets',
-          prompt: 'Deze code geeft een fout. Klik op **Run Code** en lees de uitleg. Repareer de code zodat de Output **110** is.',
-          starter: 'local coins = 100\nlocal beloning = 10\nprint(coins + belonig)',
-          checks: [{ kind: 'output', lines: ['110'], message: 'De Output moet **110** zijn.' }],
-          hints: ['Welke variabele is `nil`? Vergelijk de namen letter voor letter.', 'Op regel 3 staat `belonig`; de variabele heet `beloning`.'],
-          solution: 'local coins = 100\nlocal beloning = 10\nprint(coins + beloning)',
+          title: 'Calculating with nothing',
+          prompt: 'This code gives an error. Click **Run Code** and read the explanation. Fix the code so the Output is **110**.',
+          starter: 'local coins = 100\nlocal reward = 10\nprint(coins + rewrd)',
+          checks: [{ kind: 'output', lines: ['110'], message: 'The Output must be **110**.' }],
+          hints: ['Which variable is `nil`? Compare the names letter by letter.', 'Line 3 says `rewrd`; the variable is called `reward`.'],
+          solution: 'local coins = 100\nlocal reward = 10\nprint(coins + reward)',
           concepts: ['nil', 'variables'],
-          success: 'Gevonden. Een tikfout in een naam is de meest voorkomende oorzaak van nil-fouten.',
+          success: 'Found it. A typo in a name is the most common cause of nil errors.',
         },
         {
           type: 'exercise',
           id: 'c1-booleans-ex1',
           mode: 'independent',
-          title: 'Spelstatus',
-          prompt: 'Maak twee variabelen:\n- `isVip` met de waarde **true**\n- `isBanned` met de waarde **false**',
+          title: 'Game status',
+          prompt: 'Create two variables:\n- `isVip` with the value **true**\n- `isBanned` with the value **false**',
           starter: '',
           checks: [
-            { kind: 'value', expr: 'isVip', equals: true, message: '`isVip` moet de boolean `true` zijn, zonder aanhalingstekens.' },
-            { kind: 'value', expr: 'isBanned', equals: false, message: '`isBanned` moet de boolean `false` zijn, zonder aanhalingstekens.' },
+            { kind: 'value', expr: 'isVip', equals: true, message: '`isVip` must be the boolean `true`, without quotes.' },
+            { kind: 'value', expr: 'isBanned', equals: false, message: '`isBanned` must be the boolean `false`, without quotes.' },
           ],
-          hints: ['Booleans schrijf je zonder aanhalingstekens: `true` of `false`.'],
+          hints: ['You write booleans without quotes: `true` or `false`.'],
           solution: 'local isVip = true\nlocal isBanned = false',
           concepts: ['booleans'],
-          success: 'Goed. In de volgende cursus gebruik je zulke booleans om keuzes te maken met if.',
+          success: 'Good. In the next course you will use booleans like these to make choices with if.',
         },
       ],
-      summary: ['Een boolean is `true` of `false`.', '`nil` betekent: geen waarde.', 'Rekenen met nil geeft een fout; vaak is een tikfout in een naam de oorzaak.'],
+      summary: ['A boolean is `true` or `false`.', '`nil` means: no value.', 'Calculating with nil gives an error; often a typo in a name is the cause.'],
     },
 
     // ------------------------------------------------------------------ 6
     {
       id: 'c1-typeof',
       courseId: 'course-1',
-      title: 'Soorten waarden en typeof()',
-      objective: 'Je kunt met typeof() opvragen wat voor soort waarde iets is.',
+      title: 'Kinds of values and typeof()',
+      objective: 'You can use typeof() to ask what kind of value something is.',
       minutes: 6,
       prerequisites: ['booleans', 'nil', 'strings', 'numbers'],
       concepts: ['typeof'],
       steps: [
         {
           type: 'explain',
-          body: `Elke waarde heeft een **soort** (programmeurs zeggen: een **type**):
-- \`"Hallo"\` is een \`string\`
-- \`42\` is een \`number\`
-- \`true\` is een \`boolean\`
+          body: `Every value has a **kind** (programmers say: a **type**):
+- \`"Hello"\` is a \`string\`
+- \`42\` is a \`number\`
+- \`true\` is a \`boolean\`
 - \`nil\` is \`nil\`
 
-Met \`typeof(waarde)\` vraag je het type op. Dat helpt bij het zoeken naar fouten: "is dit nu een getal of tekst?"`,
+With \`typeof(value)\` you ask for the type. That helps when hunting bugs: "is this a number or text right now?"`,
         },
         {
           type: 'code',
-          code: 'print(typeof("Hallo"))\nprint(typeof(42))\nprint(typeof(true))\nprint(typeof(nil))\nprint(typeof("42"))',
+          code: 'print(typeof("Hello"))\nprint(typeof(42))\nprint(typeof(true))\nprint(typeof(nil))\nprint(typeof("42"))',
           runnable: true,
-          after: 'Let op de laatste: `"42"` is een string, ook al zijn het cijfers.',
+          after: 'Look at the last one: `"42"` is a string, even though it is made of digits.',
         },
         {
           type: 'predict',
           id: 'c1-typeof-p1',
-          question: 'Wat laat `print(typeof("false"))` zien?',
+          question: 'What does `print(typeof("false"))` show?',
           code: 'print(typeof("false"))',
           concepts: ['typeof', 'booleans'],
           options: [
-            { text: 'boolean', feedback: 'Kijk naar de aanhalingstekens rond false.' },
-            { text: 'string', correct: true, feedback: 'Juist. Tussen aanhalingstekens is het tekst.' },
-            { text: 'nil', feedback: 'nil is alleen als er helemaal geen waarde is.' },
+            { text: 'boolean', feedback: 'Look at the quotes around false.' },
+            { text: 'string', correct: true, feedback: 'Right. Between quotes it is text.' },
+            { text: 'nil', feedback: 'nil is only when there is no value at all.' },
           ],
         },
         {
           type: 'exercise',
           id: 'c1-typeof-ex1',
           mode: 'independent',
-          title: 'Juiste types',
-          prompt: 'Maak drie variabelen zodat:\n- `a` een **number** is\n- `b` een **string** is\n- `c` een **boolean** is\nDe waarden kies je zelf.',
+          title: 'The right types',
+          prompt: 'Create three variables so that:\n- `a` is a **number**\n- `b` is a **string**\n- `c` is a **boolean**\nYou choose the values.',
           starter: '',
           checks: [
-            { kind: 'value', expr: 'a', type: 'number', message: '`a` moet een getal zijn (zonder aanhalingstekens).' },
-            { kind: 'value', expr: 'b', type: 'string', message: '`b` moet tekst zijn (met aanhalingstekens).' },
-            { kind: 'value', expr: 'c', type: 'boolean', message: '`c` moet `true` of `false` zijn.' },
+            { kind: 'value', expr: 'a', type: 'number', message: '`a` must be a number (without quotes).' },
+            { kind: 'value', expr: 'b', type: 'string', message: '`b` must be text (with quotes).' },
+            { kind: 'value', expr: 'c', type: 'boolean', message: '`c` must be `true` or `false`.' },
           ],
-          hints: ['Bijvoorbeeld: een getal zoals 5, tekst zoals "hoi", en true of false.'],
-          solution: 'local a = 5\nlocal b = "hoi"\nlocal c = true',
+          hints: ['For example: a number like 5, text like "hi", and true or false.'],
+          solution: 'local a = 5\nlocal b = "hi"\nlocal c = true',
           concepts: ['typeof', 'variables'],
-          success: 'Precies. Je kunt nu de vier basistypes herkennen én maken.',
+          success: 'Exactly. You can now recognise and create the four basic types.',
         },
       ],
-      summary: ['Waarden hebben een type: string, number, boolean of nil.', '`typeof(x)` geeft het type als tekst.', 'Cijfers tussen aanhalingstekens zijn een string.'],
+      summary: ['Values have a type: string, number, boolean or nil.', '`typeof(x)` gives the type as text.', 'Digits between quotes are a string.'],
     },
 
     // ------------------------------------------------------------------ 7
     {
       id: 'c1-naming-scope',
       courseId: 'course-1',
-      title: 'Goede namen en scope',
-      objective: 'Je kiest geldige, duidelijke namen en weet dat een local alleen binnen zijn blok bestaat.',
+      title: 'Good names and scope',
+      objective: 'You choose valid, clear names and know that a local only exists inside its block.',
       minutes: 9,
       prerequisites: ['variables'],
       concepts: ['naming', 'variables'],
       steps: [
         {
           type: 'explain',
-          title: 'Regels voor namen',
-          body: `Een naam van een variabele:
-- mag letters, cijfers en \`_\` bevatten
-- mag **niet** met een cijfer beginnen (\`2coins\` mag niet)
-- mag geen spaties bevatten
-- is **hoofdlettergevoelig**: \`coins\` en \`Coins\` zijn twee verschillende variabelen
-- mag geen woord zijn dat Luau zelf gebruikt, zoals \`local\`, \`end\` of \`if\`
+          title: 'Rules for names',
+          body: `The name of a variable:
+- may contain letters, digits and \`_\`
+- may **not** start with a digit (\`2coins\` is not allowed)
+- may not contain spaces
+- is **case-sensitive**: \`coins\` and \`Coins\` are two different variables
+- may not be a word Luau uses itself, like \`local\`, \`end\` or \`if\`
 
-In Roblox schrijf je namen meestal in **camelCase**: aan elkaar, elk nieuw woord met een hoofdletter: \`playerCoins\`, \`maxHealth\`.`,
+In Roblox you usually write names in **camelCase**: joined together, each new word with a capital letter: \`playerCoins\`, \`maxHealth\`.`,
         },
         {
           type: 'quiz',
           id: 'c1-naming-q1',
-          question: 'Welke naam is geldig én duidelijk?',
+          question: 'Which name is valid and clear?',
           concepts: ['naming'],
           options: [
-            { text: 'maxHealth', correct: true, feedback: 'Geldig, en je ziet meteen wat erin zit.' },
-            { text: '2ndPlayer', feedback: 'Een naam mag niet met een cijfer beginnen.' },
-            { text: 'max health', feedback: 'Spaties mogen niet in een naam.' },
-            { text: 'x', feedback: 'Geldig, maar onduidelijk. Over een week weet je niet meer wat x betekende.' },
+            { text: 'maxHealth', correct: true, feedback: 'Valid, and you can see right away what is inside.' },
+            { text: '2ndPlayer', feedback: 'A name may not start with a digit.' },
+            { text: 'max health', feedback: 'Spaces are not allowed in a name.' },
+            { text: 'x', feedback: 'Valid, but unclear. In a week you will not remember what x meant.' },
           ],
         },
         {
           type: 'explain',
-          title: 'Scope: waar een variabele bestaat',
-          body: `**Scope** betekent: het deel van je code waar een variabele bestaat.
+          title: 'Scope: where a variable exists',
+          body: `**Scope** means: the part of your code where a variable exists.
 
-Een \`local\`-variabele bestaat vanaf de regel waar je hem maakt, tot het einde van het **blok** waarin hij staat. Een blok begint bijvoorbeeld met \`do\` en eindigt met \`end\`. Later zie je dat \`if\`, lussen en functies ook blokken zijn.
+A \`local\` variable exists from the line where you create it until the end of the **block** it is in. A block starts, for example, with \`do\` and ends with \`end\`. Later you will see that \`if\`, loops and functions are blocks too.
 
-Buiten het blok bestaat de variabele niet meer: hij is dan \`nil\`.`,
+Outside the block the variable no longer exists: it is \`nil\` there.`,
         },
         {
           type: 'code',
-          code: 'local buiten = "zichtbaar"\ndo\n    local binnen = "alleen in het blok"\n    print(binnen)\n    print(buiten)\nend\nprint(binnen)',
+          code: 'local outside = "visible"\ndo\n    local inside = "only in the block"\n    print(inside)\n    print(outside)\nend\nprint(inside)',
           runnable: true,
-          after: 'Regel 7 laat `nil` zien: `binnen` bestond alleen tussen `do` en `end`. `buiten` is ook in het blok zichtbaar.',
+          after: 'Line 7 shows `nil`: `inside` only existed between `do` and `end`. `outside` is visible in the block too.',
         },
         {
           type: 'exercise',
           id: 'c1-scope-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Hoofdletters tellen',
-          prompt: 'De code laat `nil` zien in plaats van **Snelheid: 16**. Zoek het verschil en repareer het.',
-          starter: 'local walkSpeed = 16\nprint("Snelheid: " .. tostring(WalkSpeed))',
-          checks: [{ kind: 'output', lines: ['Snelheid: 16'], message: 'De Output moet **Snelheid: 16** zijn.' }],
-          hints: ['Vergelijk de naam op regel 1 en op regel 2 heel precies, ook de hoofdletters.', '`walkSpeed` en `WalkSpeed` zijn verschillende namen.'],
-          solution: 'local walkSpeed = 16\nprint("Snelheid: " .. tostring(walkSpeed))',
+          title: 'Capital letters count',
+          prompt: 'The code shows `nil` instead of **Speed: 16**. Find the difference and fix it.',
+          starter: 'local walkSpeed = 16\nprint("Speed: " .. tostring(WalkSpeed))',
+          checks: [{ kind: 'output', lines: ['Speed: 16'], message: 'The Output must be **Speed: 16**.' }],
+          hints: ['Compare the name on line 1 and line 2 very carefully, including capital letters.', '`walkSpeed` and `WalkSpeed` are different names.'],
+          solution: 'local walkSpeed = 16\nprint("Speed: " .. tostring(walkSpeed))',
           concepts: ['naming'],
-          success: 'Opgelost. De editor onderstreept zulke onbekende namen ook: let op de golvende lijntjes.',
+          success: 'Fixed. The editor also underlines unknown names like this: watch for the wavy lines.',
         },
       ],
-      summary: ['Namen: letters, cijfers en _, niet beginnen met een cijfer, geen spaties.', 'Luau is hoofdlettergevoelig.', 'Gebruik duidelijke namen in camelCase.', 'Een local bestaat alleen binnen het blok waarin je hem maakt.'],
+      summary: ['Names: letters, digits and _, not starting with a digit, no spaces.', 'Luau is case-sensitive.', 'Use clear names in camelCase.', 'A local only exists inside the block where you create it.'],
     },
 
     // ------------------------------------------------------------------ 8
     {
       id: 'c1-warn-errors',
       courseId: 'course-1',
-      title: 'warn() en foutmeldingen lezen',
-      objective: 'Je gebruikt warn() en kunt een foutmelding lezen: wat, waar en waarom.',
+      title: 'warn() and reading error messages',
+      objective: 'You use warn() and can read an error message: what, where and why.',
       minutes: 8,
       prerequisites: ['print', 'variables'],
       concepts: ['warn'],
       steps: [
         {
           type: 'explain',
-          body: `\`warn\` werkt als \`print\`, maar het bericht verschijnt in het **geel** in de Output. Je gebruikt het voor dingen die niet goed gaan, maar je game niet laten stoppen: "Let op: deze speler heeft geen data."
+          body: `\`warn\` works like \`print\`, but the message appears in **yellow** in the Output. You use it for things that are not quite right but should not stop your game: "Note: this player has no data."
 
-Een echte **fout** (error) is rood en stopt het script op die plek. Elke foutmelding vertelt je:
-1. **waar**: welk script en welke regel
-2. **wat**: een korte beschrijving van het probleem`,
+A real **error** is red and stops the script at that point. Every error message tells you:
+1. **where**: which script and which line
+2. **what**: a short description of the problem`,
         },
         {
           type: 'code',
-          code: 'print("Data laden...")\nwarn("Geen opgeslagen data gevonden, nieuwe speler")\nprint("Klaar")',
+          code: 'print("Loading data...")\nwarn("No saved data found, new player")\nprint("Done")',
           runnable: true,
-          after: 'De waarschuwing is geel, en het script ging gewoon verder.',
+          after: 'The warning is yellow, and the script simply carried on.',
         },
         {
           type: 'code',
-          title: 'Een echte fout',
-          code: 'print("Voor de fout")\nlocal coins = nil\nprint(coins + 10)\nprint("Deze regel wordt nooit bereikt")',
+          title: 'A real error',
+          code: 'print("Before the error")\nlocal coins = nil\nprint(coins + 10)\nprint("This line is never reached")',
           runnable: true,
-          after: 'De fout op regel 3 stopt het script. Daarom zie je de laatste regel niet. De Academy legt de fout onder de Output in gewone taal uit.',
+          after: 'The error on line 3 stops the script. That is why you do not see the last line. The Academy explains the error in plain language below the Output.',
         },
         {
           type: 'exercise',
           id: 'c1-errors-ex1',
           mode: 'guided',
           kind: 'fix-bug',
-          title: 'Repareer twee fouten',
-          prompt: 'Deze code heeft **twee** fouten. Run de code, repareer de eerste fout, run opnieuw, en repareer de tweede. Uiteindelijk is de Output:\n**Ronde 1**\n**Tijd: 60**',
-          starter: 'print("Ronde 1"\nlocal tijd = 60\nprint("Tijd: " .. tjd)',
-          checks: [{ kind: 'output', lines: ['Ronde 1', 'Tijd: 60'], message: 'De Output moet **Ronde 1** en daarna **Tijd: 60** zijn.' }],
-          hints: ['Fout 1 zit op regel 1: tel de haakjes.', 'Fout 2 zit op regel 3: is de naam goed gespeld?'],
-          solution: 'print("Ronde 1")\nlocal tijd = 60\nprint("Tijd: " .. tijd)',
+          title: 'Fix two errors',
+          prompt: 'This code has **two** errors. Run the code, fix the first error, run again, and fix the second. In the end the Output is:\n**Round 1**\n**Time: 60**',
+          starter: 'print("Round 1"\nlocal time = 60\nprint("Time: " .. tme)',
+          checks: [{ kind: 'output', lines: ['Round 1', 'Time: 60'], message: 'The Output must be **Round 1** followed by **Time: 60**.' }],
+          hints: ['Error 1 is on line 1: count the brackets.', 'Error 2 is on line 3: is the name spelled right?'],
+          solution: 'print("Round 1")\nlocal time = 60\nprint("Time: " .. time)',
           concepts: ['warn', 'naming'],
-          success: 'Twee fouten opgelost. Zo debug je: één fout per keer, steeds opnieuw testen.',
+          success: 'Two errors fixed. This is how you debug: one error at a time, testing again each time.',
         },
         {
           type: 'exercise',
           id: 'c1-warn-ex1',
           mode: 'independent',
-          title: 'Een waarschuwing geven',
-          prompt: 'Laat met `warn` het bericht **Inventaris is vol** zien.',
+          title: 'Give a warning',
+          prompt: 'Use `warn` to show the message **Inventory is full**.',
           starter: '',
           checks: [
-            { kind: 'warns', message: 'Gebruik `warn(...)` in plaats van `print`.' },
-            { kind: 'uses', sequence: ['warn', '('], message: 'Gebruik `warn( ... )`.' },
+            { kind: 'warns', message: 'Use `warn(...)` instead of `print`.' },
+            { kind: 'uses', sequence: ['warn', '('], message: 'Use `warn( ... )`.' },
           ],
-          hints: ['`warn` gebruik je precies zoals `print`.'],
-          solution: 'warn("Inventaris is vol")',
+          hints: ['You use `warn` exactly like `print`.'],
+          solution: 'warn("Inventory is full")',
           concepts: ['warn'],
-          success: 'Goed. In de Output van Roblox Studio is dit bericht ook geel.',
+          success: 'Good. In the Output of Roblox Studio this message is yellow too.',
         },
       ],
-      summary: ['`warn()` toont een gele waarschuwing; het script gaat door.', 'Een error is rood en stopt het script op die regel.', 'Lees elke fout: waar (regel) en wat. Los één fout per keer op.'],
+      summary: ['`warn()` shows a yellow warning; the script keeps going.', 'An error is red and stops the script on that line.', 'Read every error: where (line) and what. Fix one error at a time.'],
     },
 
     // ------------------------------------------------------------------ 9 project
     {
       id: 'c1-project-coins',
       courseId: 'course-1',
-      title: 'Project: coin-calculator',
-      objective: 'Je combineert alles uit deze cursus in een klein, zelfstandig programma.',
+      title: 'Project: coin calculator',
+      objective: 'You combine everything from this course into a small program of your own.',
       minutes: 15,
       prerequisites: ['variables', 'operators', 'interpolation'],
       concepts: ['variables', 'operators', 'interpolation'],
       steps: [
         {
           type: 'explain',
-          title: 'De opdracht',
-          body: `In een simulator verdient een speler coins per klik, met een bonus voor VIP-spelers. Jij maakt de berekening.
+          title: 'The assignment',
+          body: `In a simulator a player earns coins per click, with a bonus for VIP players. You write the calculation.
 
-Je bouwt het in drie stappen. Elke stap wordt apart gecontroleerd.`,
+You build it in three steps. Each step is checked separately.`,
         },
         {
           type: 'exercise',
           id: 'c1-project-ex1',
           mode: 'independent',
-          title: 'Stap 1: de gegevens',
-          prompt: 'Maak deze variabelen:\n- `coinsPerClick` = **5**\n- `clicks` = **40**\n- `vipMultiplier` = **2**',
-          starter: '-- Coin-calculator\n',
+          title: 'Step 1: the data',
+          prompt: 'Create these variables:\n- `coinsPerClick` = **5**\n- `clicks` = **40**\n- `vipMultiplier` = **2**',
+          starter: '-- Coin calculator\n',
           checks: [
-            { kind: 'value', expr: 'coinsPerClick', equals: 5, message: '`coinsPerClick` moet 5 zijn.' },
-            { kind: 'value', expr: 'clicks', equals: 40, message: '`clicks` moet 40 zijn.' },
-            { kind: 'value', expr: 'vipMultiplier', equals: 2, message: '`vipMultiplier` moet 2 zijn.' },
+            { kind: 'value', expr: 'coinsPerClick', equals: 5, message: '`coinsPerClick` must be 5.' },
+            { kind: 'value', expr: 'clicks', equals: 40, message: '`clicks` must be 40.' },
+            { kind: 'value', expr: 'vipMultiplier', equals: 2, message: '`vipMultiplier` must be 2.' },
           ],
-          hints: ['Drie regels, elk in de vorm `local naam = waarde`.'],
+          hints: ['Three lines, each in the shape `local name = value`.'],
           solution: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2',
           concepts: ['variables'],
-          success: 'De gegevens staan klaar.',
+          success: 'The data is ready.',
         },
         {
           type: 'exercise',
           id: 'c1-project-ex2',
           mode: 'independent',
-          title: 'Stap 2: de berekening',
-          prompt: 'Ga verder met je code. Voeg toe:\n- `normalCoins`: coins per klik keer het aantal klikken\n- `vipCoins`: normalCoins keer de multiplier\nGebruik je **variabelen**, niet de getallen zelf.',
+          title: 'Step 2: the calculation',
+          prompt: 'Continue with your code. Add:\n- `normalCoins`: coins per click times the number of clicks\n- `vipCoins`: normalCoins times the multiplier\nUse your **variables**, not the numbers themselves.',
           starter: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2\n',
           checks: [
-            { kind: 'value', expr: 'normalCoins', equals: 200, message: '`normalCoins` klopt nog niet: 5 coins × 40 klikken.' },
-            { kind: 'value', expr: 'vipCoins', equals: 400, message: '`vipCoins` klopt nog niet: normalCoins × de multiplier.' },
-            { kind: 'uses', sequence: ['coinsPerClick', '*', 'clicks'], message: 'Reken `normalCoins` uit met de variabelen: `coinsPerClick * clicks`.' },
-            { kind: 'uses', sequence: ['*', 'vipMultiplier'], message: 'Gebruik de variabele `vipMultiplier` in je berekening van `vipCoins`.' },
+            { kind: 'value', expr: 'normalCoins', equals: 200, message: '`normalCoins` is not right yet: 5 coins × 40 clicks.' },
+            { kind: 'value', expr: 'vipCoins', equals: 400, message: '`vipCoins` is not right yet: normalCoins × the multiplier.' },
+            { kind: 'uses', sequence: ['coinsPerClick', '*', 'clicks'], message: 'Calculate `normalCoins` with the variables: `coinsPerClick * clicks`.' },
+            { kind: 'uses', sequence: ['*', 'vipMultiplier'], message: 'Use the variable `vipMultiplier` in your calculation of `vipCoins`.' },
           ],
-          hints: ['Vermenigvuldigen doe je met `*`.', '`local normalCoins = coinsPerClick * clicks`'],
+          hints: ['You multiply with `*`.', '`local normalCoins = coinsPerClick * clicks`'],
           solution: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2\nlocal normalCoins = coinsPerClick * clicks\nlocal vipCoins = normalCoins * vipMultiplier',
           concepts: ['operators', 'variables'],
-          success: 'Door variabelen te gebruiken kun je later één getal aanpassen en klopt de rest automatisch.',
+          success: 'By using variables you can change one number later and everything else stays correct automatically.',
         },
         {
           type: 'exercise',
           id: 'c1-project-ex3',
           mode: 'independent',
-          title: 'Stap 3: het resultaat tonen',
-          prompt: 'Laat met string interpolation twee regels zien:\n**Normaal: 200 coins**\n**VIP: 400 coins**\nGebruik `{normalCoins}` en `{vipCoins}` in je tekst.',
+          title: 'Step 3: show the result',
+          prompt: 'Use string interpolation to show two lines:\n**Normal: 200 coins**\n**VIP: 400 coins**\nUse `{normalCoins}` and `{vipCoins}` in your text.',
           starter: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2\nlocal normalCoins = coinsPerClick * clicks\nlocal vipCoins = normalCoins * vipMultiplier\n',
           checks: [
-            { kind: 'output', lines: ['Normaal: 200 coins', 'VIP: 400 coins'], message: 'De Output moet **Normaal: 200 coins** en **VIP: 400 coins** zijn.' },
-            { kind: 'stringLiteral', contains: '{vipCoins}', message: 'Gebruik `{vipCoins}` in een tekst tussen backticks.' },
+            { kind: 'output', lines: ['Normal: 200 coins', 'VIP: 400 coins'], message: 'The Output must be **Normal: 200 coins** and **VIP: 400 coins**.' },
+            { kind: 'stringLiteral', contains: '{vipCoins}', message: 'Use `{vipCoins}` in text between backticks.' },
           ],
-          hints: ['print(`Normaal: {normalCoins} coins`)'],
-          solution: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2\nlocal normalCoins = coinsPerClick * clicks\nlocal vipCoins = normalCoins * vipMultiplier\nprint(`Normaal: {normalCoins} coins`)\nprint(`VIP: {vipCoins} coins`)',
+          hints: ['print(`Normal: {normalCoins} coins`)'],
+          solution: 'local coinsPerClick = 5\nlocal clicks = 40\nlocal vipMultiplier = 2\nlocal normalCoins = coinsPerClick * clicks\nlocal vipCoins = normalCoins * vipMultiplier\nprint(`Normal: {normalCoins} coins`)\nprint(`VIP: {vipCoins} coins`)',
           concepts: ['interpolation'],
-          success: 'Je eerste complete programma. Verander eens `clicks` naar 100 en run opnieuw: alles rekent vanzelf mee.',
+          success: 'Your first complete program. Try changing `clicks` to 100 and run again: everything recalculates by itself.',
         },
       ],
-      summary: ['Je hebt variabelen, rekenen en interpolation gecombineerd.', 'Door variabelen te gebruiken in berekeningen, past alles zich automatisch aan.', 'Volgende stap: beslissingen maken met if-statements.'],
+      summary: ['You combined variables, math and interpolation.', 'When you use variables in calculations, everything adjusts automatically.', 'Next step: making decisions with if statements.'],
     },
   ],
 };

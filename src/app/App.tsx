@@ -1,12 +1,14 @@
-import { Component, lazy, Suspense, useEffect, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { backgroundStyle } from './background';
 import {
-  BarChart3, BookOpen, Bot, Code2, Dumbbell, FolderKanban, GraduationCap, LayoutDashboard, Monitor, Settings as SettingsIcon, Swords, Trophy, Flame, Sparkles, Braces,
+  BarChart3, BookOpen, Code2, Dumbbell, FolderKanban, GraduationCap, LayoutDashboard, ScanSearch, Settings as SettingsIcon, Swords, Trophy, Flame, Sparkles, Braces,
 } from 'lucide-react';
 import { useApp, applyAppearance, type Page } from '@/store';
 import { call, onNotice, ping } from '@/api';
 import { Toasts } from '@/components/ui';
 import { levelFromXp } from '@shared/xp';
+import { APP_NAME } from '@shared/brand';
+import { applyLanguage, t, type LanguageState } from '@/i18n';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { Dashboard } from '@/features/dashboard/Dashboard';
 import { LearnPage } from '@/features/learning/LearnPage';
@@ -14,7 +16,6 @@ import { LessonPlayer } from '@/features/learning/LessonPlayer';
 import { PracticePage } from '@/features/practice/PracticePage';
 import { AchievementsPage } from '@/features/achievements/AchievementsPage';
 import { SettingsPage } from '@/features/settings/SettingsPage';
-import { StudioPage } from '@/features/studio/StudioPage';
 import { LESSON_BY_ID } from '@/curriculum';
 
 const Playground = lazy(() => import('@/features/playground/Playground').then((m) => ({ default: m.Playground })));
@@ -23,29 +24,29 @@ const KnowledgePage = lazy(() => import('@/features/knowledge/KnowledgePage').th
 const TutorPage = lazy(() => import('@/features/tutor/TutorPage').then((m) => ({ default: m.TutorPage })));
 const ProjectsPage = lazy(() => import('@/features/projects/ProjectsPage').then((m) => ({ default: m.ProjectsPage })));
 
+// Labels are English keys; they are translated when rendered.
 const NAV: { group: string; items: { page: Page; label: string; icon: typeof LayoutDashboard }[] }[] = [
-  { group: 'Leren', items: [
+  { group: 'Learn', items: [
     { page: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { page: 'learn', label: 'Leren', icon: GraduationCap },
+    { page: 'learn', label: 'Courses', icon: GraduationCap },
     { page: 'playground', label: 'Code Playground', icon: Code2 },
-    { page: 'practice', label: 'Oefenen', icon: Dumbbell },
+    { page: 'practice', label: 'Practice', icon: Dumbbell },
   ] },
-  { group: 'Bouwen', items: [
-    { page: 'studio', label: 'Roblox Studio', icon: Monitor },
-    { page: 'projects', label: 'Projecten', icon: FolderKanban },
-    { page: 'tutor', label: 'AI Tutor', icon: Bot },
-    { page: 'challenges', label: 'Uitdagingen', icon: Swords },
+  { group: 'Build', items: [
+    { page: 'projects', label: 'Projects', icon: FolderKanban },
+    { page: 'tutor', label: 'Code Explainer', icon: ScanSearch },
+    { page: 'challenges', label: 'Challenges', icon: Swords },
   ] },
-  { group: 'Naslag', items: [
-    { page: 'knowledge', label: 'Kennisbank', icon: BookOpen },
-    { page: 'stats', label: 'Statistieken', icon: BarChart3 },
-    { page: 'achievements', label: 'Prestaties', icon: Trophy },
+  { group: 'Reference', items: [
+    { page: 'knowledge', label: 'Knowledge Base', icon: BookOpen },
+    { page: 'stats', label: 'Statistics', icon: BarChart3 },
+    { page: 'achievements', label: 'Achievements', icon: Trophy },
   ] },
 ];
 
 const TITLES: Record<Page, string> = {
-  dashboard: 'Dashboard', learn: 'Leren', lesson: 'Les', playground: 'Code Playground', practice: 'Oefenen', studio: 'Roblox Studio', projects: 'Projecten',
-  tutor: 'AI Tutor', challenges: 'Uitdagingen', knowledge: 'Kennisbank', stats: 'Statistieken', achievements: 'Prestaties', settings: 'Instellingen',
+  dashboard: 'Dashboard', learn: 'Courses', lesson: 'Lesson', playground: 'Code Playground', practice: 'Practice', projects: 'Projects',
+  tutor: 'Code Explainer', challenges: 'Challenges', knowledge: 'Knowledge Base', stats: 'Statistics', achievements: 'Achievements', settings: 'Settings',
 };
 
 class ErrorBoundary extends Component<{ children: ReactNode; resetKey: string }, { error: Error | null }> {
@@ -60,10 +61,10 @@ class ErrorBoundary extends Component<{ children: ReactNode; resetKey: string },
     if (this.state.error) {
       return (
         <div className="page"><div className="card empty">
-          <strong>Dit scherm liep vast.</strong>
-          <span className="small">Je voortgang is veilig opgeslagen. Kies een ander onderdeel in de zijbalk of probeer het opnieuw.</span>
+          <strong>{t('This screen got stuck.')}</strong>
+          <span className="small">{t('Your progress is safely saved. Pick another section in the sidebar or try again.')}</span>
           <pre className="mono small faint selectable" style={{ whiteSpace: 'pre-wrap' }}>{this.state.error.message}</pre>
-          <button className="btn" onClick={() => this.setState({ error: null })}>Opnieuw proberen</button>
+          <button className="btn" onClick={() => this.setState({ error: null })}>{t('Try again')}</button>
         </div></div>
       );
     }
@@ -73,36 +74,45 @@ class ErrorBoundary extends Component<{ children: ReactNode; resetKey: string },
 
 export function App() {
   const { ready, route, navigate, snapshot, settings } = useApp();
+  // Bumped when the language changes or a machine translation of the interface finishes, so the
+  // whole tree re-renders in the new language. (Not on every batch: that would reset open editors.)
+  const [langVersion, setLangVersion] = useState(0);
+  const langStatus = useApp((s) => s.langStatus);
+  const appliedLanguage = useRef<string | null>(null);
+  const onLanguageProgress = (st: LanguageState) => {
+    useApp.setState({ langStatus: st });
+    if (st.missing === 0) setLangVersion((v) => v + 1);
+  };
 
   useEffect(() => {
     (async () => {
       const s = await call('settings:get');
       useApp.setState({ settings: s });
       applyAppearance(s);
+      const translator = await call('mt:status').catch(() => null);
+      useApp.setState({ translator });
+      appliedLanguage.current = `${s.language}:${!!translator?.installed}`;
+      useApp.setState({ langStatus: await applyLanguage(s.language, onLanguageProgress) });
       void call('window:setTheme', s.theme);
       await useApp.getState().refresh();
-      void useApp.getState().refreshStudio();
+      void useApp.getState().refreshLicense();
       const status = await call('app:startupStatus');
       if (status.recoveredFromCorruption) {
         useApp.getState().toast({
           kind: 'error',
-          title: 'Leergegevens hersteld',
-          body: status.restoredBackup ? `Het databasebestand was beschadigd. De back-up ${status.restoredBackup} is teruggezet; het beschadigde bestand is bewaard.` : 'Het databasebestand was beschadigd en is apart bewaard. Er was geen back-up om terug te zetten.',
+          title: t('Learning data restored'),
+          body: status.restoredBackup
+            ? t('The database file was damaged. The backup {file} was restored; the damaged file was kept.', { file: status.restoredBackup })
+            : t('The database file was damaged and was kept separately. There was no backup to restore.'),
         });
       }
       useApp.setState({ ready: true });
-    })().catch((e) => useApp.getState().toast({ kind: 'error', title: 'Opstarten mislukt', body: String(e?.message ?? e) }));
+    })().catch((e) => useApp.getState().toast({ kind: 'error', title: t('Starting up failed'), body: String(e?.message ?? e) }));
 
     const off = onNotice((n) => {
       if (n.type === 'awards') useApp.getState().showAwards(n.awards);
-      if (n.type === 'studio') {
-        const st = useApp.getState();
-        void st.refreshStudio();
-        if (n.verification) st.toast(n.verification.passed ? { kind: 'success', title: 'Gecontroleerd in Studio: alles klopt!' } : { kind: 'info', title: 'Studio-controle: nog niet alles klopt', body: 'Bekijk de feedback op de pagina Roblox Studio of in je les.' });
-        if (n.pull) st.toast({ kind: n.pull.kind === 'conflict' ? 'error' : 'success', title: n.pull.kind === 'conflict' ? 'Conflict: script is op beide plekken veranderd' : `Script ontvangen uit Studio`, body: n.pull.path });
-        if (n.pushResult) st.toast({ kind: n.pushResult.reason === 'applied' ? 'success' : 'info', title: n.pushResult.reason === 'applied' ? 'Script bijgewerkt in Studio' : n.pushResult.reason === 'conflict' ? 'Niet bijgewerkt: Studio-versie was veranderd' : 'Update niet toegepast in Studio', body: n.pushResult.path });
-      }
-      if (n.type === 'break') useApp.getState().toast({ kind: 'info', title: 'Even pauze?', body: `Je bent ${n.minutes} minuten actief bezig. Even opstaan en wat drinken helpt je concentratie.` });
+      if (n.type === 'translator') useApp.setState({ translator: n.status });
+      if (n.type === 'break') useApp.getState().toast({ kind: 'info', title: t('Time for a break?'), body: t('You have been active for {n} minutes. Standing up and having a drink helps you focus.', { n: n.minutes }) });
     });
     const activity = () => ping();
     const evs = ['keydown', 'mousedown', 'wheel', 'mousemove'] as const;
@@ -115,22 +125,42 @@ export function App() {
 
   useEffect(() => applyAppearance(settings), [settings]);
 
-  if (!ready) return <div className="app"><div className="titlebar"><span className="brand"><span className="brand-mark"><Braces size={11} /></span>Roblox Dev Academy</span></div><div /></div>;
+  // Switching language later (onboarding or settings).
+  const language = settings.language;
+  const translatorInstalled = useApp((st) => !!st.translator?.installed);
+  useEffect(() => {
+    // Re-applied when the translator finishes downloading, so missing texts get translated.
+    const key = `${language}:${translatorInstalled}`;
+    if (!ready || appliedLanguage.current === key) return;
+    appliedLanguage.current = key;
+    void applyLanguage(language, onLanguageProgress).then((st) => {
+      useApp.setState({ langStatus: st });
+      setLangVersion((v) => v + 1);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, ready, translatorInstalled]);
+
+  if (!ready) return <div className="app"><div className="titlebar"><span className="brand"><span className="brand-mark"><Braces size={11} /></span>{APP_NAME}</span></div><div /></div>;
   const onboarded = !!snapshot?.profile?.onboardedAt;
   const level = levelFromXp(snapshot?.xp ?? 0);
   const activePage = route.page === 'lesson' ? 'learn' : route.page;
-  const crumb = route.page === 'lesson' ? LESSON_BY_ID.get(route.params?.id ?? '')?.title : TITLES[route.page];
+  const crumb = route.page === 'lesson' ? LESSON_BY_ID.get(route.params?.id ?? '')?.title : t(TITLES[route.page]);
 
   return (
-    <div className="app">
+    <div className="app" key={`${language}:${langVersion}`}>
       <div className="titlebar">
-        <span className="brand"><span className="brand-mark"><Braces size={11} /></span>Roblox Dev Academy</span>
+        <span className="brand"><span className="brand-mark"><Braces size={11} /></span>{APP_NAME}</span>
         {onboarded && crumb && <><span className="crumb">/</span><span>{crumb}</span></>}
         <span className="spacer" />
+        {langStatus.machine && langStatus.missing > 0 && (
+          <button className="tb-stat btn ghost sm" onClick={() => navigate('settings', { section: 'language' })} title={t('Some texts are still in English')}>
+            {useApp.getState().translator?.installed ? t('Translating… {n} left', { n: langStatus.missing }) : t('Download the translator')}
+          </button>
+        )}
         {onboarded && (
           <>
-            <button className="tb-stat btn ghost sm" onClick={() => navigate('stats')} title="Leerreeks"><Flame size={13} /> {snapshot?.streakDays ?? 0}</button>
-            {settings.showXp && <button className="tb-stat btn ghost sm" onClick={() => navigate('achievements')} title={`${snapshot?.xp ?? 0} XP`}><Sparkles size={13} /> Level {level.level}</button>}
+            <button className="tb-stat btn ghost sm" onClick={() => navigate('stats')} title={t('Learning streak')}><Flame size={13} /> {snapshot?.streakDays ?? 0}</button>
+            {settings.showXp && <button className="tb-stat btn ghost sm" onClick={() => navigate('achievements')} title={`${snapshot?.xp ?? 0} XP`}><Sparkles size={13} /> {t('Level {n}', { n: level.level })}</button>}
           </>
         )}
       </div>
@@ -138,20 +168,20 @@ export function App() {
         <Onboarding />
       ) : (
         <div className="body">
-          <nav className="sidebar" aria-label="Hoofdmenu">
+          <nav className="sidebar" aria-label={t('Main menu')}>
             {NAV.map((g) => (
               <div key={g.group}>
-                <div className="group-label">{g.group}</div>
+                <div className="group-label">{t(g.group)}</div>
                 {g.items.map((it) => (
                   <button key={it.page} className="nav-item" aria-current={activePage === it.page ? 'page' : undefined} onClick={() => navigate(it.page)}>
-                    <it.icon size={16} strokeWidth={1.75} /> {it.label}
+                    <it.icon size={16} strokeWidth={1.75} /> {t(it.label)}
                   </button>
                 ))}
               </div>
             ))}
             <div className="foot">
               <button className="nav-item" aria-current={activePage === 'settings' ? 'page' : undefined} onClick={() => navigate('settings')}>
-                <SettingsIcon size={16} strokeWidth={1.75} /> Instellingen
+                <SettingsIcon size={16} strokeWidth={1.75} /> {t('Settings')}
               </button>
             </div>
           </nav>
@@ -181,7 +211,6 @@ function Route() {
     case 'playground': return <Playground />;
     case 'practice': return <PracticePage key={JSON.stringify(route.params ?? {})} />;
     case 'challenges': return <PracticePage key="challenges" challenges />;
-    case 'studio': return <StudioPage />;
     case 'projects': return <ProjectsPage />;
     case 'tutor': return <TutorPage />;
     case 'knowledge': return <KnowledgePage />;

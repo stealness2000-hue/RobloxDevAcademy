@@ -51,13 +51,14 @@ export function masteryLevel(score: number, evidenceCount: number): MasteryLevel
   return 'introduced';
 }
 
+/** English labels; show them with t(). */
 export const MASTERY_LABELS: Record<MasteryLevel, string> = {
-  'not-started': 'Nog niet begonnen',
-  introduced: 'Geïntroduceerd',
-  practicing: 'Aan het oefenen',
-  developing: 'In ontwikkeling',
-  proficient: 'Bekwaam',
-  mastered: 'Beheerst',
+  'not-started': 'Not started',
+  introduced: 'Introduced',
+  practicing: 'Practising',
+  developing: 'Developing',
+  proficient: 'Proficient',
+  mastered: 'Mastered',
 };
 
 /** Failures among the most recent pieces of evidence; used to suggest extra practice. */

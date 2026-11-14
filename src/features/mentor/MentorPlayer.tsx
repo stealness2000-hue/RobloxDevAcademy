@@ -1,25 +1,30 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Braces, Captions, ChevronLeft, ChevronRight, Loader2, Pause, Play, RefreshCw, Sparkles, Volume2, VolumeX, X, Lightbulb, MonitorPlay, ListChecks } from 'lucide-react';
+import { Braces, Captions, ChevronLeft, ChevronRight, Loader2, Pause, Play, Volume2, VolumeX, X, Lightbulb, MonitorPlay, ListChecks } from 'lucide-react';
 import { call } from '@/api';
 import { useApp } from '@/store';
 import { CodeView } from '@/components/ui';
 import { sceneDurationMs, type MentorScene, type MentorScript } from '@shared/mentor';
+import { LANGUAGE_BY_CODE } from '@shared/languages';
 import type { Lesson } from '@/curriculum/types';
-import { builtinScript, lessonAsText } from './script';
+import { t } from '@/i18n';
+import { builtinScript } from './script';
 
 type Lang = 'luau' | 'cpp' | 'java';
 
 function sceneText(s: MentorScene): string {
   if (s.kind === 'title') return `${s.title}. ${s.subtitle}`;
-  if (s.kind === 'recap') return `Samengevat: ${s.points.join('. ')}`;
+  if (s.kind === 'recap') return `${t('In short')}: ${s.points.join('. ')}`;
   if (s.kind === 'code' || s.kind === 'output') return s.say;
   return s.text;
 }
 
-function dutchVoice(): SpeechSynthesisVoice | null {
+/** A Windows voice for the student's language (e.g. "nl-NL" or "fr-FR"), if one is installed. */
+function voiceFor(locale: string): SpeechSynthesisVoice | null {
   try {
     const voices = window.speechSynthesis?.getVoices() ?? [];
-    return voices.find((v) => v.lang?.toLowerCase().startsWith('nl')) ?? null;
+    const want = locale.toLowerCase();
+    const base = want.split('-')[0];
+    return voices.find((v) => v.lang?.toLowerCase() === want) ?? voices.find((v) => v.lang?.toLowerCase().startsWith(base)) ?? null;
   } catch {
     return null;
   }
@@ -48,11 +53,16 @@ async function withRealOutput(script: MentorScript, language: Lang): Promise<Men
   return { ...script, scenes };
 }
 
+/**
+ * Explainer video for a lesson, generated from the lesson itself (works offline, no AI service):
+ * typed code, highlighted lines, real program output, captions and an optional Windows voice-over.
+ */
 export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; language: Lang; onClose: () => void }) {
-  const { settings, toast, navigate } = useApp();
+  const settings = useApp((s) => s.settings);
+  const locale = LANGUAGE_BY_CODE.get(settings.language)?.locale ?? 'en-US';
+  const languageName = LANGUAGE_BY_CODE.get(settings.language)?.name ?? 'English';
   const [script, setScript] = useState<MentorScript | null>(null);
-  const [loading, setLoading] = useState<string | null>('Video voorbereiden…');
-  const [aiConfigured, setAiConfigured] = useState(false);
+  const [loading, setLoading] = useState<string | null>(t('Preparing the video…'));
   const [index, setIndex] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -64,34 +74,21 @@ export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; la
   const raf = useRef(0);
   const last = useRef(0);
 
-  const load = useCallback(async (mode: 'auto' | 'builtin' | 'ai-new') => {
+  const load = useCallback(async () => {
     setPlaying(false);
     window.speechSynthesis?.cancel();
-    let s: MentorScript | null = null;
-    const status = await call('ai:status').catch(() => ({ configured: false }));
-    setAiConfigured(status.configured);
-    if (mode !== 'builtin' && status.configured) {
-      setLoading(mode === 'ai-new' ? 'AI Mentor schrijft een nieuwe uitleg…' : 'AI Mentor schrijft je uitleg…');
-      try {
-        s = await call('mentor:aiScript', { lessonId: lesson.id, language, title: lesson.title, objective: lesson.objective, content: lessonAsText(lesson), level: settings.explanationDepth, regenerate: mode === 'ai-new' });
-      } catch (e) {
-        toast({ kind: 'error', title: 'AI-uitleg lukte niet', body: `${(e as Error).message.replace(/^Error invoking remote method '[^']+': (Error: )?/, '')} Je ziet nu de ingebouwde uitleg.` });
-      }
-    }
-    if (!s) {
-      setLoading('Video voorbereiden…');
-      s = await withRealOutput(builtinScript(lesson, language), language);
-    }
+    setLoading(t('Preparing the video…'));
+    const s = await withRealOutput(builtinScript(lesson, language), language);
     setScript(s);
     setIndex(0);
     setElapsed(0);
     setLoading(null);
     setPlaying(true);
-  }, [lesson, language, settings.explanationDepth, toast]);
+  }, [lesson, language]);
 
   useEffect(() => {
-    void load('auto');
-    const pick = () => setVoice(dutchVoice());
+    void load();
+    const pick = () => setVoice(voiceFor(locale));
     pick();
     window.speechSynthesis?.addEventListener?.('voiceschanged', pick);
     return () => {
@@ -130,9 +127,9 @@ export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; la
   useEffect(() => {
     if (!playing || !script) return;
     last.current = performance.now();
-    const tick = (t: number) => {
-      const dt = (t - last.current) * speed;
-      last.current = t;
+    const tick = (now: number) => {
+      const dt = (now - last.current) * speed;
+      last.current = now;
       setElapsed((e) => {
         const next = e + dt;
         const typingDone = !(scene?.kind === 'code' && scene.typing) || next >= Math.min(6000, (scene?.kind === 'code' ? scene.code.length : 0) * 28);
@@ -184,25 +181,15 @@ export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; la
 
   return (
     <div className="overlay mentor-overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="mentor" role="dialog" aria-modal="true" aria-label={`Uitlegvideo: ${lesson.title}`}>
+      <div className="mentor" role="dialog" aria-modal="true" aria-label={t('Explainer video: {title}', { title: lesson.title })}>
         <div className="mentor-top">
           <div className="mentor-avatar" aria-hidden><Braces size={16} /></div>
           <div className="grow">
-            <strong>AI Mentor</strong>
+            <strong>{t('Video explanation')}</strong>
             <div className="small muted">{lesson.title}</div>
           </div>
-          {script && (
-            <span className={`badge ${script.source === 'ai' ? 'accent' : ''}`}>
-              {script.source === 'ai' ? <><Sparkles size={11} /> Gemaakt door AI (Claude)</> : 'Ingebouwde uitleg'}
-            </span>
-          )}
-          {aiConfigured && script && (
-            <button className="btn sm ghost" onClick={() => void load(script.source === 'ai' ? 'ai-new' : 'auto')} title="Laat de AI een nieuwe uitleg schrijven">
-              <RefreshCw size={13} /> {script.source === 'ai' ? 'Nieuwe AI-versie' : 'AI-versie'}
-            </button>
-          )}
-          {aiConfigured && script?.source === 'ai' && <button className="btn sm ghost" onClick={() => void load('builtin')}>Ingebouwd</button>}
-          <button className="btn ghost sm icon" onClick={onClose} aria-label="Sluiten"><X size={16} /></button>
+          {script && <span className="badge">{t('Made from this lesson')}</span>}
+          <button className="btn ghost sm icon" onClick={onClose} aria-label={t('Close')}><X size={16} /></button>
         </div>
 
         <div className="mentor-stage" onClick={toggle}>
@@ -232,7 +219,7 @@ export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; la
               )}
               {scene.kind === 'recap' && (
                 <div className="ms-recap">
-                  <div className="row" style={{ gap: 8 }}><ListChecks size={20} /><h2>Samengevat</h2></div>
+                  <div className="row" style={{ gap: 8 }}><ListChecks size={20} /><h2>{t('In short')}</h2></div>
                   <ul>{scene.points.map((p, i) => <li key={i} style={{ animationDelay: `${i * 180}ms` }}>{p}</li>)}</ul>
                 </div>
               )}
@@ -245,31 +232,29 @@ export function MentorPlayer({ lesson, language, onClose }: { lesson: Lesson; la
         </div>
 
         <div className="mentor-controls">
-          <button className="btn ghost icon" onClick={toggle} aria-label={playing ? 'Pauzeren' : 'Afspelen'} disabled={!script}>{playing ? <Pause size={17} /> : <Play size={17} />}</button>
-          <button className="btn ghost icon" onClick={() => go(index - 1)} aria-label="Vorige scène" disabled={!script}><ChevronLeft size={17} /></button>
-          <button className="btn ghost icon" onClick={() => go(index + 1)} aria-label="Volgende scène" disabled={!script}><ChevronRight size={17} /></button>
-          <div className="mentor-timeline" role="slider" aria-label="Tijdlijn" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
+          <button className="btn ghost icon" onClick={toggle} aria-label={playing ? t('Pause') : t('Play')} disabled={!script}>{playing ? <Pause size={17} /> : <Play size={17} />}</button>
+          <button className="btn ghost icon" onClick={() => go(index - 1)} aria-label={t('Previous scene')} disabled={!script}><ChevronLeft size={17} /></button>
+          <button className="btn ghost icon" onClick={() => go(index + 1)} aria-label={t('Next scene')} disabled={!script}><ChevronRight size={17} /></button>
+          <div className="mentor-timeline" role="slider" aria-label={t('Timeline')} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
             <div className="fill" style={{ width: `${progress * 100}%` }} />
             {script?.scenes.map((_, i) => (
-              <button key={i} className={`seg ${i === index ? 'on' : ''}`} style={{ left: `${(i / script.scenes.length) * 100}%`, width: `${100 / script.scenes.length}%` }} onClick={() => go(i)} aria-label={`Ga naar scène ${i + 1}`} />
+              <button key={i} className={`seg ${i === index ? 'on' : ''}`} style={{ left: `${(i / script.scenes.length) * 100}%`, width: `${100 / script.scenes.length}%` }} onClick={() => go(i)} aria-label={t('Go to scene {n}', { n: i + 1 })} />
             ))}
           </div>
           <span className="small mono faint">{script ? `${index + 1}/${script.scenes.length}` : ''}</span>
-          <select className="select" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} aria-label="Snelheid">
+          <select className="select" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} aria-label={t('Speed')}>
             {[0.75, 1, 1.25, 1.5].map((s) => <option key={s} value={s}>{s}×</option>)}
           </select>
-          <button className="btn ghost icon" onClick={() => setCaptions((c) => !c)} aria-pressed={captions} aria-label="Ondertiteling" title="Ondertiteling"><Captions size={17} style={{ opacity: captions ? 1 : 0.45 }} /></button>
-          <button className="btn ghost icon" onClick={() => setVoiceOn((v) => !v)} disabled={!voice} aria-pressed={speak} aria-label="Voorlezen" title={voice ? 'Voorlezen' : 'Geen Nederlandse stem gevonden in Windows'}>
+          <button className="btn ghost icon" onClick={() => setCaptions((c) => !c)} aria-pressed={captions} aria-label={t('Captions')} title={t('Captions')}><Captions size={17} style={{ opacity: captions ? 1 : 0.45 }} /></button>
+          <button className="btn ghost icon" onClick={() => setVoiceOn((v) => !v)} disabled={!voice} aria-pressed={speak} aria-label={t('Read aloud')} title={voice ? t('Read aloud') : t('No {language} voice found in Windows', { language: languageName })}>
             {speak ? <Volume2 size={17} /> : <VolumeX size={17} />}
           </button>
         </div>
-        {!aiConfigured && (
-          <div className="mentor-foot small muted">
-            Dit is de ingebouwde uitleg. Wil je dat echte AI een persoonlijke uitleg schrijft? Voeg een Claude API-sleutel toe in{' '}
-            <button className="btn sm ghost" onClick={() => { onClose(); navigate('settings', { section: 'AI Tutor' }); }}>Instellingen → AI Tutor</button>
+        {!voice && (
+          <div className="mentor-foot small faint">
+            {t('Read aloud: Windows has no {language} voice. You can add one in Windows Settings → Time & language → Speech.', { language: languageName })}
           </div>
         )}
-        {!voice && <div className="mentor-foot small faint">Voorlezen: Windows heeft geen Nederlandse stem. Je kunt er een toevoegen via Windows-instellingen → Tijd en taal → Spraak.</div>}
       </div>
     </div>
   );

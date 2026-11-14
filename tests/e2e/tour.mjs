@@ -9,13 +9,15 @@ import { connect } from '../../scripts/cdp.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const shots = path.join(root, 'tests/e2e/screenshots/tour');
 fs.mkdirSync(shots, { recursive: true });
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'rda-tour-'));
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'lumora-tour-'));
 const proc = spawn(path.join(root, 'node_modules/electron/dist/electron.exe'), ['.', '--remote-debugging-port=9336'], { cwd: root, env: { ...process.env, RDA_USER_DATA: profile }, stdio: 'ignore' });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const p = await connect(9336, 30000);
 await p.send('Runtime.enable');
 const errors = [];
 await p.waitFor(`!!document.querySelector('.ob-title')`, 20000);
+// The tour runs in English; TOUR_LANG=nl (or any language code) shows another language.
+await p.eval(`window.academy.invoke('settings:set', { language: ${JSON.stringify(process.env.TOUR_LANG ?? 'en')} })`);
 await p.eval(`window.academy.invoke('profile:completeOnboarding', { experience: 'none', goal: 'simulator', dailyGoalMinutes: 15 })`);
 if (process.argv[2] === 'light') await p.eval(`window.academy.invoke('settings:set', { theme: 'light' })`);
 // some real practice data so charts have content
@@ -27,11 +29,11 @@ await p.eval(`(async () => {
 })()`);
 await p.eval('location.reload()').catch(() => {});
 await sleep(2500);
-const pages = ['Dashboard', 'Leren', 'Code Playground', 'Oefenen', 'Roblox Studio', 'Projecten', 'AI Tutor', 'Uitdagingen', 'Kennisbank', 'Statistieken', 'Prestaties', 'Instellingen'];
+const pages = ['Dashboard', 'Courses', 'Code Playground', 'Practice', 'Projects', 'Code Explainer', 'Challenges', 'Knowledge Base', 'Statistics', 'Achievements', 'Settings'];
 for (const [i, name] of pages.entries()) {
   await p.eval(`[...document.querySelectorAll('.nav-item')].find(n => n.textContent.trim() === ${JSON.stringify(name)}).click()`);
-  await sleep(name === 'Code Playground' || name === 'AI Tutor' ? 1800 : 900);
-  const crashed = await p.eval(`document.body.innerText.includes('Dit scherm liep vast')`);
+  await sleep(name === 'Code Playground' || name === 'Code Explainer' ? 1800 : 900);
+  const crashed = await p.eval(`document.body.innerText.includes('This screen got stuck')`);
   if (crashed) errors.push(`${name}: ${await p.eval(`document.querySelector('.main pre')?.innerText`)}`);
   await p.shot(path.join(shots, `${String(i + 1).padStart(2, '0')}-${name.replace(/\s/g, '-').toLowerCase()}${process.argv[2] ? '-' + process.argv[2] : ''}.png`));
 }

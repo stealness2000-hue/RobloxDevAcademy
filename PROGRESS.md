@@ -1,37 +1,56 @@
-# PROGRESS — Roblox Dev Academy
+# PROGRESS — Lumora Academy (formerly Roblox Dev Academy)
 
-Last updated: 2026-11-14 · Version 0.5.0
+Last updated: 2026-11-14 · Version 0.6.0
 
 This file is the honest status of the project. "Done" means built **and** tested; everything else is labelled.
 
 ## Summary
 
-| Phase | Status |
+| Area | Status |
 |---|---|
-| 1 — Functional foundation | **Done** |
-| 2 — Complete beginner experience | **Done** (Courses 0 and 1) |
-| 3 — Roblox Studio integration | **Done** (plugin + secure local bridge + verification + safe sync); not yet tried inside a real Roblox Studio, see limitations |
-| 4 — Advanced learning | **Partial**: Courses 2–5 (all of the plain-Luau foundation) written; mastery + review scheduling done; courses 6–12 not written |
-| 5 — AI and advanced analytics | Partial: offline "explain my code" and the full statistics page; no AI provider |
-| 6 — Production quality | Partial: hardened Windows installer, backups and recovery done; courses 6–12, accessibility audit and code signing not done |
+| Core app (lessons, editor, real Luau/C++/Java execution, progress, statistics) | **Done** |
+| Content | **Done** for courses 0–5 (Luau foundation), C++ and Java basics; courses 6–12 not written |
+| Languages | **Done**: English + Dutch by people; 84 languages machine-translated offline (quality varies, labelled) |
+| Selling | **Done**: free trial (courses 0–1) + full course via license key (Lumora bot keys offline, Gumroad online once); Gumroad product ID still to be filled in |
+| Roblox Studio plugin | **Removed** in 0.6.0 (Studio steps are self-confirmed checklists again) |
+| AI (Claude) option | **Removed** in 0.6.0 (the free built-in explainer video stays) |
+| Production | Installer works and is tested; not code-signed (SmartScreen warning) |
 
 ### Ready for students now
 
-A student can install the app and learn from zero up to and including **functions and tables**:
-**42 lessons in 6 courses**, about 6–8 hours of lesson time plus practice. That covers everything in Luau
-that does not need Roblox Studio. All exercises are checked automatically in the real Luau runtime.
+**52 lessons**: 42 in Roblox Luau (courses 0–5) plus 5 C++ and 5 Java lessons, about 6–8 hours of lesson time
+plus 27 practice exercises, 6 challenges, a 21-entry knowledge base and 1 of 10 projects. All exercises are
+checked automatically in the real Luau runtime (and with g++/Java when installed).
 
-| Course | Lessons | Exercises | Quiz / predict | Status |
-|---|---|---|---|---|
-| 0 — Voordat je codeert | 10 | 10 | 14 | Done |
-| 1 — Luau-fundamenten | 9 | 16 | 5 | Done |
-| 2 — Voorwaarden en logica | 6 | 10 | 5 | Done (v0.2) |
-| 3 — Lussen | 6 | 10 | 3 | Done (v0.2) |
-| 4 — Functies | 5 | 8 | 4 | Done (v0.2) |
-| 5 — Tabellen | 6 | 10 | 2 | Done (v0.2) |
-| 6–12 (engine, events, client/server, UI, data, advanced, games) | — | — | — | Planned topics shown as "in ontwikkeling" |
+| Course | Lessons | Free? |
+|---|---|---|
+| 0 — Before you code | 10 | Free |
+| 1 — Luau fundamentals | 9 | Free |
+| 2 — Conditions and logic | 6 | Full course |
+| 3 — Loops | 6 | Full course |
+| 4 — Functions | 5 | Full course |
+| 5 — Tables | 6 | Full course |
+| C++: the basics / Java: the basics | 5 + 5 | First 3 free each |
+| 6–12 (engine, events, client/server, UI, data, advanced, games) | — | Planned topics shown as "in development" |
 
-Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of 10 projects.
+## What changed in 0.6.0
+
+- **Renamed to Lumora Academy** (name in one place: `shared/brand.ts`). Data from `%APPDATA%\Roblox Dev Academy` is
+  copied (not moved) into the new folder on first start, so progress is kept.
+- **English is the base language.** All lessons, practice, knowledge base, projects, error explanations and the
+  interface were rewritten in English. The original Dutch is kept as a human translation (same lesson ids).
+- **86 languages.** Language picker in onboarding and Settings (default: the Windows language; existing 0.5 users
+  keep Dutch). For the 84 machine languages the app uses M2M100 418M (MIT licence, free, ~640 MB, downloaded once from
+  huggingface.co on request) in a separate utility process: nothing typed by the student leaves the computer. Code,
+  placeholders and expected output are never translated; lost placeholders fall back to English (with a retry using
+  number tokens). Every sentence is cached in the database (migration 5). Screens show an "automatically translated"
+  label. The video-explanation voice uses a Windows voice for the chosen language when one is installed.
+- **Free trial + $9.99 full course.** Courses 0–1 and the first 3 C++/Java lessons are free; other lessons show a lock
+  screen with a buy button and key entry. Keys: `LUMORA1-…` keys from the Lumora Discord bot are Ed25519-signed and
+  verified offline with the bot's public key; Gumroad keys are verified once online (license table, migration 5) and
+  re-checked every 14 days when online (only a refund/chargeback locks again; being offline never does).
+- **Removed**: the Roblox Studio plugin and local bridge, the Claude API option and `@anthropic-ai/sdk`. The "AI Tutor"
+  page is now honestly called "Code Explainer" (offline static analysis). The lesson button is "Video explanation".
 
 ## What changed in 0.5.0
 
@@ -50,7 +69,7 @@ Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of
 - **Backgrounds**: Aurora, Raster, Stippen, Avond, Oceaan, or your own image (PNG/JPG/WEBP/GIF up to 15 MB, copied into the app folder and served via `app://`, so the CSP stays strict), with a dim slider for readability.
 - CI now fails if Java or g++ is missing on the build server, so all C++/Java content is compiled and checked on every release.
 
-## What changed in 0.3.0 — Roblox Studio integration
+## What changed in 0.3.0 — Roblox Studio integration (removed again in 0.6.0)
 
 - **Studio companion plugin** (`studio-plugin/RobloxDevAcademy.lua`), installed with one click from the Academy into `%LOCALAPPDATA%RobloxPlugins`. It shows the opened exercise with steps; on the student's click it creates an **empty** practice script (comments only, never the answer, never overwriting), reads facts from the place (instances, allowlisted properties, script sources) and sends them to the Academy, offers script updates (apply/decline), and forwards Output errors during Play. Every change goes through ChangeHistoryService (Ctrl+Z).
 - **Secure local bridge** (`electron/services/studio-bridge.ts`): 127.0.0.1:34873 only; Host check (DNS rebinding) and rejection of browser requests (Origin); pairing only after clicking "Koppelen" (6-digit code, 2 minutes, 5 attempts); 256-bit session token (stored hashed, survives restarts, revoked by "Ontkoppelen"); fixed route allowlist, Zod validation, 256 KB limit, rate limits; no code execution, no file access.
@@ -104,41 +123,41 @@ Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of
 **Distribution**
 - `npm run dist` → `release/Roblox Dev Academy Setup 0.2.0.exe` (NSIS, per user, choose the install folder, desktop shortcut; uninstalling keeps learning data).
 
-## Tests executed (2026-11-14, v0.3.0)
+## Tests executed (2026-11-14, v0.6.0)
 
 | Suite | Result |
 |---|---|
-| `npm test` (Vitest, 5 files) | **213 / 213 passed** |
-| ↳ Curriculum validation in real Luau (solutions pass, starters fail, predicted output matches) | all passed |
-| ↳ Studio: plugin compiles as Luau and only uses 127.0.0.1; bridge refuses pairing without consent, wrong codes (5×), missing/forged tokens, browser Origin, wrong Host, unknown operations, invalid/oversized payloads, floods; token survives restart, unpair revokes; exercise/check/push protocol; fact verification | all passed |
-| ↳ Database incl. Studio sync: create, update, conflict without overwriting, resolution keeping both versions | all passed |
-| `tests/e2e/acceptance.mjs` on the **packaged installer build** | **35 / 35 checks passed** |
-| `tests/e2e/studio-bridge.mjs` on the **packaged installer build** (simulated plugin, exact protocol) | **19 / 19 checks passed** |
-| `tsc --noEmit` | Clean |
+| `npm test` (Vitest, 9 files) | **434 passed**, 29 skipped (C++/Java content without local g++/JDK; CI runs them) |
+| ↳ Curriculum in real Luau, **English and Dutch**: every solution passes, every starter fails, predicted output matches | all passed |
+| ↳ License: valid LUMORA1 key, tampered key, key from another signer, unknown tier, no online re-check for offline keys; Gumroad accept / refund / not configured | all passed |
+| ↳ i18n: every `t()` text has Dutch, placeholders match, segmenting keeps code and restores tokens | all passed |
+| ↳ Database: migrations 1–5, translation cache, license storage | all passed |
+| `tests/e2e/acceptance.mjs` on the **packaged build** (onboarding in English, lessons 1–2, persistence, lock screen, forged key refused, switch to Dutch) | **42 / 42 checks passed** |
+| `tests/e2e/translator.mjs` on the **packaged build** (M2M100 in the utility process, Spanish UI text + lesson, code kept, cache) | **7 / 7 checks passed** |
+| `tests/e2e/tour.mjs` (every page in English) | no page crashed |
+| `tsc --noEmit` | clean |
 
-Not executed: the plugin inside a real Roblox Studio (Studio is not installed/running on the build machine), the NSIS installer itself, and the GitHub workflows (they run once the project is pushed to GitHub).
+Not executed: the full 640 MB model download from inside the app (the six download URLs were checked; the test used a
+local copy of the same files), a purchase on Gumroad (no product ID yet), the NSIS installer UI itself, and the
+GitHub workflows.
 
 ## Known limitations
 
-- **C++/Java need a local toolchain** (free: Temurin JDK, MSYS2 g++), installed by the student. This code runs natively as the student's user, with timeouts and a temp folder but without a sandbox. C++ content is verified on the GitHub build server (no g++ on the development machine).
-
-- **Curriculum**: Courses 6–12 (Roblox engine, events, client/server, UI, DataStores, advanced, full games) and projects 2–10 are not written yet. They need Roblox Studio, and therefore the Studio integration below, to be checked properly.
-- **Roblox Studio plugin not yet tried in real Studio.** The protocol, security and verification are tested end to end against the real app with a simulated plugin, and the plugin compiles as Luau; its Studio-side behaviour (UI, HttpService localhost permission prompt, ScriptEditorService calls) still needs a manual check in Studio. Behaviour during Play (for example "the part turns blue") cannot be observed and stays self-confirmed.
-- **AI tutor**: not implemented; the page offers an offline static code explanation.
-- **Formatter**: re-indentation only (StyLua/Selene not bundled).
-- **Playground runtime**: plain Luau. `task.wait` returns immediately (labelled); `task.spawn/delay/defer`, `os` and `io` are unavailable.
-- **E2E typing speed**: synthetic key events faster than ~35 ms per key were partly dropped by Monaco in an empty editor; 90 ms per key works. Not observed with real typing.
-- **Code signing** not configured: Windows SmartScreen will warn on first install ("Meer info → Toch uitvoeren").
-- Main renderer chunk is 4.3 MB (mostly Monaco), loaded from local disk.
+- **Machine translation quality** is decent for everyday sentences and weaker for technical words (it is labelled).
+  The first time a lesson opens in a new language it takes a while (~1–2 s per sentence on an average CPU), then it is
+  cached. Without the model the 84 machine languages show English text with a notice.
+- **Gumroad**: `gumroadProductId` and `buyUrl` in `shared/license.ts` must be filled in before Gumroad keys work.
+  Lumora bot keys already work offline. A revocation list for bot keys is not implemented yet.
+- **C++/Java need a local toolchain** (free: Temurin JDK, MSYS2 g++); this code runs natively without a sandbox.
+- **Curriculum**: courses 6–12 and projects 2–10 are not written yet.
+- **Formatter**: re-indentation only. **Playground runtime**: plain Luau (`task.wait` returns immediately, labelled).
+- **Code signing** not configured: Windows SmartScreen warns on first install ("More info → Run anyway").
+- Installer grew from 137 MB to 166 MB (ONNX runtime for the translator); the model itself is not in the installer.
 
 ## Remaining tasks (prioritised)
 
-1. Try the plugin in real Roblox Studio (install from the Studio page → pair → open "Kleurveranderend onderdeel" → Maak oefenscript → Controleer mijn werk) and fix anything Studio-specific.
-2. Publish: push to a GitHub repository, enable Pages, tag `v0.3.0` (see README "Gratis publiceren").
-3. Course 6 (Roblox engine) and Course 7 (events) with Studio-verified exercises, plus projects 2–3.
-4. Courses 8–10 (client/server, UI, data) and projects 4–7.
-5. Optional AI tutor; code signing certificate; accessibility audit.
-
-## Next development step
-
-Run the manual Studio check (task 1), then write **Course 6 — De Roblox-engine** using the now-available verified Studio exercises.
+1. Fill in the Gumroad product ID and buy URL (or point `buyUrl` at the Discord bot), then publish v0.6.0.
+2. Optional: revocation list for LUMORA1 keys (fetched from GitHub Pages).
+3. Optional: pre-translated interface packs for the most used languages, so the first start in those is instant.
+4. Course 6 (Roblox engine) and Course 7 (events), plus projects 2–3.
+5. Code signing certificate; accessibility audit.

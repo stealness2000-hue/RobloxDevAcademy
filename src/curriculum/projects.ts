@@ -12,7 +12,7 @@ export interface Project {
   id: string;
   number: number;
   title: string;
-  difficulty: 'Beginner' | 'Gemiddeld' | 'Gevorderd';
+  difficulty: string; // Beginner | Intermediate | Advanced
   description: string;
   learns: string[];
   prerequisites: string[]; // lesson ids
@@ -27,63 +27,63 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    id: 'project-color-part', number: 1, title: 'Kleurveranderend onderdeel', difficulty: 'Beginner', available: true,
-    description: 'Een Part dat blauw wordt wanneer je het aanraakt. Je eerste interactieve mechanisme.',
+    id: 'project-color-part', number: 1, title: 'Color-changing part', difficulty: 'Beginner', available: true,
+    description: 'A Part that turns blue when you touch it. Your first interactive mechanic.',
     learns: ['Parts', 'Scripts', 'Properties', 'Events (Touched)', 'Color3'],
     prerequisites: ['c0-first-studio-script', 'c1-variables'],
-    setup: ['Een Baseplate in Roblox Studio met Explorer, Properties en Output open.'],
-    scriptLocation: 'Een Script direct ín het Part "TrainingPart" (zodat script.Parent het Part is).',
+    setup: ['A Baseplate in Roblox Studio with Explorer, Properties and Output open.'],
+    scriptLocation: 'A Script directly inside the Part "TrainingPart" (so script.Parent is the Part).',
     tasks: [
       {
-        title: 'Het Part maken',
-        body: 'Eerst bouw je het onderdeel, zonder code.',
+        title: 'Making the Part',
+        body: 'First you build the part, without code.',
         studio: [
-          { text: 'Klik in het tabblad **Home** (of **Model**) op **Part** om een blok in Workspace te zetten.' },
-          { text: 'Hernoem het in de Explorer naar **TrainingPart** (dubbelklik op de naam).' },
-          { text: 'Zet in Properties **Anchored** aan, zodat het niet omvalt.' },
+          { text: 'In the **Home** (or **Model**) tab, click **Part** to put a block in Workspace.' },
+          { text: 'Rename it to **TrainingPart** in the Explorer (double-click the name).' },
+          { text: 'Turn on **Anchored** in Properties, so it does not fall over.' },
         ],
       },
       {
-        title: 'De code schrijven',
-        body: `Nieuw in dit project is een **event**: iets dat gebeurt in je game, zoals "iets raakt dit Part aan". Met \`:Connect(function() ... end)\` zeg je: als dit event gebeurt, voer dan deze code uit.
+        title: 'Writing the code',
+        body: `New in this project is an **event**: something that happens in your game, like "something touches this Part". With \`:Connect(function() ... end)\` you say: when this event happens, run this code.
 
-\`script.Parent\` is het onderdeel waar het script in zit: hier je TrainingPart.
+\`script.Parent\` is the part the script is inside: here your TrainingPart.
 
-Schrijf de code hieronder. Zet het Part met een variabele \`part\` vast, verbind het **Touched**-event, en geef \`part.Color\` de kleur \`Color3.fromRGB(0, 120, 255)\`.`,
+Write the code below. Store the Part in a variable \`part\`, connect the **Touched** event, and give \`part.Color\` the colour \`Color3.fromRGB(0, 120, 255)\`.`,
         code: {
           starter: '-- Script in TrainingPart\nlocal part = script.Parent\n\n',
           checks: [
-            { kind: 'uses', sequence: ['local', 'part', '=', 'script', '.', 'Parent'], message: 'Begin met `local part = script.Parent`.' },
-            { kind: 'uses', sequence: ['part', '.', 'Touched', ':', 'Connect', '('], message: 'Verbind het event met `part.Touched:Connect(function() ... end)`.' },
-            { kind: 'uses', sequence: ['part', '.', 'Color', '='], message: 'Geef binnen de functie `part.Color` een nieuwe waarde.' },
-            { kind: 'uses', sequence: ['Color3', '.', 'fromRGB', '('], message: 'Maak de kleur met `Color3.fromRGB(0, 120, 255)`.' },
+            { kind: 'uses', sequence: ['local', 'part', '=', 'script', '.', 'Parent'], message: 'Start with `local part = script.Parent`.' },
+            { kind: 'uses', sequence: ['part', '.', 'Touched', ':', 'Connect', '('], message: 'Connect the event with `part.Touched:Connect(function() ... end)`.' },
+            { kind: 'uses', sequence: ['part', '.', 'Color', '='], message: 'Inside the function, give `part.Color` a new value.' },
+            { kind: 'uses', sequence: ['Color3', '.', 'fromRGB', '('], message: 'Make the colour with `Color3.fromRGB(0, 120, 255)`.' },
           ],
-          hints: ['De vorm van een event: `part.Touched:Connect(function()` ... `end)`', 'Binnen de functie: `part.Color = Color3.fromRGB(0, 120, 255)`'],
+          hints: ['The shape of an event: `part.Touched:Connect(function()` ... `end)`', 'Inside the function: `part.Color = Color3.fromRGB(0, 120, 255)`'],
           solution: 'local part = script.Parent\n\npart.Touched:Connect(function()\n    part.Color = Color3.fromRGB(0, 120, 255)\nend)',
         },
       },
       {
-        title: 'In Studio zetten en testen',
-        body: 'Nu zet je jouw code in Studio.',
+        title: 'Putting it in Studio and testing',
+        body: 'Now you put your code into Studio.',
         studio: [
-          { text: 'Ga met je muis over **TrainingPart** in de Explorer, klik op **+** en kies **Script**.' },
-          { text: 'Vervang de inhoud door jouw code van de vorige stap.' },
-          { text: 'Klik op **Play** en loop met je avatar tegen het Part aan.' },
-          { text: 'Controleer dat het Part blauw wordt, en dat de Output geen rode fouten toont.' },
+          { text: 'Hover over **TrainingPart** in the Explorer, click **+** and choose **Script**.' },
+          { text: 'Replace its content with your code from the previous step.' },
+          { text: 'Click **Play** and walk into the Part with your avatar.' },
+          { text: 'Check that the Part turns blue, and that the Output shows no red errors.' },
         ],
       },
     ],
-    testing: ['Het Part wordt blauw zodra je het aanraakt.', 'De Output toont geen rode foutmeldingen.'],
-    mistakes: ['Het Script in ServerScriptService gezet: dan is script.Parent geen Part maar de service.', 'Color3.new(0, 120, 255) gebruikt: Color3.new verwacht waarden van 0 tot 1.', '`end)` vergeten aan het einde van de functie.'],
-    done: 'Je eerste interactieve mechanisme werkt. Je gebruikte een event: de basis van bijna alles wat spelers in een game kunnen doen.',
+    testing: ['The Part turns blue as soon as you touch it.', 'The Output shows no red error messages.'],
+    mistakes: ['Putting the Script in ServerScriptService: then script.Parent is not a Part but the service.', 'Using Color3.new(0, 120, 255): Color3.new expects values from 0 to 1.', 'Forgetting `end)` at the end of the function.'],
+    done: 'Your first interactive mechanic works. You used an event: the basis of almost everything players can do in a game.',
   },
-  { id: 'project-door', number: 2, title: 'Werkende deur', difficulty: 'Beginner', available: false, description: 'Een deur die opengaat met een ProximityPrompt en TweenService.', learns: ['ProximityPrompt', 'Events', 'TweenService', 'Status bijhouden'], prerequisites: [] },
-  { id: 'project-coins', number: 3, title: 'Coins verzamelen', difficulty: 'Beginner', available: false, description: 'Munten die verdwijnen en coins geven als een speler ze aanraakt.', learns: ['Spelers herkennen', 'Variabelen', 'Events', 'Voortgang op de server'], prerequisites: [] },
-  { id: 'project-shop', number: 4, title: 'Eenvoudige winkel', difficulty: 'Gemiddeld', available: false, description: 'Een koopknop die een RemoteEvent stuurt; de server controleert het saldo.', learns: ['Knoppen', 'RemoteEvents', 'Validatie op de server', 'Saldo controleren'], prerequisites: [] },
-  { id: 'project-inventory', number: 5, title: 'Inventaris', difficulty: 'Gemiddeld', available: false, description: 'Een inventaris met tabellen, een ModuleScript en een interface.', learns: ['Tabellen', 'ModuleScripts', 'UI', 'Client en server samen'], prerequisites: [] },
-  { id: 'project-obby', number: 6, title: 'Obby-systeem', difficulty: 'Gemiddeld', available: false, description: 'Checkpoints, respawnen en een timer.', learns: ['Checkpoints', 'Respawnen', 'Voortgang', 'Timers'], prerequisites: [] },
-  { id: 'project-simulator', number: 7, title: 'Simpele simulator', difficulty: 'Gevorderd', available: false, description: 'Stats, upgrades en opgeslagen voortgang.', learns: ['Stats', 'Upgrades', 'Economie', 'Data opslaan'], prerequisites: [] },
-  { id: 'project-rounds', number: 8, title: 'Ronde-gebaseerde multiplayer', difficulty: 'Gevorderd', available: false, description: 'Rondes, teams en een aftelling met een state machine.', learns: ['State machines', 'Teams', 'Aftellen', 'Spelers die komen en gaan'], prerequisites: [] },
-  { id: 'project-tycoon', number: 9, title: 'Geavanceerde tycoon', difficulty: 'Gevorderd', available: false, description: 'Ontgrendelingen, veilige aankopen en modulaire code.', learns: ['Ontgrendelen', 'Modulaire architectuur', 'Veilige aankopen', 'Optimalisatie'], prerequisites: [] },
-  { id: 'project-own-game', number: 10, title: 'Je eigen game', difficulty: 'Gevorderd', available: false, description: 'Je plant en bouwt zelf een game. De Academy begeleidt, maar schrijft hem niet voor je.', learns: ['Plannen', 'Alles uit eerdere cursussen'], prerequisites: [] },
+  { id: 'project-door', number: 2, title: 'Working door', difficulty: 'Beginner', available: false, description: 'A door that opens with a ProximityPrompt and TweenService.', learns: ['ProximityPrompt', 'Events', 'TweenService', 'Keeping state'], prerequisites: [] },
+  { id: 'project-coins', number: 3, title: 'Collecting coins', difficulty: 'Beginner', available: false, description: 'Coins that disappear and give currency when a player touches them.', learns: ['Recognising players', 'Variables', 'Events', 'Progress on the server'], prerequisites: [] },
+  { id: 'project-shop', number: 4, title: 'Simple shop', difficulty: 'Intermediate', available: false, description: 'A buy button that sends a RemoteEvent; the server checks the balance.', learns: ['Buttons', 'RemoteEvents', 'Validation on the server', 'Checking the balance'], prerequisites: [] },
+  { id: 'project-inventory', number: 5, title: 'Inventory', difficulty: 'Intermediate', available: false, description: 'An inventory with tables, a ModuleScript and an interface.', learns: ['Tables', 'ModuleScripts', 'UI', 'Client and server together'], prerequisites: [] },
+  { id: 'project-obby', number: 6, title: 'Obby system', difficulty: 'Intermediate', available: false, description: 'Checkpoints, respawning and a timer.', learns: ['Checkpoints', 'Respawning', 'Progress', 'Timers'], prerequisites: [] },
+  { id: 'project-simulator', number: 7, title: 'Simple simulator', difficulty: 'Advanced', available: false, description: 'Stats, upgrades and saved progress.', learns: ['Stats', 'Upgrades', 'Economy', 'Saving data'], prerequisites: [] },
+  { id: 'project-rounds', number: 8, title: 'Round-based multiplayer', difficulty: 'Advanced', available: false, description: 'Rounds, teams and a countdown with a state machine.', learns: ['State machines', 'Teams', 'Countdowns', 'Players joining and leaving'], prerequisites: [] },
+  { id: 'project-tycoon', number: 9, title: 'Advanced tycoon', difficulty: 'Advanced', available: false, description: 'Unlocks, safe purchases and modular code.', learns: ['Unlocking', 'Modular architecture', 'Safe purchases', 'Optimisation'], prerequisites: [] },
+  { id: 'project-own-game', number: 10, title: 'Your own game', difficulty: 'Advanced', available: false, description: 'You plan and build a game yourself. The Academy guides you, but does not write it for you.', learns: ['Planning', 'Everything from earlier courses'], prerequisites: [] },
 ];

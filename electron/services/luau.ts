@@ -27,9 +27,9 @@ const PRELUDE = [
   'local print = function(...) __print(__fmt(...)) end;',
   `local warn = function(...) __print("${WARN_MARK}" .. __fmt(...)) end;`,
   'local task = table.freeze({ wait = function(s) return if type(s) == "number" then s else 0.03 end,',
-  ' spawn = function() error("task.spawn werkt alleen in Roblox Studio", 2) end,',
-  ' delay = function() error("task.delay werkt alleen in Roblox Studio", 2) end,',
-  ' defer = function() error("task.defer werkt alleen in Roblox Studio", 2) end });',
+  ' spawn = function() error("task.spawn only works in Roblox Studio", 2) end,',
+  ' delay = function() error("task.delay only works in Roblox Studio", 2) end,',
+  ' defer = function() error("task.defer only works in Roblox Studio", 2) end });',
   ' ',
 ].join(' ');
 
@@ -120,7 +120,7 @@ export class LuauService {
       const output = this.sink;
       if (res === 'timeout') {
         this.resetWorker();
-        return { ok: false, output, error: { kind: 'timeout', message: `Uitvoering gestopt na ${timeoutMs / 1000} seconden.` }, values: [], outputTruncated: false, durationMs: performance.now() - started };
+        return { ok: false, output, error: { kind: 'timeout', message: `Execution stopped after ${timeoutMs / 1000} seconds.` }, values: [], outputTruncated: false, durationMs: performance.now() - started };
       }
       const error = res.error ? normalizeError(res.error.kind, res.error.message) : null;
       return { ok: res.ok, output, error, values: res.values ?? [], outputTruncated: res.outputTruncated, durationMs: performance.now() - started };

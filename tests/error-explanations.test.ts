@@ -1,6 +1,6 @@
 /**
- * Every typical beginner mistake must get an easy Dutch explanation:
- * the real Luau runtime and analyzer produce the messages; none may fall through to "onbekend".
+ * Every typical beginner mistake must get an easy explanation:
+ * the real Luau runtime and analyzer produce the messages; none may fall through to "unknown".
  */
 import { afterAll, describe, expect, it } from 'vitest';
 import { LuauService } from '../electron/services/luau';
@@ -20,7 +20,7 @@ describe('every real Luau error in the corpus gets an easy explanation', () => {
         ...diags.map((d) => explainMessage(d.message, code, d.line, d.column)),
       ];
       for (const e of explanations) {
-        expect(e.certainty, `no easy explanation for: ${e.original}`).not.toBe('onbekend');
+        expect(e.certainty, `no easy explanation for: ${e.original}`).not.toBe('unknown');
         expect(e.what.length).toBeGreaterThan(10);
         expect(e.hint.length).toBeGreaterThan(10);
         // easy language: no raw English compiler phrases in the main sentence

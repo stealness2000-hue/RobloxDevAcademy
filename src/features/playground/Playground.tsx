@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlignLeft, FilePlus2, FileCode2, History, Loader2, Pencil, Play, RotateCcw, Save, Trash2, X, AlertTriangle, CircleAlert, BookOpen, Monitor } from 'lucide-react';
 import { CodeEditor, type CodeEditorHandle } from '@/editor/CodeEditor';
 import { OutputConsole, ErrorExplanation } from '@/features/learning/Output';
-import { Modal } from '@/components/ui';
+import { Modal, inline } from '@/components/ui';
 import { call } from '@/api';
 import { useApp } from '@/store';
 import { explainDiagnostic, explainRunError, ROBLOX_GLOBALS } from '@shared/explain-error';
@@ -11,14 +11,15 @@ import { explainNative } from '@shared/explain-native';
 import { runCode } from '@/features/learning/Steps';
 import { ToolchainBanner } from '@/features/learning/ToolchainBanner';
 import type { CodeFile, CodeRevision, Diagnostic, RunResult } from '@shared/types';
+import { locale, t } from '@/i18n';
 
 const EXAMPLES: { name: string; code: string }[] = [
-  { name: 'hallo.luau', code: '-- Je eerste script\nlocal username = "Developer"\n\nprint("Hallo " .. username)\n' },
-  { name: 'coins.luau', code: 'local coins = 100\nlocal prijs = 30\n\ncoins -= prijs\nprint(`Over: {coins} coins`)\n' },
-  { name: 'aftellen.luau', code: '-- Een for-lus (dat leer je in cursus 3)\nfor i = 3, 1, -1 do\n    print(i)\n    task.wait(1) -- wacht hier niet echt; in Roblox Studio wel\nend\nprint("Start!")\n' },
-  { name: 'hallo.cpp', code: '#include <iostream>\n\nint main() {\n    std::cout << "Hallo vanuit C++!" << std::endl;\n    return 0;\n}\n' },
-  { name: 'Main.java', code: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hallo vanuit Java!");\n    }\n}\n' },
-  { name: 'winkel.luau', code: 'local coins = 120\nlocal prijs = 100\n\nif coins >= prijs then\n    print("Je kunt het kopen!")\nelse\n    print("Nog niet genoeg coins")\nend\n' },
+  { name: 'hello.luau', code: '-- Your first script\nlocal username = "Developer"\n\nprint("Hello " .. username)\n' },
+  { name: 'coins.luau', code: 'local coins = 100\nlocal price = 30\n\ncoins -= price\nprint(`Left: {coins} coins`)\n' },
+  { name: 'countdown.luau', code: '-- A for loop (you learn this in course 3)\nfor i = 3, 1, -1 do\n    print(i)\n    task.wait(1) -- does not really wait here; in Roblox Studio it does\nend\nprint("Start!")\n' },
+  { name: 'hello.cpp', code: '#include <iostream>\n\nint main() {\n    std::cout << "Hello from C++!" << std::endl;\n    return 0;\n}\n' },
+  { name: 'Main.java', code: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Java!");\n    }\n}\n' },
+  { name: 'shop.luau', code: 'local coins = 120\nlocal price = 100\n\nif coins >= price then\n    print("You can buy it!")\nelse\n    print("Not enough coins yet")\nend\n' },
 ];
 
 const TABS_KEY = 'playground.tabs';
@@ -101,7 +102,7 @@ export function Playground() {
   async function save() {
     if (!active) return;
     const content = buffers[active.id] ?? active.content;
-    const { file, awards } = await call('files:save', { id: active.id, content, reason: 'Opgeslagen' });
+    const { file, awards } = await call('files:save', { id: active.id, content, reason: 'Saved' });
     showAwards(awards);
     setFiles((fs) => fs.map((f) => (f.id === file.id ? file : f)));
     setBuffers((b) => {
@@ -110,7 +111,7 @@ export function Playground() {
       return n;
     });
     setRecovered((r) => ({ ...r, [file.id]: false }));
-    toast({ kind: 'success', title: `${file.name} opgeslagen` });
+    toast({ kind: 'success', title: t('{name} saved', { name: file.name }) });
   }
 
   async function run() {
@@ -137,7 +138,7 @@ export function Playground() {
     });
   }
 
-  async function createFile(name: string, code = '-- Nieuw script\n\n') {
+  async function createFile(name: string, code = '-- New script\n\n') {
     const f = await call('files:create', { name, content: code });
     setFiles((fs) => [f, ...fs]);
     openFile(f.id);
@@ -152,27 +153,27 @@ export function Playground() {
     <div className="page full playground">
       <aside className="pg-explorer">
         <div className="pg-section-head">
-          <span>Bestanden</span>
-          <button className="btn ghost sm icon" title="Nieuw bestand" aria-label="Nieuw bestand" onClick={() => { setNameInput('script.luau'); setDialog({ kind: 'new' }); }}><FilePlus2 size={15} /></button>
+          <span>{t('Files')}</span>
+          <button className="btn ghost sm icon" title={t('New file')} aria-label={t('New file')} onClick={() => { setNameInput('script.luau'); setDialog({ kind: 'new' }); }}><FilePlus2 size={15} /></button>
         </div>
-        <div className="pg-files" role="listbox" aria-label="Bestanden">
+        <div className="pg-files" role="listbox" aria-label={t('Files')}>
           {files.map((f) => (
             <div key={f.id} className={`pg-file ${f.id === tabs.active ? 'active' : ''}`} role="option" aria-selected={f.id === tabs.active}>
               <button className="pg-file-main" onClick={() => openFile(f.id)}>
-                <FileCode2 size={14} /> <span className="grow">{f.name}</span>{dirty(f) && <span className="dot" title="Niet opgeslagen" />}
+                <FileCode2 size={14} /> <span className="grow">{f.name}</span>{dirty(f) && <span className="dot" title={t('Not saved')} />}
               </button>
-              <button className="btn ghost sm icon" aria-label={`${f.name} hernoemen`} onClick={() => { setNameInput(f.name); setDialog({ kind: 'rename', id: f.id }); }}><Pencil size={12} /></button>
-              <button className="btn ghost sm icon" aria-label={`${f.name} verwijderen`} onClick={() => setDialog({ kind: 'delete', id: f.id })}><Trash2 size={12} /></button>
+              <button className="btn ghost sm icon" aria-label={t('Rename {name}', { name: f.name })} onClick={() => { setNameInput(f.name); setDialog({ kind: 'rename', id: f.id }); }}><Pencil size={12} /></button>
+              <button className="btn ghost sm icon" aria-label={t('Delete {name}', { name: f.name })} onClick={() => setDialog({ kind: 'delete', id: f.id })}><Trash2 size={12} /></button>
             </div>
           ))}
         </div>
-        <div className="pg-section-head" style={{ marginTop: 12 }}><span>Voorbeelden</span></div>
+        <div className="pg-section-head" style={{ marginTop: 12 }}><span>{t('Examples')}</span></div>
         <div className="pg-files">
           {EXAMPLES.map((e) => (
             <button key={e.name} className="pg-file-main example" onClick={() => createFile(e.name, e.code)}><BookOpen size={13} /> <span className="grow">{e.name}</span></button>
           ))}
         </div>
-        <div className="small faint" style={{ padding: '12px 12px 0' }}>Bestanden op <code>.luau</code> draaien in Luau, <code>.cpp</code> in C++ en <code>.java</code> in Java. Code met <code>game</code>, <code>workspace</code> of <code>Instance</code> test je in Roblox Studio.</div>
+        <div className="small faint" style={{ padding: '12px 12px 0' }}>{inline(t('Files ending in `.luau` run in Luau, `.cpp` in C++ and `.java` in Java. Code with `game`, `workspace` or `Instance` is tested in Roblox Studio.'))}</div>
       </aside>
 
       <section className="pg-main">
@@ -183,39 +184,39 @@ export function Playground() {
             return (
               <div key={id} className={`pg-tab ${id === tabs.active ? 'active' : ''}`} role="tab" aria-selected={id === tabs.active}>
                 <button className="pg-tab-main" onClick={() => openFile(id)}>{f.name}{dirty(f) && <span className="dot" />}</button>
-                <button className="btn ghost sm icon" aria-label={`${f.name} sluiten`} onClick={() => closeTab(id)}><X size={12} /></button>
+                <button className="btn ghost sm icon" aria-label={t('Close {name}', { name: f.name })} onClick={() => closeTab(id)}><X size={12} /></button>
               </div>
             );
           })}
           <span className="grow" />
           <div className="pg-actions">
-            <button className="btn primary sm" onClick={run} disabled={!active || busy} title="Ctrl + Enter">{busy ? <Loader2 size={13} className="spin" /> : <Play size={13} />} Run Code</button>
-            <button className="btn sm" onClick={save} disabled={!active || !dirty(active)} title="Ctrl + S"><Save size={13} /> Opslaan</button>
-            <button className="btn sm" onClick={() => editor.current?.format()} disabled={!active} title="Inspringing herstellen (Shift + Alt + F)"><AlignLeft size={13} /> Formatteren</button>
-            <button className="btn sm ghost" onClick={() => setDialog({ kind: 'reset' })} disabled={!active || !dirty(active)} title="Terug naar laatst opgeslagen versie"><RotateCcw size={13} /></button>
+            <button className="btn primary sm" onClick={run} disabled={!active || busy} title="Ctrl + Enter">{busy ? <Loader2 size={13} className="spin" /> : <Play size={13} />} {t('Run Code')}</button>
+            <button className="btn sm" onClick={save} disabled={!active || !dirty(active)} title="Ctrl + S"><Save size={13} /> {t('Save')}</button>
+            <button className="btn sm" onClick={() => editor.current?.format()} disabled={!active} title={t('Fix indentation (Shift + Alt + F)')}><AlignLeft size={13} /> {t('Format')}</button>
+            <button className="btn sm ghost" onClick={() => setDialog({ kind: 'reset' })} disabled={!active || !dirty(active)} title={t('Back to the last saved version')}><RotateCcw size={13} /></button>
           </div>
         </div>
         <div className="pg-banners">
         {active && recovered[active.id] && (
-          <div className="pg-banner"><AlertTriangle size={14} /> Niet-opgeslagen wijzigingen van je vorige sessie zijn hersteld. Sla op om ze te bewaren, of zet het bestand terug.</div>
+          <div className="pg-banner"><AlertTriangle size={14} /> {t('Unsaved changes from your previous session were restored. Save to keep them, or reset the file.')}</div>
         )}
         {active && lang !== 'luau' && <div style={{ padding: '0 14px 8px' }}><ToolchainBanner language={lang} /></div>}
         {active && usesRoblox && (
-          <div className="pg-banner warn"><Monitor size={14} /> Deze code gebruikt onderdelen van de Roblox-engine. Die bestaan alleen in Roblox Studio; de speeltuin kan ze niet uitvoeren.</div>
+          <div className="pg-banner warn"><Monitor size={14} /> {t('This code uses parts of the Roblox engine. Those only exist in Roblox Studio; the playground cannot run them.')}</div>
         )}
         </div>
         <div className="pg-editor">
           {active ? (
-            <CodeEditor key={active.id} ref={editor} value={value} onChange={onChange} onRun={run} onSave={save} onDiagnostics={setDiags} errorLine={result?.error?.line ?? null} fill ariaLabel={`Editor: ${active.name}`} language={lang} />
+            <CodeEditor key={active.id} ref={editor} value={value} onChange={onChange} onRun={run} onSave={save} onDiagnostics={setDiags} errorLine={result?.error?.line ?? null} fill ariaLabel={t('Editor: {name}', { name: active.name })} language={lang} />
           ) : (
-            <div className="empty"><FileCode2 size={28} /> Open of maak een bestand om te beginnen.</div>
+            <div className="empty"><FileCode2 size={28} /> {t('Open or create a file to start.')}</div>
           )}
         </div>
         <div className="pg-panel">
           <div className="pg-panel-tabs" role="tablist">
             <button role="tab" aria-selected={panel === 'output'} onClick={() => setPanel('output')}>Output</button>
-            <button role="tab" aria-selected={panel === 'problems'} onClick={() => setPanel('problems')}>Problemen {diags.length > 0 && <span className={`badge ${errors.length ? 'error' : 'warning'}`}>{diags.length}</span>}</button>
-            <button role="tab" aria-selected={panel === 'history'} onClick={() => setPanel('history')}><History size={13} /> Versies</button>
+            <button role="tab" aria-selected={panel === 'problems'} onClick={() => setPanel('problems')}>{t('Problems')} {diags.length > 0 && <span className={`badge ${errors.length ? 'error' : 'warning'}`}>{diags.length}</span>}</button>
+            <button role="tab" aria-selected={panel === 'history'} onClick={() => setPanel('history')}><History size={13} /> {t('Versions')}</button>
           </div>
           <div className="pg-panel-body">
             {panel === 'output' && (result ? (
@@ -223,30 +224,30 @@ export function Playground() {
                 <OutputConsole result={result} />
                 {runExplanation && <ErrorExplanation explanation={runExplanation} onGoto={(l) => editor.current?.revealLine(l)} />}
               </div>
-            ) : <div className="small faint">Klik op Run Code (Ctrl + Enter) om je code uit te voeren.</div>)}
-            {panel === 'problems' && (diags.length === 0 ? <div className="small faint">De Luau-analyzer vindt geen problemen.</div> : (
+            ) : <div className="small faint">{t('Click Run Code (Ctrl + Enter) to run your code.')}</div>)}
+            {panel === 'problems' && (diags.length === 0 ? <div className="small faint">{t('The Luau analyzer finds no problems.')}</div> : (
               <div className="col" style={{ gap: 8 }}>
                 {diags.map((d, i) => {
                   const e = explainDiagnostic(d, value);
                   return (
                     <button key={i} className="problem" onClick={() => editor.current?.revealLine(d.line)}>
                       {d.severity === 'error' ? <CircleAlert size={15} color="var(--error)" /> : <AlertTriangle size={15} color="var(--warning)" />}
-                      <span className="grow"><strong>{e.what.replace(/`/g, '')}</strong><span className="small faint" style={{ display: 'block' }}>Regel {d.line} · {d.message}</span></span>
+                      <span className="grow"><strong>{e.what.replace(/`/g, '')}</strong><span className="small faint" style={{ display: 'block' }}>{t('Line {line}', { line: d.line })} · {d.message}</span></span>
                     </button>
                   );
                 })}
               </div>
             ))}
-            {panel === 'history' && (revisions.length === 0 ? <div className="small faint">Nog geen opgeslagen versies.</div> : (
+            {panel === 'history' && (revisions.length === 0 ? <div className="small faint">{t('No saved versions yet.')}</div> : (
               <table className="table">
-                <thead><tr><th>Moment</th><th>Wat</th><th>Regels</th><th /></tr></thead>
+                <thead><tr><th>{t('Moment')}</th><th>{t('What')}</th><th>{t('Lines')}</th><th /></tr></thead>
                 <tbody>
                   {revisions.map((r) => (
                     <tr key={r.id}>
-                      <td className="mono small">{new Date(r.createdAt).toLocaleString('nl-NL')}</td>
-                      <td>{r.reason}</td>
+                      <td className="mono small">{new Date(r.createdAt).toLocaleString(locale())}</td>
+                      <td>{t(r.reason)}</td>
                       <td className="faint">{r.content.split('\n').length}</td>
-                      <td style={{ textAlign: 'right' }}><button className="btn sm" onClick={() => setDialog({ kind: 'restore', rev: r })}>Herstellen</button></td>
+                      <td style={{ textAlign: 'right' }}><button className="btn sm" onClick={() => setDialog({ kind: 'restore', rev: r })}>{t('Restore')}</button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -257,52 +258,52 @@ export function Playground() {
       </section>
 
       {dialog?.kind === 'new' && (
-        <Modal title="Nieuw bestand" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn primary" onClick={() => { void createFile(nameInput); setDialog(null); }}>Maken</button>
+        <Modal title={t('New file')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn primary" onClick={() => { void createFile(nameInput); setDialog(null); }}>{t('Create')}</button>
         </>}>
-          <input className="input" style={{ width: '100%' }} value={nameInput} onChange={(e) => setNameInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { void createFile(nameInput); setDialog(null); } }} aria-label="Bestandsnaam" />
+          <input className="input" style={{ width: '100%' }} value={nameInput} onChange={(e) => setNameInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { void createFile(nameInput); setDialog(null); } }} aria-label={t('File name')} />
         </Modal>
       )}
       {dialog?.kind === 'rename' && (
-        <Modal title="Bestand hernoemen" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn primary" onClick={async () => { const f = await call('files:rename', { id: dialog.id!, name: nameInput }); setFiles((fs) => fs.map((x) => (x.id === f.id ? f : x))); setDialog(null); }}>Hernoemen</button>
+        <Modal title={t('Rename file')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn primary" onClick={async () => { const f = await call('files:rename', { id: dialog.id!, name: nameInput }); setFiles((fs) => fs.map((x) => (x.id === f.id ? f : x))); setDialog(null); }}>{t('Rename')}</button>
         </>}>
-          <input className="input" style={{ width: '100%' }} value={nameInput} onChange={(e) => setNameInput(e.target.value)} aria-label="Nieuwe naam" />
+          <input className="input" style={{ width: '100%' }} value={nameInput} onChange={(e) => setNameInput(e.target.value)} aria-label={t('New name')} />
         </Modal>
       )}
       {dialog?.kind === 'delete' && (
-        <Modal title="Bestand verwijderen?" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn danger" onClick={async () => { await call('files:remove', dialog.id!); closeTab(dialog.id!, true); setFiles((fs) => fs.filter((f) => f.id !== dialog.id)); setDialog(null); }}>Verwijderen</button>
+        <Modal title={t('Delete file?')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn danger" onClick={async () => { await call('files:remove', dialog.id!); closeTab(dialog.id!, true); setFiles((fs) => fs.filter((f) => f.id !== dialog.id)); setDialog(null); }}>{t('Delete')}</button>
         </>}>
-          {files.find((f) => f.id === dialog.id)?.name} verdwijnt uit je lijst. Het blijft bewaard in je back-ups.
+          {t('{name} disappears from your list. It stays in your backups.', { name: files.find((f) => f.id === dialog.id)?.name ?? '' })}
         </Modal>
       )}
       {dialog?.kind === 'close' && (
-        <Modal title="Niet-opgeslagen wijzigingen" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn danger" onClick={() => { setBuffers((b) => { const n = { ...b }; delete n[dialog.id!]; return n; }); void call('files:saveDraft', { id: dialog.id!, draft: null }); closeTab(dialog.id!, true); setDialog(null); }}>Niet opslaan</button>
-          <button className="btn primary" onClick={async () => { await save(); closeTab(dialog.id!, true); setDialog(null); }}>Opslaan</button>
+        <Modal title={t('Unsaved changes')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn danger" onClick={() => { setBuffers((b) => { const n = { ...b }; delete n[dialog.id!]; return n; }); void call('files:saveDraft', { id: dialog.id!, draft: null }); closeTab(dialog.id!, true); setDialog(null); }}>{t("Don't save")}</button>
+          <button className="btn primary" onClick={async () => { await save(); closeTab(dialog.id!, true); setDialog(null); }}>{t('Save')}</button>
         </>}>
-          Wil je de wijzigingen in {files.find((f) => f.id === dialog.id)?.name} opslaan voordat je het tabblad sluit?
+          {t('Do you want to save the changes in {name} before you close the tab?', { name: files.find((f) => f.id === dialog.id)?.name ?? '' })}
         </Modal>
       )}
       {dialog?.kind === 'reset' && active && (
-        <Modal title="Terug naar laatst opgeslagen versie?" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn danger" onClick={() => { setBuffers((b) => { const n = { ...b }; delete n[active.id]; return n; }); void call('files:saveDraft', { id: active.id, draft: null }); setRecovered((r) => ({ ...r, [active.id]: false })); setDialog(null); }}>Wijzigingen weggooien</button>
+        <Modal title={t('Back to the last saved version?')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn danger" onClick={() => { setBuffers((b) => { const n = { ...b }; delete n[active.id]; return n; }); void call('files:saveDraft', { id: active.id, draft: null }); setRecovered((r) => ({ ...r, [active.id]: false })); setDialog(null); }}>{t('Discard changes')}</button>
         </>}>
-          Je niet-opgeslagen wijzigingen gaan verloren.
+          {t('Your unsaved changes will be lost.')}
         </Modal>
       )}
       {dialog?.kind === 'restore' && active && dialog.rev && (
-        <Modal title="Deze versie herstellen?" onClose={() => setDialog(null)} actions={<>
-          <button className="btn ghost" onClick={() => setDialog(null)}>Annuleren</button>
-          <button className="btn primary" onClick={async () => { const f = await call('files:restore', dialog.rev!.id); setFiles((fs) => fs.map((x) => (x.id === f.id ? f : x))); setBuffers((b) => { const n = { ...b }; delete n[f.id]; return n; }); setDialog(null); }}>Herstellen</button>
+        <Modal title={t('Restore this version?')} onClose={() => setDialog(null)} actions={<>
+          <button className="btn ghost" onClick={() => setDialog(null)}>{t('Cancel')}</button>
+          <button className="btn primary" onClick={async () => { const f = await call('files:restore', dialog.rev!.id); setFiles((fs) => fs.map((x) => (x.id === f.id ? f : x))); setBuffers((b) => { const n = { ...b }; delete n[f.id]; return n; }); setDialog(null); }}>{t('Restore')}</button>
         </>}>
-          De huidige inhoud blijft bewaard als aparte versie in de geschiedenis. {dirty(active) && 'Let op: je niet-opgeslagen wijzigingen worden vervangen.'}
+          {t('The current content is kept as a separate version in the history.')} {dirty(active) && t('Note: your unsaved changes will be replaced.')}
         </Modal>
       )}
     </div>

@@ -5,8 +5,9 @@
  *
  * Why a staging folder: NSIS (makensis) is a 32-bit tool that fails on paths longer than 260 characters.
  * We stage only the files the app ships in a short temp path and build the installer there.
- * Only two runtime packages are needed by the main process (@luau-rs/luau and sql.js); all renderer code
- * is already bundled by Vite into dist/.
+ * Runtime packages needed outside the bundles: @luau-rs/luau, sql.js and the offline translator
+ * (@huggingface/transformers with its Windows x64 ONNX runtime). All renderer code is bundled by Vite into dist/.
+ * The translation MODEL itself is not shipped: the student downloads it from inside the app if they want it.
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -16,8 +17,25 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-const stage = path.join(os.tmpdir(), 'rda-pkg');
-const RUNTIME = ['@luau-rs/luau', 'sql.js'];
+const stage = path.join(os.tmpdir(), 'lumora-pkg');
+const RUNTIME = ['@luau-rs/luau', 'sql.js', '@huggingface/transformers'];
+// The Node build of transformers bundles the web runtime inline, so this 140 MB package is not needed.
+const SKIP = new Set(['onnxruntime-web']);
+
+/** Every installed production dependency of the runtime packages (recursively). */
+function closure(names) {
+  const seen = new Set();
+  const visit = (name) => {
+    if (seen.has(name) || SKIP.has(name)) return;
+    const dir = path.join(root, 'node_modules', name);
+    if (!fs.existsSync(path.join(dir, 'package.json'))) return; // optional dependency for another platform
+    seen.add(name);
+    const p = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+    for (const dep of Object.keys({ ...p.dependencies, ...p.optionalDependencies })) visit(dep);
+  };
+  names.forEach(visit);
+  return [...seen];
+}
 
 for (const required of ['dist/index.html', 'dist-electron/main.mjs', 'dist-electron/preload.cjs', 'assets/icon.png']) {
   if (!fs.existsSync(path.join(root, required))) throw new Error(`Missing ${required}. Run "npm run build" first.`);
@@ -25,8 +43,20 @@ for (const required of ['dist/index.html', 'dist-electron/main.mjs', 'dist-elect
 
 fs.rmSync(stage, { recursive: true, force: true });
 fs.mkdirSync(stage, { recursive: true });
-for (const dir of ['dist', 'dist-electron', 'assets', 'studio-plugin']) fs.cpSync(path.join(root, dir), path.join(stage, dir), { recursive: true });
-for (const dep of RUNTIME) fs.cpSync(path.join(root, 'node_modules', dep), path.join(stage, 'node_modules', dep), { recursive: true });
+for (const dir of ['dist', 'dist-electron', 'assets']) fs.cpSync(path.join(root, dir), path.join(stage, dir), { recursive: true });
+const shipped = closure(RUNTIME);
+for (const dep of shipped) fs.cpSync(path.join(root, 'node_modules', dep), path.join(stage, 'node_modules', dep), { recursive: true });
+// ONNX runtime ships binaries for every OS (~290 MB); keep only Windows x64.
+const ortBin = path.join(stage, 'node_modules', 'onnxruntime-node', 'bin');
+if (fs.existsSync(ortBin)) {
+  for (const napi of fs.readdirSync(ortBin)) {
+    for (const osDir of fs.readdirSync(path.join(ortBin, napi))) {
+      if (osDir !== 'win32') fs.rmSync(path.join(ortBin, napi, osDir), { recursive: true, force: true });
+      else for (const arch of fs.readdirSync(path.join(ortBin, napi, osDir))) if (arch !== 'x64') fs.rmSync(path.join(ortBin, napi, osDir, arch), { recursive: true, force: true });
+    }
+  }
+}
+console.log(`Shipping ${shipped.length} runtime packages`);
 
 const stagedPkg = {
   name: pkg.name,

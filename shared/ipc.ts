@@ -3,9 +3,19 @@
  * Every invoke channel has a Zod schema for its argument; the main process rejects anything else.
  */
 import { z } from 'zod';
-import { MentorRequest, type MentorScript } from './mentor';
+import { LANGUAGE_CODES } from './languages';
+import type { LicenseStatus } from './license';
+
+/** Status of the offline translation model (see electron/services/translator.ts). */
+export interface TranslatorStatus {
+  installed: boolean;
+  downloading: boolean;
+  progress: number;
+  error: string | null;
+  sizeMb: number;
+}
 import type {
-  Award, BackupInfo, CodeFile, CodeRevision, Diagnostic, Profile, ProgressSnapshot, RunResult, Settings, StartupStatus, Statistics, StudioState,
+  Award, BackupInfo, CodeFile, CodeRevision, Diagnostic, Profile, ProgressSnapshot, RunResult, Settings, StartupStatus, Statistics,
 } from './types';
 
 const id = z.string().min(1).max(120).regex(/^[a-z0-9][a-z0-9-_.]*$/i);
@@ -13,6 +23,7 @@ const code = z.string().max(200_000);
 
 export const SettingsPatch = z
   .object({
+    language: z.string().refine((c) => LANGUAGE_CODES.includes(c), 'unknown language'),
     theme: z.enum(['dark', 'light']),
     accent: z.enum(['blue', 'violet', 'teal', 'amber']),
     uiScale: z.number().min(0.8).max(1.4),
@@ -94,24 +105,17 @@ export const schemas = {
   'data:listBackups': z.undefined(),
   'data:restoreBackup': z.string().regex(/^backup-[0-9T-]+(?:-[a-z]+)?\.sqlite$/),
   'data:reset': z.enum(['lessons', 'practice', 'statistics', 'all']),
-  'data:deleteProfile': z.literal('VERWIJDER'),
+  'data:deleteProfile': z.literal('DELETE'),
   'settings:pickBackground': z.undefined(),
-  'ai:status': z.undefined(),
-  'ai:setKey': z.string().regex(/^sk-ant-[A-Za-z0-9_-]{20,300}$/),
-  'ai:clearKey': z.undefined(),
-  'mentor:aiScript': MentorRequest,
-  'mentor:cached': z.string().min(1).max(80),
+  'license:status': z.undefined(),
+  'license:activate': z.string().min(4).max(120),
+  'license:deactivate': z.undefined(),
+  'mt:status': z.undefined(),
+  'mt:download': z.undefined(),
+  'mt:remove': z.undefined(),
+  'mt:translate': z.object({ lang: z.string().refine((c) => LANGUAGE_CODES.includes(c), 'unknown language'), texts: z.array(z.string().max(20_000)).max(2000) }).strict(),
   'code:run': z.object({ language: z.enum(['cpp', 'java']), code, record: z.boolean() }).strict(),
   'code:toolchain': z.object({ language: z.enum(['cpp', 'java']), refresh: z.boolean() }).strict(),
-  'studio:status': z.undefined(),
-  'studio:startPairing': z.undefined(),
-  'studio:unpair': z.undefined(),
-  'studio:openExercise': z.string().max(80).nullable(),
-  'studio:requestCheck': z.undefined(),
-  'studio:installPlugin': z.undefined(),
-  'studio:push': z.number().int().positive(),
-  'studio:resolveConflict': z.object({ id: z.number().int().positive(), choice: z.enum(['studio', 'academy']) }).strict(),
-  'studio:clearLogs': z.undefined(),
 } as const;
 
 export type Channel = keyof typeof schemas;
@@ -159,22 +163,15 @@ export interface ChannelResults {
   'data:reset': void;
   'data:deleteProfile': void;
   'settings:pickBackground': Settings | null;
-  'ai:status': { configured: boolean; encryptionAvailable: boolean; model: string };
-  'ai:setKey': void;
-  'ai:clearKey': void;
-  'mentor:aiScript': MentorScript;
-  'mentor:cached': MentorScript | null;
+  'license:status': LicenseStatus;
+  'license:activate': LicenseStatus;
+  'license:deactivate': LicenseStatus;
+  'mt:status': TranslatorStatus;
+  'mt:download': TranslatorStatus;
+  'mt:remove': TranslatorStatus;
+  'mt:translate': { texts: string[]; missing: number };
   'code:run': RunResult;
   'code:toolchain': { language: 'cpp' | 'java'; available: boolean; command: string | null; version: string | null };
-  'studio:status': StudioState;
-  'studio:startPairing': string;
-  'studio:unpair': void;
-  'studio:openExercise': void;
-  'studio:requestCheck': void;
-  'studio:installPlugin': StudioState['plugin'];
-  'studio:push': boolean;
-  'studio:resolveConflict': { path: string; fileId: number } | null;
-  'studio:clearLogs': void;
 }
 
 export type ChannelArgs = { [K in Channel]: z.input<(typeof schemas)[K]> };
