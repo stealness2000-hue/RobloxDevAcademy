@@ -11,9 +11,9 @@
  */
 export const LICENSE_CONFIG = {
   /** Gumroad product ID (not the permalink). Empty = selling not set up yet. */
-  gumroadProductId: '',
+  gumroadProductId: 'ulgBz2tJnB6cS6OuvqceMw==',
   /** Page where students buy the full course. */
-  buyUrl: 'https://gumroad.com/',
+  buyUrl: 'https://stealness.gumroad.com/l/lumoracademy',
   price: '$9.99',
   /** Re-check the key online at most this often; offline use always keeps working. */
   recheckDays: 14,

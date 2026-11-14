@@ -1,6 +1,6 @@
 # PROGRESS — Lumora Academy (formerly Roblox Dev Academy)
 
-Last updated: 2026-11-14 · Version 0.6.0
+Last updated: 2026-11-14 · Version 0.6.1
 
 This file is the honest status of the project. "Done" means built **and** tested; everything else is labelled.
 
@@ -11,7 +11,7 @@ This file is the honest status of the project. "Done" means built **and** tested
 | Core app (lessons, editor, real Luau/C++/Java execution, progress, statistics) | **Done** |
 | Content | **Done** for courses 0–5 (Luau foundation), C++ and Java basics; courses 6–12 not written |
 | Languages | **Done**: English + Dutch by people; 84 languages machine-translated offline (quality varies, labelled) |
-| Selling | **Done**: free trial (courses 0–1) + full course via license key (Lumora bot keys offline, Gumroad online once); Gumroad product ID still to be filled in |
+| Selling | **Done**: free trial (courses 0–1) + full course via license key (Lumora bot keys offline, Gumroad online once; product `lumoracademy` connected in 0.6.1) |
 | Roblox Studio plugin | **Removed** in 0.6.0 (Studio steps are self-confirmed checklists again) |
 | AI (Claude) option | **Removed** in 0.6.0 (the free built-in explainer video stays) |
 | Production | Installer works and is tested; not code-signed (SmartScreen warning) |
@@ -156,7 +156,7 @@ GitHub workflows.
 
 ## Remaining tasks (prioritised)
 
-1. Fill in the Gumroad product ID and buy URL (or point `buyUrl` at the Discord bot), then publish v0.6.0.
+1. In Gumroad, turn on "Generate a unique license key per sale" for the product, then test one real purchase.
 2. Optional: revocation list for LUMORA1 keys (fetched from GitHub Pages).
 3. Optional: pre-translated interface packs for the most used languages, so the first start in those is instant.
 4. Course 6 (Roblox engine) and Course 7 (events), plus projects 2–3.
