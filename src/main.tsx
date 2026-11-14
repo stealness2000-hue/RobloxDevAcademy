@@ -4,6 +4,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/pages.css';
+import './styles/polish.css';
 import { App } from './app/App';
 
 createRoot(document.getElementById('root')!).render(

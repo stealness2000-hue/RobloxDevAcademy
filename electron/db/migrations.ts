@@ -176,4 +176,15 @@ CREATE TABLE studio_conflicts (
 );
 `,
   },
+  {
+    version: 4,
+    name: 'ai mentor video scripts cache',
+    sql: `
+CREATE TABLE mentor_scripts (
+  lesson_id TEXT PRIMARY KEY,
+  script_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+`,
+  },
 ];

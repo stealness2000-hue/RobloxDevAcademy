@@ -3,6 +3,7 @@
  * Every invoke channel has a Zod schema for its argument; the main process rejects anything else.
  */
 import { z } from 'zod';
+import { MentorRequest, type MentorScript } from './mentor';
 import type {
   Award, BackupInfo, CodeFile, CodeRevision, Diagnostic, Profile, ProgressSnapshot, RunResult, Settings, StartupStatus, Statistics, StudioState,
 } from './types';
@@ -95,6 +96,11 @@ export const schemas = {
   'data:reset': z.enum(['lessons', 'practice', 'statistics', 'all']),
   'data:deleteProfile': z.literal('VERWIJDER'),
   'settings:pickBackground': z.undefined(),
+  'ai:status': z.undefined(),
+  'ai:setKey': z.string().regex(/^sk-ant-[A-Za-z0-9_-]{20,300}$/),
+  'ai:clearKey': z.undefined(),
+  'mentor:aiScript': MentorRequest,
+  'mentor:cached': z.string().min(1).max(80),
   'code:run': z.object({ language: z.enum(['cpp', 'java']), code, record: z.boolean() }).strict(),
   'code:toolchain': z.object({ language: z.enum(['cpp', 'java']), refresh: z.boolean() }).strict(),
   'studio:status': z.undefined(),
@@ -153,6 +159,11 @@ export interface ChannelResults {
   'data:reset': void;
   'data:deleteProfile': void;
   'settings:pickBackground': Settings | null;
+  'ai:status': { configured: boolean; encryptionAvailable: boolean; model: string };
+  'ai:setKey': void;
+  'ai:clearKey': void;
+  'mentor:aiScript': MentorScript;
+  'mentor:cached': MentorScript | null;
   'code:run': RunResult;
   'code:toolchain': { language: 'cpp' | 'java'; available: boolean; command: string | null; version: string | null };
   'studio:status': StudioState;

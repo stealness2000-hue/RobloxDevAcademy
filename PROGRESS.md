@@ -1,6 +1,6 @@
 # PROGRESS — Roblox Dev Academy
 
-Last updated: 2026-11-14 · Version 0.4.0
+Last updated: 2026-11-14 · Version 0.5.0
 
 This file is the honest status of the project. "Done" means built **and** tested; everything else is labelled.
 
@@ -32,6 +32,13 @@ that does not need Roblox Studio. All exercises are checked automatically in the
 | 6–12 (engine, events, client/server, UI, data, advanced, games) | — | — | — | Planned topics shown as "in ontwikkeling" |
 
 Plus: 27 practice exercises and 6 challenges, a 21-entry knowledge base and 1 of 10 projects.
+
+## What changed in 0.5.0
+
+- **"Uitleg door AI Mentor" on every lesson**: an in-app animated explainer video (16:9) with live-typed code, highlighted lines, captions, real program output (the code is really run, not counted as a student run), play/pause, scene timeline, speed and keyboard control. Voice-over uses a Dutch Windows voice when installed (otherwise captions only, with instructions).
+- Without an API key the script is built from the lesson itself (offline, labelled "Ingebouwde uitleg"). With a Claude API key (Instellingen → AI Tutor) **Claude Opus 5.5** writes a personal script, labelled "Gemaakt door AI (Claude)". Only lesson content is sent; the key is stored encrypted with Windows (safeStorage) and never logged; AI output is validated against a strict schema (one retry, then the built-in version); results are cached per lesson (database migration 4). Server-side refusal fallback (`fallbacks: "default"`) is enabled.
+- **All common errors explained in easy Dutch**: a corpus of 38 typical beginner mistakes runs through the real Luau runtime and analyzer in the tests; none may fall back to "unknown". New: missing comma/brace in tables, extra `end`/`else`/`)`, `s.upper()` vs `s:upper()`, wrong or missing arguments, comparing different types, calling a non-function, endless recursion, `nil` as table key, two statements on one line, own `error()` messages. Friendlier fallback text for C++/Java too.
+- **More attractive UI**: gradient accents, glow and depth on cards and buttons, a hero header per lesson, accent course numbers, success glow animation.
 
 ## What changed in 0.4.0
 

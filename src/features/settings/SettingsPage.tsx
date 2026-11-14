@@ -24,8 +24,9 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
 }
 
 export function SettingsPage() {
-  const { settings, updateSettings } = useApp();
-  const [section, setSection] = useState<Section>('Weergave');
+  const { settings, updateSettings, route } = useApp();
+  const initial = SECTIONS.find((x) => x === route.params?.section) ?? 'Weergave';
+  const [section, setSection] = useState<Section>(initial);
   const set = <K extends keyof Settings>(k: K, v: Settings[K]) => void updateSettings({ [k]: v } as Partial<Settings>);
 
   return (
@@ -149,13 +150,7 @@ export function SettingsPage() {
               <p>De koppeling met Roblox Studio (plugin, verbindingsstatus en synchronisatie) wordt gebouwd in fase 3. Er zijn nu nog geen instellingen om te wijzigen. Studio-oefeningen werken wel, met handmatige stappen.</p>
             </div>
           )}
-          {section === 'AI Tutor' && (
-            <div className="prose" style={{ fontSize: 14 }}>
-              <p><span className="badge warning">Nog niet beschikbaar</span></p>
-              <p>De optionele AI-tutor komt in fase 5. Je kiest dan zelf een aanbieder en API-sleutel; de sleutel wordt versleuteld opgeslagen en nooit gelogd. Gesprekken worden alleen bewaard als je dat aanzet, en je kunt ze altijd wissen.</p>
-              <p>Tot die tijd werkt "Leg mijn code uit" op de AI Tutor-pagina volledig offline.</p>
-            </div>
-          )}
+          {section === 'AI Tutor' && <AiSection />}
           {section === 'Gegevens' && <DataSection />}
         </div>
       </div>
@@ -223,6 +218,47 @@ function DataSection() {
           <p>Al je voortgang, bestanden en instellingen worden verwijderd. De back-upmap blijft bestaan. Typ <strong>VERWIJDER</strong> om te bevestigen.</p>
           <input className="input" style={{ width: '100%', marginTop: 10 }} value={confirmText} onChange={(e) => setConfirmText(e.target.value)} aria-label="Typ VERWIJDER" />
         </Modal>
+      )}
+    </>
+  );
+}
+
+function AiSection() {
+  const { toast } = useApp();
+  const [status, setStatus] = useState<{ configured: boolean; encryptionAvailable: boolean; model: string } | null>(null);
+  const [key, setKey] = useState('');
+  const load = () => void call('ai:status').then(setStatus);
+  useEffect(load, []);
+  if (!status) return null;
+  return (
+    <>
+      <div className="prose" style={{ fontSize: 14, padding: '14px 0' }}>
+        <p>De <strong>AI Mentor</strong> maakt bij elke les een uitlegvideo. Zonder sleutel gebruikt hij de ingebouwde uitleg uit de les (werkt offline). Met een Claude API-sleutel schrijft echte AI (model <code>{status.model}</code>) een persoonlijke uitleg.</p>
+        <p className="small muted">Privacy: alleen de inhoud van de les wordt verstuurd, geen naam, voortgang of bestanden. De sleutel wordt versleuteld opgeslagen met Windows-beveiliging en nooit gelogd. Een AI-video wordt bewaard, zodat dezelfde les je geen extra kosten geeft. Gebruik van de API kost geld op je Anthropic-account.</p>
+      </div>
+      <Row label="Status" hint={status.encryptionAvailable ? undefined : 'Windows-versleuteling is niet beschikbaar; de sleutel kan niet veilig worden opgeslagen.'}>
+        {status.configured ? <span className="badge success">Sleutel ingesteld</span> : <span className="badge">Geen sleutel (ingebouwde uitleg)</span>}
+      </Row>
+      {!status.configured ? (
+        <Row label="Claude API-sleutel" hint="Maak een sleutel op platform.claude.com (begint met sk-ant-).">
+          <div className="row">
+            <input className="input" type="password" autoComplete="off" spellCheck={false} placeholder="sk-ant-..." value={key} onChange={(e) => setKey(e.target.value.trim())} style={{ width: 260 }} aria-label="Claude API-sleutel" />
+            <button className="btn primary" disabled={!/^sk-ant-[A-Za-z0-9_-]{20,300}$/.test(key) || !status.encryptionAvailable} onClick={async () => {
+              try {
+                await call('ai:setKey', key);
+                setKey('');
+                toast({ kind: 'success', title: 'AI-sleutel opgeslagen', body: 'Open bij een les "Uitleg door AI Mentor".' });
+              } catch (e) {
+                toast({ kind: 'error', title: 'Niet opgeslagen', body: (e as Error).message });
+              }
+              load();
+            }}>Opslaan</button>
+          </div>
+        </Row>
+      ) : (
+        <Row label="Sleutel verwijderen" hint="Daarna gebruikt de mentor weer de ingebouwde uitleg.">
+          <button className="btn danger" onClick={async () => { await call('ai:clearKey'); load(); }}>Verwijderen</button>
+        </Row>
       )}
     </>
   );

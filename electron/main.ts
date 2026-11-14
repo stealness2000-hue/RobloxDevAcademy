@@ -10,8 +10,26 @@ import { LuauService } from './services/luau';
 import { loadWindowState, trackWindowState } from './services/window-state';
 import { StudioBridge } from './services/studio-bridge';
 import { NativeRunner } from './services/native-runner';
+import { AiMentor } from './services/ai';
+import { MentorScript, type MentorRequest } from '../shared/mentor';
+import { safeStorage } from 'electron';
 
 const native = new NativeRunner();
+const aiKeyFile = () => path.join(app.getPath('userData'), 'ai-key.bin');
+const ai = new AiMentor({
+  available: () => safeStorage.isEncryptionAvailable(),
+  read: () => {
+    try {
+      return safeStorage.decryptString(fs.readFileSync(aiKeyFile()));
+    } catch {
+      return null;
+    }
+  },
+  write: (key) => {
+    if (key) fs.writeFileSync(aiKeyFile(), safeStorage.encryptString(key));
+    else fs.rmSync(aiKeyFile(), { force: true });
+  },
+});
 import { execFile } from 'node:child_process';
 import os from 'node:os';
 import { verifyStudioFacts, type StudioExercise, type StudioFacts, type StudioVerification } from '../shared/studio';
@@ -355,6 +373,25 @@ const handlers: Record<Channel, Handler> = {
     db.backup('predelete');
     repo.deleteProfile();
     bridge.unpair();
+  },
+  'ai:status': () => ai.status(),
+  'ai:setKey': (key: string) => ai.setKey(key),
+  'ai:clearKey': () => ai.setKey(null),
+  'mentor:cached': (lessonId: string) => {
+    const raw = repo.getMentorScript(lessonId);
+    if (!raw) return null;
+    const parsed = MentorScript.safeParse(JSON.parse(raw));
+    return parsed.success ? parsed.data : null;
+  },
+  'mentor:aiScript': async (req: MentorRequest) => {
+    if (!req.regenerate) {
+      const raw = repo.getMentorScript(req.lessonId);
+      const cached = raw ? MentorScript.safeParse(JSON.parse(raw)) : null;
+      if (cached?.success) return cached.data;
+    }
+    const script = await ai.script(req);
+    repo.saveMentorScript(req.lessonId, JSON.stringify(script));
+    return script;
   },
   'code:run': async (a: { language: 'cpp' | 'java'; code: string; record: boolean }) => {
     const r = await native.run(a.language, a.code);

@@ -101,8 +101,8 @@ export function explainNative(raw: string, lang: Lang): Explanation {
       more: 'De Academy gebruikt de officiële gereedschappen, zodat je code precies zo werkt als bij echte programmeurs.' };
   }
   return { ...base, category: 'other', certainty: 'onbekend',
-    what: `${lang === 'java' ? 'Java' : 'De C++-compiler'} meldt een probleem dat we nog niet in gewone taal kunnen vertalen.`,
-    why: 'Hieronder staat de originele melding. Meestal staat het regelnummer erin.',
-    hint: line ? `Begin met regel ${line}: lees hem langzaam van links naar rechts.` : 'Lees je code langzaam van boven naar beneden.',
-    more: `Originele melding: ${msg}` };
+    what: 'Er is iets misgegaan dat we nog niet precies kunnen uitleggen.',
+    why: `${lang === 'java' ? 'Java' : 'De C++-compiler'} gaf een melding die nog niet in de lijst van de Academy staat. Meestal staat er wel in op welke regel het misgaat.`,
+    hint: line ? `Kijk naar regel ${line}. Klopt elke puntkomma, accolade, aanhalingsteken en naam?` : 'Lees je code langzaam van boven naar beneden. Klopt elke puntkomma, accolade en naam?',
+    more: `Originele melding (in het Engels): ${msg}` };
 }

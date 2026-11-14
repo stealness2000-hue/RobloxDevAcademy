@@ -358,14 +358,111 @@ export function explainMessage(rawMessage: string, code: string, knownLine?: num
     };
   }
 
+  // ---- More syntax mistakes ------------------------------------------------
+  if (/Expected ',' after table constructor element/.test(msg)) {
+    return { ...base, category: 'missing-bracket', certainty: 'zeker',
+      what: 'In je tabel mist een komma, of de sluitende accolade `}`.',
+      why: 'In een tabel `{ }` zet je tussen elk item een komma, zoals `{1, 2, 3}`. Na het laatste item sluit je af met `}`.',
+      hint: 'Kijk naar het einde van de vorige regel: staat er een komma? En staat er onderaan een `}`?',
+      more: 'Voorbeeld: `local stats = { health = 100, speed = 16 }`. Een komma na het laatste item mag ook.' };
+  }
+  if ((m = /Expected '\}' \(to close '\{' at line (\d+)\)/.exec(msg)) || (m = /Expected '\)' \(to close '\(' at line (\d+)\)/.exec(msg))) {
+    const brace = msg.includes("'{'");
+    return { ...base, line: Number(m[1]), category: 'missing-bracket', certainty: 'zeker',
+      what: brace ? 'Je bent een sluitende accolade `}` vergeten.' : 'Je bent een sluitend haakje `)` vergeten.',
+      why: brace ? `Op regel ${m[1]} begint een tabel met \`{\`, maar die wordt nergens afgesloten.` : `Op regel ${m[1]} begint iets met \`(\`, maar het sluitende haakje ontbreekt.`,
+      hint: brace ? 'Zet een `}` op de plek waar je tabel moet eindigen.' : 'Zet een `)` waar de informatie tussen de haakjes eindigt.',
+      more: 'Elk openend teken heeft een sluitend teken nodig: `(` met `)`, `{` met `}`, `[` met `]`.' };
+  }
+  if ((m = /Expected <eof>, got '(end|else|elseif|until|\))'/.exec(msg))) {
+    const w = m[1];
+    return { ...base, category: 'missing-end', certainty: 'zeker',
+      what: w === 'end' ? 'Er staat een `end` te veel.' : w === ')' ? 'Er staat een haakje `)` te veel.' : `Er staat een \`${w}\` zonder bijbehorende \`if\`.`,
+      why: w === 'end' ? 'Elke `end` sluit een blok af (zoals `if`, `for` of `function`). Deze `end` heeft geen blok meer om af te sluiten.' : w === ')' ? 'Er zijn meer sluitende dan openende haakjes.' : `\`${w}\` kan alleen binnen een if-statement staan, na \`if ... then\`.`,
+      hint: w === 'end' ? 'Tel je blokken: hoort elke `end` bij een `if`, `for`, `while` of `function`? Haal de extra `end` weg.' : w === ')' ? 'Tel de `(` en `)` op deze regel en haal er één `)` weg.' : 'Zet er een `if ... then` boven, of haal deze regel weg.',
+      more: 'Tip: met de knop Formatteren zie je aan het inspringen welk blok waar eindigt.' };
+  }
+  if (/A new statement is on the same line/.test(msg)) {
+    return { ...base, category: 'incomplete-statement', certainty: 'waarschijnlijk',
+      what: 'Er staan twee opdrachten op één regel, waarschijnlijk door een fout ervoor.',
+      why: 'Luau denkt dat er een nieuwe opdracht begint op dezelfde regel. Dat gebeurt vaak als er iets te veel of te weinig staat, zoals een haakje of een `=`.',
+      hint: 'Los eerst de andere fout op deze regel op; deze melding verdwijnt dan meestal vanzelf.',
+      more: 'Wil je echt twee opdrachten op één regel? Zet ze dan op aparte regels; dat is ook veel beter leesbaar.' };
+  }
+  if ((m = /Expected identifier when parsing expression, got '\)'/.exec(msg))) {
+    return { ...base, category: 'missing-bracket', certainty: 'zeker',
+      what: 'Er staat een haakje `)` te veel, of er ontbreekt iets vóór het haakje.',
+      why: 'Luau verwachtte nog een waarde, maar kwam een sluitend haakje tegen.',
+      hint: 'Tel de `(` en `)` op deze regel. Zijn het er evenveel?',
+      more: 'Ook een komma te veel kan dit veroorzaken, zoals `print("a",)`.' };
+  }
+
+  // ---- More runtime mistakes -----------------------------------------------
+  if ((m = /attempt to compare (\w+) [<>=]+ (\w+)/.exec(msg))) {
+    return { ...base, category: 'type-mismatch', certainty: 'zeker',
+      what: `Je vergelijkt een ${dutchType(m[1])} met een ${dutchType(m[2])}.`,
+      why: 'Met `<`, `>`, `<=` en `>=` kun je alleen getallen met getallen (of tekst met tekst) vergelijken.',
+      hint: 'Controleer welke waarde geen getal is. Staat er misschien tekst tussen aanhalingstekens, of is iets `nil`?',
+      more: 'Tekst omzetten naar een getal kan met `tonumber("10")`.' };
+  }
+  if ((m = /invalid argument #(\d+) to '([^']+)' \((\w+) expected, got (\w+)\)/.exec(msg)) || (m = /the function '([^']+)' expects to get an? (\w+) as its (\d+)\w* argument, but is being given an? (\w+)/.exec(msg))) {
+    const fn = m[0].startsWith('invalid') ? m[2] : m[1];
+    const nr = m[0].startsWith('invalid') ? m[1] : m[3];
+    const want = m[0].startsWith('invalid') ? m[3] : m[2];
+    const got = m[4];
+    return { ...base, category: 'type-mismatch', certainty: 'zeker',
+      what: `Je geeft \`${fn}\` het verkeerde soort waarde.`,
+      why: `\`${fn}\` verwacht als ${nr}e argument een ${dutchType(want)}, maar kreeg een ${dutchType(got)}.`,
+      hint: `Kijk wat je tussen de haakjes van \`${fn}(...)\` zet. Moet dat een ${dutchType(want)} zijn?`,
+      more: 'Een argument is de informatie tussen de haakjes. Elke functie verwacht een bepaald soort informatie.' };
+  }
+  if ((m = /missing argument #(\d+)(?: to '([^']+)')?/.exec(msg)) || (m = /the function '([^']+)' will error at runtime if it is not called with (\d+) arguments?/.exec(msg))) {
+    const analyzer = m[0].startsWith('the function');
+    const fn = analyzer ? m[1] : m[2] ?? 'deze functie';
+    const methodLike = /^[a-z]\w*\.(upper|lower|sub|len|rep|find|gsub|split|format)$/.test(fn);
+    return { ...base, category: 'incomplete-statement', certainty: 'zeker',
+      what: methodLike ? `Gebruik een dubbele punt: \`${fn.replace('.', ':')}()\` in plaats van \`${fn}()\`.` : `Je bent informatie vergeten tussen de haakjes van \`${fn}\`.`,
+      why: methodLike ? 'Tekstfuncties op een variabele roep je aan met `:`. Dan geeft Luau de tekst zelf automatisch mee.' : `\`${fn}\` heeft informatie (een argument) nodig om te werken, maar de haakjes zijn leeg of er ontbreekt er een.`,
+      hint: methodLike ? `Schrijf \`${fn.replace('.', ':')}()\`.` : `Zet tussen de haakjes wat \`${fn}\` nodig heeft, bijvoorbeeld een getal of tekst.`,
+      more: 'Met `naam:methode()` werk je met de waarde zelf. Met `naam.functie()` moet je alles zelf meegeven.' };
+  }
+  if ((m = /attempt to call an? (\w+) value/.exec(msg)) && m[1] !== 'nil') {
+    return { ...base, category: 'nil-call', certainty: 'zeker',
+      what: `Je gebruikt haakjes \`()\` achter een ${dutchType(m[1])}, maar dat is geen functie.`,
+      why: 'Haakjes achter een naam betekenen: voer deze functie uit. Maar deze naam bevat een waarde, geen functie.',
+      hint: 'Haal de haakjes weg, of controleer of je de juiste naam gebruikt (misschien heeft een variabele dezelfde naam als een functie).',
+      more: 'Voorbeeld: `local score = 5` en daarna `score()` geeft deze fout, want 5 is geen functie.' };
+  }
+  if (/stack overflow/i.test(msg)) {
+    return { ...base, category: 'infinite-loop', certainty: 'waarschijnlijk',
+      what: 'Een functie roept zichzelf eindeloos aan.',
+      why: 'Als een functie zichzelf aanroept zonder ooit te stoppen, raakt het geheugen voor aanroepen op.',
+      hint: 'Kijk of je functie zichzelf aanroept. Zorg voor een `if` die ervoor zorgt dat hij een keer stopt.',
+      more: 'Dit heet recursie. Het is handig, maar heeft altijd een stopvoorwaarde nodig.' };
+  }
+  if (/table index is nil/.test(msg)) {
+    return { ...base, category: 'nil-index', certainty: 'zeker',
+      what: 'Je gebruikt `nil` als sleutel in een tabel.',
+      why: 'Een sleutel (tussen `[ ]`) moet een echte waarde zijn, zoals een naam of getal. `nil` betekent "niets" en kan geen sleutel zijn.',
+      hint: 'Kijk welke variabele je tussen de blokhaken zet. Heeft die wel een waarde?',
+      more: 'Vaak is de variabele verkeerd gespeld, of heeft hij nog geen waarde gekregen.' };
+  }
+  if (/\berror\s*\(/.test(code) && !/attempt to|Expected|Unknown global|Malformed/.test(msg) && /runtime error/.test(original)) {
+    return { ...base, category: 'other', certainty: 'zeker',
+      what: `Je code gaf zelf een foutmelding: "${msg}".`,
+      why: 'Met `error("...")` stop je je programma bewust met een eigen melding. Dat is handig om problemen op te merken.',
+      hint: 'Is dit de bedoeling? Zo niet, kijk waarom de regel met `error(...)` is uitgevoerd.',
+      more: 'In Roblox gebruik je `error` vaak om te stoppen als iets ontbreekt, en `pcall` om zo\'n fout netjes op te vangen.' };
+  }
+
   return {
     ...base,
     category: 'other',
     certainty: 'onbekend',
-    what: 'Luau meldt een probleem dat we nog niet in gewone taal kunnen vertalen.',
-    why: 'Hieronder staat de originele melding van Luau. Die is technisch, maar meestal staat de regel erin waar het misgaat.',
-    hint: line ? `Begin met regel ${line}: lees hem langzaam van links naar rechts.` : 'Lees je code langzaam van boven naar beneden.',
-    more: `Originele melding: ${msg}`,
+    what: 'Er is iets misgegaan dat we nog niet precies kunnen uitleggen.',
+    why: 'Luau gaf een melding die nog niet in de lijst van de Academy staat. Meestal staat er wel in op welke regel het misgaat.',
+    hint: line ? `Kijk naar regel ${line}. Lees hem langzaam van links naar rechts. Klopt elk haakje, aanhalingsteken en elke naam?` : 'Lees je code langzaam van boven naar beneden. Klopt elk haakje, aanhalingsteken en elke naam?',
+    more: `Originele melding (in het Engels): ${msg}`,
   };
 }
 

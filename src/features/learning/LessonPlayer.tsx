@@ -4,6 +4,8 @@ import { useApp } from '@/store';
 import { call } from '@/api';
 import { COURSE_BY_ID, LESSON_BY_ID, isGradedStep, lessonNumber, languageOfLesson, lessonsOfTrack, trackOfLesson, TRACK_LABEL } from '@/curriculum';
 import { ToolchainBanner } from './ToolchainBanner';
+import { MentorPlayer } from '@/features/mentor/MentorPlayer';
+import { Sparkles } from 'lucide-react';
 import { conceptName } from '@/curriculum/concepts';
 import { ProgressBar, Prose, inline } from '@/components/ui';
 import { CodeStep, ExplainStep, QuizStep, StudioStep } from './Steps';
@@ -32,6 +34,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
     reached: alreadyCompleted ? (lesson?.steps.length ?? 1) - 1 : Math.min(saved.reached ?? row?.stepIndex ?? 0, (lesson?.steps.length ?? 1) - 1),
   });
   const [completion, setCompletion] = useState<Award[] | null>(null);
+  const [mentorOpen, setMentorOpen] = useState(false);
   const stepRefs = useRef<(HTMLElement | null)[]>([]);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const latest = useRef(state);
@@ -93,6 +96,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
 
   return (
     <div className="page lesson-page">
+      {mentorOpen && <MentorPlayer lesson={lesson} language={language} onClose={() => setMentorOpen(false)} />}
       <div className="lesson-top">
         <button className="btn ghost sm" onClick={() => navigate('learn')}><ArrowLeft size={14} /> {course.title}</button>
         <span className="grow" />
@@ -100,6 +104,7 @@ export function LessonPlayer({ lessonId }: { lessonId: string }) {
       </div>
       <header className="lesson-header">
         <h1>{lesson.title}</h1>
+        <button className="btn mentor-btn" onClick={() => setMentorOpen(true)}><Sparkles size={15} /> Uitleg door AI Mentor</button>
         <div className="lesson-meta">
           <span className="row small muted"><Target size={14} /> {lesson.objective}</span>
         </div>

@@ -1,7 +1,7 @@
 {
   "name": "roblox-dev-academy",
   "productName": "Roblox Dev Academy",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Leer Roblox-programmeren met Luau, vanaf nul.",
   "author": "Roblox Dev Academy",
   "license": "UNLICENSED",
@@ -20,6 +20,7 @@
     "test:studio": "node tests/e2e/studio-bridge.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
     "@luau-rs/luau": "0.739.0",
     "lucide-react": "1.72.0",
     "monaco-editor": "0.57.0",

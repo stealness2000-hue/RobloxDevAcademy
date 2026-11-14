@@ -127,10 +127,10 @@ describe('database persistence', () => {
 
   it('migrations are applied once and recorded', async () => {
     let db = await open();
-    expect(db.schemaVersion).toBe(3);
+    expect(db.schemaVersion).toBe(4);
     db.close();
     db = await open();
-    expect(db.schemaVersion).toBe(3);
+    expect(db.schemaVersion).toBe(4);
     db.close();
   });
 

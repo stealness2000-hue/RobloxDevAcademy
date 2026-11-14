@@ -577,6 +577,15 @@ export class Repository {
       .map((r) => ({ path: r.studio_path, fileId: Number(r.file_id), updatedAt: r.updated_at }));
   }
 
+  // ---------------------------------------------------------------- AI mentor script cache
+  getMentorScript(lessonId: string): string | null {
+    return this.db.get<{ script_json: string }>('SELECT script_json FROM mentor_scripts WHERE lesson_id = ?', [lessonId])?.script_json ?? null;
+  }
+
+  saveMentorScript(lessonId: string, json: string) {
+    this.db.run('INSERT INTO mentor_scripts (lesson_id, script_json, created_at) VALUES (?, ?, ?) ON CONFLICT(lesson_id) DO UPDATE SET script_json = excluded.script_json, created_at = excluded.created_at', [lessonId, json, this.now()]);
+  }
+
   // ---------------------------------------------------------------- data management
   exportAll(): Record<string, unknown> {
     const tables = ['users', 'settings', 'lesson_progress', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_files', 'code_revisions', 'xp_events', 'earned_achievements'];
@@ -612,7 +621,7 @@ export class Repository {
 
   deleteProfile() {
     this.db.transaction(() => {
-      for (const t of ['studio_sync', 'studio_conflicts', 'attempt_concepts', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_revisions', 'code_files', 'xp_events', 'earned_achievements', 'lesson_progress', 'app_events', 'settings', 'users', 'tutor_conversations', 'studio_connections'])
+      for (const t of ['mentor_scripts', 'studio_sync', 'studio_conflicts', 'attempt_concepts', 'exercise_attempts', 'quiz_results', 'review_schedule', 'study_sessions', 'code_revisions', 'code_files', 'xp_events', 'earned_achievements', 'lesson_progress', 'app_events', 'settings', 'users', 'tutor_conversations', 'studio_connections'])
         this.db.run(`DELETE FROM ${t}`);
     });
   }
